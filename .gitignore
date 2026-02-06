@@ -1,0 +1,51 @@
+
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# production build artifacts (if you ever export/copy)
+dist/
+build/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+*.log
+
+# local env files
+.env
+.env.* 
+
+# caches
+.turbo/
+.vercel/
+.cache/
+.eslintcache
+.parcel-cache/
+
+# coverage
+coverage/
+*.lcov
+
+# OS / editor
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+.vscode/
+.idea/
+*.swp
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional: local Next.js analytics
+.next/cache/
+
