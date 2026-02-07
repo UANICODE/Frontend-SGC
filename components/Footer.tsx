@@ -50,7 +50,7 @@ export function Footer() {
               />
             </motion.div>
             <div>
-              <span className="text-3xl font-bold text-textPrimaryLight block bg-gradient-to-r from-textPrimaryLight to-textPrimaryLight bg-clip-text">
+              <span className="text-3xl font-bold block text-[#FF9E3A]">
                 Foodnect
               </span>
               <span className="text-xs text-textSecondaryLight -mt-1 flex items-center gap-1.5 mt-1">
@@ -60,7 +60,7 @@ export function Footer() {
             </div>
           </div>
           <p className="text-sm leading-relaxed text-textSecondaryLight mb-6">
-            Descobre onde comer e faz o teu pedido em segundos. A Foodnect nasceu na Beira, Moçambique, para tornar a descoberta de restaurantes mais rápida e simples.
+            Descobre onde comer e faz o teu pedido em segundos. <span className="text-[#FF9E3A]">Foodnect</span> nasceu na Beira, Moçambique, para tornar a descoberta de restaurantes mais rápida e simples.
           </p>
           <motion.div
             whileHover={{ scale: 1.05, y: -2 }}
@@ -72,7 +72,7 @@ export function Footer() {
             >
                
             </motion.div>
-            <span>Fome? Daqui para aqui resolvi</span>
+            <span>Fome? Daqui para aqui resolvi😎.</span>
           </motion.div>
         </motion.div>
         <motion.div
@@ -114,11 +114,11 @@ export function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/#retroacoes"
+                    href="/#testemunhos"
                     className="group flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-medium text-textSecondaryLight transition-all duration-200 hover:bg-primary/5 hover:text-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                     onClick={(e) => {
                       e.preventDefault();
-                      const element = document.getElementById("retroacoes");
+                      const element = document.getElementById("testemunhos");
                       if (element) {
                         element.scrollIntoView({ behavior: "smooth", block: "start" });
                       }
@@ -126,7 +126,7 @@ export function Footer() {
                   >
                     <Star className="h-5 w-5 text-primary" />
                     <span className="group-hover:translate-x-1 transition-transform">
-                      Retroações
+                      Testemunhos
                     </span>
                   </Link>
                 </li>
@@ -160,12 +160,12 @@ export function Footer() {
               <ul className="space-y-2.5">
                 <li>
                   <a
-                    href="mailto:contacto@foodnect.app"
+                    href="mailto:info@uanicode.com"
                     className="group flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-medium text-textSecondaryLight transition-all duration-200 hover:bg-primary/5 hover:text-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <Mail className="h-5 w-5 text-primary" />
                     <span className="group-hover:translate-x-1 transition-transform">
-                      contacto@foodnect.app
+                    info@uanicode.com
                     </span>
                   </a>
                 </li>
@@ -234,8 +234,8 @@ export function Footer() {
       </div>
       <div className="bg-orange-100 relative">
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 text-xs md:flex-row md:px-6">
-          <span className="font-bold text-orange-800 text-center md:text-left">
-            © {new Date().getFullYear()} Foodnect. Todos os direitos reservados.
+          <span className="font-bold text-dark-800 text-center md:text-left">
+            © {new Date().getFullYear()} <span className="text-primary">Foodnect</span>. Todos os direitos reservados.
           </span>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -246,12 +246,12 @@ export function Footer() {
             <div className="relative h-6 w-auto md:h-8">
               <Image
                 src="/images/Parceiros/Uanecode.png"
-                alt="Uanecode"
+                alt="Uanicode"
                 fill
                 className="object-contain"
               />
             </div>
-            <span className="font-semibold text-orange-800">Desenvolvido pela Uanecode</span>
+            <span className="font-semibold text-dark-800">Desenvolvido pela UANICODE.</span>
           </motion.div>
         </div>
       </div>

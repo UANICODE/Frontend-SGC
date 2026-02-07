@@ -179,9 +179,9 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4, duration: 0.5 }}
-                    className="text-lg md:text-xl font-bold text-gradient mb-8 px-2"
+                    className="text-lg md:text-xl font-bold mb-8 px-2 text-[#FF9E3A]"
                   >
-                    A Foodnect decide por ti.
+                    Foodnect decide por ti.
                   </motion.p>
 
                   {/* Botão CTA */}
@@ -275,7 +275,7 @@ export default function HomePage() {
           className="absolute top-1/2 left-1/2 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
         />
         
-        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-16 px-4 pt-12 pb-20 md:flex-row md:pt-16 md:pb-32 md:px-6">
+        <div className="relative mx-auto flex max-w-7xl flex-col items-center gap-16 px-4 pt-6 pb-20 md:flex-row md:pt-8 md:pb-32 md:px-6">
           <div className="flex-1 space-y-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -296,7 +296,7 @@ export default function HomePage() {
                 >
                   <Sparkles className="h-4 w-4" />
                 </motion.div>
-                <span>Descobre restaurantes em Moçambique</span>
+                <span>Descobre restaurantes na cidade da Beira.</span>
               </motion.div>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
@@ -306,7 +306,7 @@ export default function HomePage() {
               >
                 Com fome e sem paciência?
                 <br />
-                <span className="text-gradient">A Foodnect decide por ti.</span>
+                <span className="text-[#FF9E3A]"> A Foodnect</span> decide por ti.
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -315,7 +315,7 @@ export default function HomePage() {
                 className="max-w-2xl text-lg text-textSecondaryLight leading-relaxed"
               >
                 Vê restaurantes e lanchonetes reais perto de ti na Beira, compara cardápios, preços, faz o
-                teu pedido, rastrea, sem perder tempo a decidir.
+                teu pedido e rastree, sem perder tempo a decidir.
               </motion.p>
             </motion.div>
             <motion.div
@@ -344,16 +344,16 @@ export default function HomePage() {
                 href="/b2b"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-gradient-to-r from-primary via-[#FF9E3A] to-primary px-5 py-3 text-xs md:text-sm font-semibold text-white shadow-lg hover:shadow-xl transition-all overflow-hidden relative"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-[#FF9E3A] to-primary px-4 py-2 text-xs font-semibold text-white shadow-lg hover:shadow-xl transition-all overflow-hidden relative max-w-fit"
               >
                 <motion.div
                   animate={{ x: [0, 6, 0] }}
                   transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-                  className="flex items-center gap-2.5 relative z-10"
-              >
-                <Store className="h-4 w-4" />
-                <span>Como a Foodnect pode fazer crescer o meu negocio?</span>
-                <ArrowRight className="h-3.5 w-3.5 opacity-90" />
+                  className="flex items-center gap-2 relative z-10"
+                >
+                  <Store className="h-3.5 w-3.5" />
+                  <span>Como a Foodnect pode beneficiar o meu estabelecimento</span>
+                  <ArrowRight className="h-3 w-3 opacity-90" />
                 </motion.div>
                 <motion.div
                   aria-hidden
@@ -398,7 +398,7 @@ export default function HomePage() {
               <span className="text-xs font-bold text-primary uppercase tracking-wide">Sobre Nós</span>
             </div>
             <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-6 leading-tight">
-              A Foodnect nasceu na <span className="text-gradient">Beira</span> para acabar com a perda de tempo na hora de comer.
+              <span className="text-[#FF9E3A]">Foodnect</span> nasceu na <span className="text-gradient">Beira</span> para acabar com a perda de tempo na hora de comer.
             </h2>
           </motion.div>
           <motion.div
@@ -409,19 +409,12 @@ export default function HomePage() {
             className="flex-1"
           >
             <p className="text-lg leading-relaxed text-textSecondaryLight mb-6">
-              Em vez de procurares alguém para perguntar "onde vamos comer?", a
-              Foodnect mostra restaurantes e lanchonetes reais perto de ti na Beira, Moçambique, com
+              Em vez de procurares alguém para perguntar "onde vamos comer?", ou "Peço sugestão de um restaurante?"{" "}
+              <span className="text-[#FF9E3A]">Foodnect</span> mostra restaurantes e lanchonetes reais perto de ti na Beira, com
               preços, cardápios, localização e horários tudo num só lugar. Tu vês,
               decide e pedes em poucos toques.
             </p>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 text-sm font-semibold text-primary cursor-pointer hover:shadow-lg transition-all"
-            >
-              <span>Saber mais sobre a Foodnect</span>
-                <ArrowRight className="h-4 w-4" />
-            </motion.div>
+         
           </motion.div>
         </div>
       </motion.section>

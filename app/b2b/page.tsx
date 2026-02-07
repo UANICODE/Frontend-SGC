@@ -5,7 +5,8 @@ import { FloatingWhatsAppButton } from "@/components/FloatingWhatsAppButton";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { motion, AnimatePresence } from "framer-motion";
 import { StoreBadge } from "@/components/StoreBadges";
-import { Eye, CheckCircle2, Globe, Zap, MessageSquare, Building2, MapPin, HelpCircle, Smartphone, ArrowRight, TrendingUp, Users, Clock, DollarSign, ChevronDown } from "lucide-react";
+import Image from "next/image";
+import { Eye, CheckCircle2, Globe, Zap, MessageSquare, Building2, MapPin, HelpCircle, Smartphone, ArrowRight, TrendingUp, Users, Clock, DollarSign, ChevronDown, Quote, Star } from "lucide-react";
 
 const BENEFITS = [
   {
@@ -47,15 +48,27 @@ const BENEFITS = [
 
 const B2B_TESTIMONIALS = [
   {
-    restaurant: "Burger Spot",
+    restaurant: "Tudo Pago",
     comment:
       "Com a Foodnect começámos a receber clientes que não nos conheciam, principalmente ao almoço.",
     location: "Beira",
   },
   {
-    restaurant: "Café Central",
+    restaurant: "Ki Sabor Schema",
     comment:
-      "Ajudou-nos muito a mostrar o menu de almoço do dia, sem depender só da montra física.",
+      "Ajudou-nos muito a mostrar o menu do dia, sem depender só da montra física.",
+    location: "Beira",
+  },
+  {
+    restaurant: "ADY Bolos",
+    comment:
+      "Aumentámos significativamente o número de pedidos, especialmente nos horários de pico. A plataforma é muito intuitiva.",
+    location: "Beira",
+  },
+  {
+    restaurant: "Ta Legal",
+    comment:
+      "A Foodnect trouxe-nos novos clientes e facilitou muito a gestão dos pedidos. Recomendamos a todos os restaurantes.",
     location: "Beira",
   },
 ];
@@ -70,7 +83,7 @@ const B2B_FAQ = [
   {
     question: "Como faço para cadastrar meu restaurante?",
     answer:
-      "Clica em \"Fale Connosco\" e a nossa equipa entra em contacto para guia-lo no seu cadastro.",
+      "Clica em \"Fale Conosco\" e a nossa equipa entra em contacto para guia-lo no seu cadastro.",
     icon: Building2,
   },
   {
@@ -92,7 +105,7 @@ export default function B2BPage() {
       <section className="border-b border-borderLight/30 bg-gradient-to-br from-white via-backgroundLight to-white relative overflow-hidden">
         <AnimatedBackground variant="hero" intensity="light" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
-        <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-12 px-4 pt-20 pb-20 md:flex-row md:items-center md:pt-28 md:pb-28 md:px-6">
+        <div className="relative mx-auto flex max-w-7xl flex-col items-start gap-12 px-4 pt-6 pb-20 md:flex-row md:items-center md:pt-8 md:pb-24 md:px-6">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -109,7 +122,7 @@ export default function B2BPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl font-bold tracking-tight text-textPrimaryLight md:text-5xl lg:text-6xl leading-tight"
             >
-              <span className="text-primary">Foodnect</span> o parceiro que faz o teu negócio{" "}
+              <span className="text-[#FF9E3A]">Foodnect</span> o parceiro que faz o teu negócio{" "}
               <span className="text-gradient">vender mais.</span>
             </motion.h1>
             <motion.p
@@ -198,43 +211,22 @@ export default function B2BPage() {
             transition={{ duration: 0.8, delay: 0.5, type: "spring" }}
             className="flex-1 flex justify-center"
           >
-            <div className="mx-auto h-[420px] max-w-sm rounded-3xl border-2 border-borderLight/30 bg-gradient-to-br from-backgroundDark via-zinc-900 to-backgroundDark p-5 text-white shadow-2xl relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 opacity-50" />
-              <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-3">
-                  <Building2 className="h-4 w-4 text-textSecondaryDark" />
-                  <p className="text-xs text-textSecondaryDark">
-                    Vista para estabelecimentos
-                  </p>
-                </div>
-                <p className="text-base font-bold mb-6">
-                  Recebe e organiza pedidos num só ecrã.
-                </p>
-                <div className="mt-4 space-y-3 text-[11px]">
-                  {["Novo pedido", "Em preparação", "Entregue"].map((status, i) => (
-                    <motion.div
-                      key={status}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                      whileHover={{ scale: 1.02, x: 4 }}
-                      className="flex items-center justify-between rounded-xl bg-white/10 backdrop-blur-sm px-4 py-3 border border-white/10"
-                    >
-                      <div>
-                        <p className="text-[12px] font-bold">
-                          Pedido #{120 + i}
-                        </p>
-                        <p className="text-[10px] text-textSecondaryDark mt-1">
-                          2x Cheeseburger • 1x Batata média
-                        </p>
-                      </div>
-                      <span className="rounded-full bg-primary/80 px-3 py-1 text-[10px] font-semibold">
-                        {status}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
+            <div className="mx-auto h-[550px] w-[380px] md:h-[650px] md:w-[460px] relative">
+              <motion.div
+                animate={{ y: [0, -10, 0], rotate: [0, -0.6, 0.6, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                whileHover={{ scale: 1.03, rotate: 0 }}
+                className="will-change-transform relative h-full w-full"
+              >
+                <Image
+                  src="/images/res2.png"
+                  alt="Foodnect"
+                  fill
+                  sizes="(min-width: 768px) 460px, 380px"
+                  priority
+                  className="object-contain"
+                />
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -257,7 +249,7 @@ export default function B2BPage() {
               <span className="text-xs font-bold text-primary uppercase tracking-wide">Benefícios</span>
             </div>
             <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
-              Veja o que a Foodnect traz de especial para o seu estabelecimento.
+              Veja o que a <span className="text-[#FF9E3A]">Foodnect</span> traz de especial para o seu estabelecimento.
             </h2>
             <p className="max-w-3xl text-lg text-textSecondaryLight leading-relaxed">
               A Foodnect foi projectada para fazer crescer negocios que actuam no ramo gastronómico aqui no nosso País sem comprometer o fluxo actual de trabalho.
@@ -318,7 +310,7 @@ export default function B2BPage() {
               <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">Download</span>
             </div>
             <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl leading-tight">
-              Começa hoje a faturar com a Foodnect.
+              Começa hoje a faturar com a <span className="text-[#FF9E3A]">Foodnect</span>.
             </h2>
             <p className="text-lg text-textSecondaryLight leading-relaxed">
               Instala a app, fala com a nossa equipa e coloca o teu
@@ -330,108 +322,75 @@ export default function B2BPage() {
               <StoreBadge variant="app" disabled />
             </div>
           </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex-1 flex justify-center"
-          >
-            <div className="mx-auto h-[420px] w-[250px] rounded-[36px] border-2 border-borderLight/30 bg-white p-4 shadow-2xl md:h-[480px] md:w-[280px]">
-              <div className="flex h-full flex-col rounded-[32px] bg-gradient-to-br from-backgroundLight via-white to-backgroundLight p-4 text-[11px]">
-                <p className="text-[12px] font-bold text-textPrimaryLight mb-1 flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-[#FF7A1A]" />
-                  Painel do estabelecimento
-                </p>
-                <p className="text-[10px] text-textSecondaryLight mb-4">
-                  Resumo do dia, pedidos e receita.
-                </p>
-                <div className="grid flex-1 grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-gradient-to-br from-white to-backgroundLight p-3 border border-borderLight/30 shadow-md">
-                    <p className="text-[10px] text-textSecondaryLight mb-2 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      Pedidos hoje
-                    </p>
-                    <p className="text-2xl font-bold text-[#FF7A1A]">32</p>
-                  </div>
-                  <div className="rounded-2xl bg-gradient-to-br from-white to-backgroundLight p-3 border border-borderLight/30 shadow-md">
-                    <p className="text-[10px] text-textSecondaryLight mb-2 flex items-center gap-1">
-                      <DollarSign className="h-3 w-3" />
-                      Receita
-                    </p>
-                    <p className="text-2xl font-bold text-secondary">€540</p>
-                  </div>
-                  <div className="col-span-2 rounded-2xl bg-gradient-to-br from-white to-backgroundLight p-3 border border-borderLight/30 shadow-md">
-                    <p className="text-[10px] text-textSecondaryLight mb-2 flex items-center gap-1">
-                      <Zap className="h-3 w-3" />
-                      Pedidos em fila
-                    </p>
-                    <p className="text-[10px] text-textPrimaryLight font-semibold mb-3">
-                      #132 2x Menu Duplo • 1x Refrigerante
-                    </p>
-                    <div className="flex gap-2 text-[10px]">
-                      <span className="flex-1 rounded-full bg-gradient-to-r from-[#FF7A1A] to-[#FF9E3A] px-3 py-2 text-center font-bold text-white shadow-md">
-                        Aceitar
-                      </span>
-                      <span className="flex-1 rounded-full border-2 border-borderLight px-3 py-2 text-center font-semibold text-textSecondaryLight">
-                        Ver detalhes
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </section>
 
       {/* Testemunhos B2B */}
-      <section className="border-b border-borderLight/30 bg-gradient-to-b from-backgroundLight to-white py-20 md:py-28 relative overflow-hidden">
+      <section className="border-b border-borderLight/30 bg-gradient-to-b from-white via-backgroundLight to-white py-20 md:py-28 relative overflow-hidden">
         <AnimatedBackground variant="section" intensity="light" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
         <div className="relative mx-auto max-w-7xl px-4 md:px-6">
-          <motion.h2
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-16"
+            className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between mb-16"
           >
-            O que dizem os que ja contam com a Foodnect para o crescimento do seu negócio.
-          </motion.h2>
-          <div className="grid gap-6 md:grid-cols-2">
-            {B2B_TESTIMONIALS.map((t, idx) => (
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#FF7A1A]/10 to-[#FF9E3A]/10 border border-[#FF7A1A]/20 mb-4">
+                <Star className="h-4 w-4 text-[#FF7A1A] fill-[#FF7A1A]" />
+                <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">Testemunhos</span>
+              </div>
+              <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
+                Veja quem já conta com a <span className="text-[#FF9E3A]">Foodnect</span> para fazer crescer o seu estabelecimento.
+              </h2>
+              <p className="text-lg text-textSecondaryLight leading-relaxed">
+                Feedback real de restaurantes e lanchonetes que usam a Foodnect para aumentar
+                a visibilidade e atrair mais clientes na Beira.
+              </p>
+            </div>
+          </motion.div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {B2B_TESTIMONIALS.map((testimonial, idx) => (
               <motion.article
-                key={t.restaurant}
+                key={testimonial.restaurant}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-                className="p-6 group relative rounded-3xl border-2 border-[#FF7A1A] bg-white/95 backdrop-blur-sm shadow-md transition-all duration-300 hover:shadow-lg"
+                whileHover={{ y: -6, scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                className="flex flex-col justify-between p-6 group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-orange-50/30 to-white backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
                 style={{ border: '2px solid #FF7A1A', boxShadow: '0 0 0 1px #FF7A1A inset' }}
               >
-                <div className="flex items-center gap-4 mb-5">
-                  <motion.div
-                    whileHover={{ scale: 1.1, rotate: 5 }}
-                    className="h-16 w-16 rounded-full bg-gradient-to-br from-[#FF7A1A]/20 via-[#FF9E3A]/20 to-[#FF7A1A]/20 flex items-center justify-center text-xl font-bold text-[#FF7A1A] border-2 border-[#FF7A1A]/20 group-hover:border-[#FF7A1A]/40 transition-all shadow-lg"
-                  >
-                    <Building2 className="h-8 w-8" />
-                  </motion.div>
-                  <div>
-                    <p className="text-base font-bold text-textPrimaryLight group-hover:text-[#FF7A1A] transition-colors">
-                      {t.restaurant}
-                    </p>
-                    <p className="text-xs text-textSecondaryLight mb-1">Parceiro Foodnect</p>
-                    <div className="flex items-center gap-1 text-[10px] text-textSecondaryLight">
-                      <MapPin className="h-3 w-3" />
-                      <span>{t.location}, Moçambique</span>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-4 mb-5">
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      className="h-16 w-16 rounded-full bg-gradient-to-br from-[#FF7A1A] to-[#FF9E3A] flex items-center justify-center shadow-lg"
+                      style={{ border: '2px solid #FF7A1A', boxShadow: '0 0 0 1px #FF7A1A inset' }}
+                    >
+                      <Building2 className="h-8 w-8 text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <p className="text-base font-bold text-textPrimaryLight group-hover:text-[#FF9E3A] transition-colors">
+                        {testimonial.restaurant}
+                      </p>
+                      <div className="flex items-center gap-1 text-[10px] text-textSecondaryLight">
+                        <MapPin className="h-3 w-3" />
+                        <span>{testimonial.location}, Moçambique</span>
+                      </div>
                     </div>
                   </div>
+                  
+                  <div className="relative mb-4">
+                    <Quote className="absolute -top-2 -left-2 h-8 w-8 text-[#FF7A1A]/40" />
+                    <p className="text-sm leading-relaxed text-textSecondaryLight pl-6 relative z-10">
+                      {testimonial.comment}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm leading-relaxed text-textSecondaryLight relative z-10">
-                  "{t.comment}"
-                </p>
               </motion.article>
             ))}
           </div>

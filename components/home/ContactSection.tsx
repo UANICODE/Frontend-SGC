@@ -89,8 +89,8 @@ export function ContactSection() {
     {
       icon: Mail,
       label: "E-mail",
-      value: "contacto@foodnect.app",
-      href: "mailto:contacto@foodnect.app",
+      value: "info@uanicode.com",
+      href: "mailto:info@uanicode.com",
     },
     {
       icon: MapPin,
@@ -129,12 +129,11 @@ export function ContactSection() {
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-textPrimaryLight mb-2">
-            Contacta a equipa Foodnect
+            Contacte a equipa <span className="text-[#FF9E3A]">Foodnect</span>
           </h2>
           <p className="text-sm md:text-base text-textSecondaryLight max-w-2xl mx-auto">
-            Tens dúvidas, sugestão, queres usar a Foodnect no teu estabelecimento
-            ou propor uma parceria? Envia-nos uma mensagem rápida e respondemos
-            por e-mail.
+            Tens dúvidas, sugestão, queres usar a <span className="text-[#FF9E3A]">Foodnect</span> no teu estabelecimento
+            ou propor uma parceria? Envia-nos uma mensagem rápida e respondemos na hora.
           </p>
         </motion.div>
 
@@ -150,12 +149,9 @@ export function ContactSection() {
             <div className="p-7 md:p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-md" style={{ border: '2px solid #FF7A1A', boxShadow: '0 0 0 1px #FF7A1A inset' }}>
               <h3 className="text-lg md:text-xl font-bold text-textPrimaryLight mb-4 flex items-center gap-2">
                 <Phone className="h-5 w-5 text-[#FF7A1A]" />
-                Fala conosco diretamente
+                Fala conosco directamente
               </h3>
-              <p className="text-sm text-textSecondaryLight mb-4">
-                Preferes não preencher o formulário? Usa um destes contactos
-                diretos para falar conosco.
-              </p>
+           
               <div className="space-y-4">
                 {contactInfo.map((info, idx) => (
                   <ContactInfoItem key={info.label} info={info} idx={idx} />
@@ -175,11 +171,11 @@ export function ContactSection() {
             <div className="p-7 md:p-8 rounded-3xl bg-white/95 backdrop-blur-sm shadow-md text-center flex flex-col items-center gap-4" style={{ border: '2px solid #FF7A1A', boxShadow: '0 0 0 1px #FF7A1A inset' }}>
               <h3 className="text-lg md:text-xl font-bold text-textPrimaryLight mb-4 flex items-center justify-center gap-2">
                 <Instagram className="h-5 w-5 text-[#FF7A1A]" />
-                Redes sociais da Foodnect
+                Redes sociais da <span className="text-[#FF9E3A]">Foodnect</span>
               </h3>
               <p className="text-sm text-textSecondaryLight mb-2">
-                Acompanha as novidades, campanhas e novos restaurantes que vão
-                entrando para a plataforma – e muito mais.
+                Acompanha as novidades, campanhas e novos restaurantes e lanchonetes que vão
+                entrando para a plataforma e muito mais.
               </p>
               {/* Botão destaque para WhatsApp centralizado */}
               <motion.a

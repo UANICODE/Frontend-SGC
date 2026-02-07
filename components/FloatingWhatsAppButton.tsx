@@ -35,7 +35,7 @@ export function FloatingWhatsAppButton({
         <MessageCircle className="h-5 w-5 relative z-10" />
       </motion.div>
       <span className="group-hover:translate-x-1 transition-transform relative z-10">
-        Fale Connosco
+        Fale Conosco
       </span>
       <motion.div
         animate={{ x: [0, 4, 0] }}

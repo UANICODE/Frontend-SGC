@@ -31,7 +31,7 @@ export function HeroMockup() {
         rotate: 2,
         transition: { duration: 0.3 }
       }}
-      className="mx-auto h-[450px] w-[240px] overflow-hidden rounded-[36px] border-2 border-borderLight/30 bg-gradient-to-br from-zinc-900 to-black p-3 shadow-2xl shadow-black/50 md:h-[520px] md:w-[270px] relative group"
+      className="mx-auto h-[550px] w-[350px] md:h-[650px] md:w-[420px] relative group"
     >
       {/* Glow effect animado */}
       <motion.div
@@ -68,39 +68,15 @@ export function HeroMockup() {
           repeat: Infinity,
           ease: "easeInOut"
         }}
-        className="relative h-full w-full overflow-hidden rounded-[30px] bg-black"
+        className="relative h-full w-full"
       >
         <Image
-          src="/images/app.jpeg"
-          alt="Ecrã da app Foodnect - Beira, Moçambique"
+          src="/images/Phone.png"
+          alt="Foodnect App - Beira, Moçambique"
           fill
-          sizes="(min-width: 768px) 270px, 240px"
-          className="object-cover"
+          sizes="(min-width: 768px) 420px, 350px"
+          className="object-contain"
           priority
-        />
-        {/* Shine overlay animado */}
-        <motion.div
-          animate={{
-            x: ["-100%", "200%"],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            repeatDelay: 2,
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50"
-        />
-        <motion.div
-          animate={{
-            opacity: [0.3, 0.6, 0.3],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5"
         />
       </motion.div>
     </motion.div>

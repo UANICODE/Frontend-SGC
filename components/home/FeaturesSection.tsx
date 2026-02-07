@@ -57,11 +57,11 @@ const FEATURES = [
 export function FeaturesSection() {
   const [index, setIndex] = useState(0);
 
-  // Troca automática de funcionalidade e imagem a cada 2 segundos
+  // Troca automática de funcionalidade e imagem a cada 6 segundos
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % FEATURES.length);
-    }, 2000);
+    }, 6000);
 
     return () => clearInterval(timer);
   }, []);
@@ -82,13 +82,13 @@ export function FeaturesSection() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 mb-4">
             <CheckCircle2 className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold text-primary uppercase tracking-wide">O que a Foodnect oferece para si</span>
+            <span className="text-xs font-bold text-[#FF9E3A] uppercase tracking-wide">O que a Foodnect oferece para si</span>
           </div>
           <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
             Tudo o que precisas para decidir e pedir em segundos.
           </h2>
           <p className="text-lg text-textSecondaryLight leading-relaxed">
-            A Foodnect junta descoberta de restaurantes e lanchonetes, cardápios reais,
+            <span className="text-[#FF9E3A]">Foodnect</span> junta descoberta de restaurantes e lanchonetes, cardápios reais,
             pedidos e rastreamento em tempo real num único lugar. Tu só deslizas, escolhes e
             confirmas.
           </p>
@@ -209,7 +209,7 @@ function ListScreen() {
           aria-hidden="true"
         />
         <Image
-          src="/images/app.jpeg"
+          src="/images/app5.png"
           alt="Lista de restaurantes na app Foodnect"
           fill
           sizes="250px"
@@ -250,7 +250,7 @@ function MapScreen() {
           aria-hidden="true"
         />
         <Image
-          src="/images/app4.jpeg"
+          src="/images/app6.png"
           alt="Mapa de restaurantes na app Foodnect"
           fill
           sizes="250px"
@@ -317,7 +317,7 @@ function OrderOptionsScreen() {
           aria-hidden="true"
         />
         <Image
-          src="/images/app4.jpeg"
+          src="/images/app6.png"
           alt="Opções de pedido na app Foodnect"
           fill
           sizes="250px"

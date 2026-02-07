@@ -54,7 +54,7 @@ export function FaqSection() {
             Perguntas frequentes.
           </h2>
           <p className="text-lg text-textSecondaryLight leading-relaxed">
-            Dúvidas rápidas sobre como usar a Foodnect no dia a dia.
+            Dúvidas rápidas sobre como usar a <span className="text-[#FF9E3A]">Foodnect</span> no dia a dia.
           </p>
         </motion.div>
 

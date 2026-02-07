@@ -7,7 +7,7 @@ import { Building2 } from "lucide-react";
 
 const PARTNERS = [
   {
-    name: "Uanecode",
+    name: "Uanicode",
     logo: "/images/Parceiros/Uanecode.png",
   },
   {
@@ -58,7 +58,7 @@ export function PartnersSection() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20">
             <Building2 className="h-4 w-4 text-primary" />
             <span className="text-xs font-bold text-primary uppercase tracking-wide">
-              Parceiro
+              Parceiros
             </span>
           </div>
           <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl leading-tight">
