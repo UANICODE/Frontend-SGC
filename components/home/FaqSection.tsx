@@ -51,7 +51,7 @@ export function FaqSection() {
             <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">FAQ</span>
           </div>
           <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
-            Perguntas frequentes.
+            Perguntas frequentes
           </h2>
           <p className="text-lg text-textSecondaryLight leading-relaxed">
             Dúvidas rápidas sobre como usar a <span className="text-[#FF9E3A]">Foodnect</span> no dia a dia.

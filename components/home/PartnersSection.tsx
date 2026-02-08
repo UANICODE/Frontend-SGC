@@ -62,7 +62,7 @@ export function PartnersSection() {
             </span>
           </div>
           <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl leading-tight">
-            Parceiros que caminham conosco
+            Parceiros que caminham com a gente
           </h2>
         </motion.div>
 

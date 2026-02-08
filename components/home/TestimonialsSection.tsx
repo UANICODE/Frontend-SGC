@@ -105,11 +105,11 @@ export function TestimonialsSection() {
               <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">Testemunhos</span>
             </div>
             <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
-              Veja quem ja contou com a <span className="text-[#FF9E3A]">Foodnect</span> para decidir onde comer.
+              Veja alguns clientes que ja contam com a <span className="text-[#FF9E3A]">Foodnect</span> no seu dia a dia
             </h2>
             <p className="text-lg text-textSecondaryLight leading-relaxed">
-              Feedback real de pessoas que usaram a app para decidir mais rápido
-              onde comer na Beira, Moçambique.
+              Feedback real de pessoas que usam a app para decidir mais rápido
+              onde comer na cidade da Beira.
             </p>
           </div>
         </motion.div>
