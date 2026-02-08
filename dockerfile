@@ -1,23 +1,39 @@
-# Dockerfile
-FROM node:20-alpine
+# ========= BUILD =========
+FROM node:20-alpine AS builder
 
-# Diretório de trabalho
 WORKDIR /app
 
-# Copiar package.json e package-lock.json primeiro (para cache de dependências)
-COPY package*.json ./
+# Ativar pnpm via corepack
+RUN corepack enable
 
-# Instalar dependências
-RUN npm install --production
+# Copiar manifests
+COPY package.json pnpm-lock.yaml ./
 
-# Copiar todo o código
+# Instalar TODAS as dependências (inclui dev)
+RUN pnpm install --frozen-lockfile
+
+# Copiar o código
 COPY . .
 
 # Build do Next.js
-RUN npm run build
+RUN pnpm build
 
-# Expor porta padrão do Next.js
+
+# ========= RUN =========
+FROM node:20-alpine AS runner
+
+WORKDIR /app
+
+RUN corepack enable
+
+ENV NODE_ENV=production
+
+# Copiar apenas o necessário do build
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+
 EXPOSE 3000
 
-# Rodar Next.js
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
