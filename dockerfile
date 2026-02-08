@@ -1,10 +1,23 @@
 # Dockerfile
-FROM nginx:alpine
+FROM node:20-alpine
 
-# Copiar arquivos do site para o nginx
-COPY . /usr/share/nginx/html
+# Diretório de trabalho
+WORKDIR /app
 
-# Expor porta 80
-EXPOSE 80
+# Copiar package.json e package-lock.json primeiro (para cache de dependências)
+COPY package*.json ./
 
-CMD ["nginx", "-g", "daemon off;"]
+# Instalar dependências
+RUN npm install --production
+
+# Copiar todo o código
+COPY . .
+
+# Build do Next.js
+RUN npm run build
+
+# Expor porta padrão do Next.js
+EXPOSE 3000
+
+# Rodar Next.js
+CMD ["npm", "start"]
