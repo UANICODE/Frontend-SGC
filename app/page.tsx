@@ -54,18 +54,7 @@ export default function HomePage() {
               onClick={() => setShowPopup(false)}
               className="absolute inset-0"
             >
-              {/* Gradientes animados no fundo */}
-              <motion.div
-                animate={{
-                  background: [
-                    "radial-gradient(circle at 20% 50%, rgba(244, 81, 30, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255, 112, 67, 0.3) 0%, transparent 50%)",
-                    "radial-gradient(circle at 30% 60%, rgba(244, 81, 30, 0.4) 0%, transparent 50%), radial-gradient(circle at 70% 40%, rgba(255, 112, 67, 0.4) 0%, transparent 50%)",
-                    "radial-gradient(circle at 20% 50%, rgba(244, 81, 30, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255, 112, 67, 0.3) 0%, transparent 50%)",
-                  ],
-                }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute inset-0"
-              />
+              
               {/* Overlay escuro com blur */}
               <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
             </motion.div>
@@ -84,18 +73,7 @@ export default function HomePage() {
               className="relative z-10 w-full max-w-md mx-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Efeito de brilho animado ao redor */}
-              <motion.div
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                  scale: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                }}
-                className="absolute -inset-3 rounded-3xl bg-gradient-to-r from-primary/40 via-secondary/30 to-primary/40 blur-2xl opacity-60 -z-10"
-              />
+     
 
               {/* Container do popup com glass morphism */}
               <div className="relative rounded-3xl bg-white/90 backdrop-blur-2xl border border-white/60 shadow-2xl p-8 md:p-10 text-center overflow-hidden">
@@ -104,19 +82,7 @@ export default function HomePage() {
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,_rgba(244,81,30,0.5)_1px,_transparent_0)] bg-[length:24px_24px]" />
                 </div>
 
-                {/* Brilho superior animado */}
-                <motion.div
-                  animate={{ y: [-15, 15, -15] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-primary/25 via-primary/10 to-transparent blur-3xl"
-                />
-
-                {/* Brilho inferior */}
-                <motion.div
-                  animate={{ y: [15, -15, 15] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                  className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-secondary/20 via-secondary/10 to-transparent blur-3xl"
-                />
+            
 
                 {/* Botão fechar */}
                 <motion.button

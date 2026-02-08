@@ -2,163 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Forçar tema claro em todos os elementos */
+/* Adicione no início do arquivo */
 :root {
-  color-scheme: light !important;
-  color-scheme: only light !important;
+  color-scheme: light only;
+  color-scheme: only light;
 }
 
 html {
-  color-scheme: light !important;
-  background-color: #fafafa !important;
+  color-scheme: light;
 }
 
 body {
-  color-scheme: light !important;
+  color-scheme: light;
   background-color: #fafafa !important;
   background: #fafafa !important;
-  color: #000000 !important;
 }
 
-/* Remover preferências de tema */
-@media (prefers-color-scheme: dark) {
-  :root, html, body {
-    color-scheme: light !important;
-    background-color: #fafafa !important;
-    color: #000000 !important;
-  }
-}
-
-/* Garantir que todos os elementos tenham cores claras */
-*,
-*::before,
-*::after {
-  background-color: inherit !important;
-  color: inherit !important;
-  border-color: #e5e7eb !important; /* cor de borda padrão clara */
-}
-
-/* Forçar cores de fundo específicas para elementos comuns */
-.bg-white,
-.bg-gray-50,
-.bg-gray-100,
-.bg-gray-200,
-.bg-backgroundLight,
-.bg-slate-50,
-.bg-slate-100,
-.bg-zinc-50,
-.bg-zinc-100,
-.bg-neutral-50,
-.bg-neutral-100,
-.bg-stone-50,
-.bg-stone-100,
-.glass-effect,
-.gradient-hero,
-.card,
-.card-feature {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-}
-
-/* Forçar cores de texto */
-.text-black,
-.text-gray-800,
-.text-gray-900,
-.text-slate-800,
-.text-slate-900,
-.text-zinc-800,
-.text-zinc-900,
-.text-neutral-800,
-.text-neutral-900,
-.text-stone-800,
-.text-stone-900 {
-  color: #000000 !important;
-}
-
-.text-gray-600,
-.text-gray-700,
-.text-slate-600,
-.text-slate-700,
-.text-zinc-600,
-.text-zinc-700,
-.text-neutral-600,
-.text-neutral-700,
-.text-stone-600,
-.text-stone-700 {
-  color: #374151 !important; /* gray-700 */
-}
-
-/* Forçar bordas claras */
-.border-gray-200,
-.border-gray-300,
-.border-slate-200,
-.border-slate-300,
-.border-zinc-200,
-.border-zinc-300,
-.border-neutral-200,
-.border-neutral-300,
-.border-stone-200,
-.border-stone-300 {
-  border-color: #e5e7eb !important; /* gray-200 */
-}
-
-/* Classes específicas do seu projeto */
-.gradient-hero {
-  background: radial-gradient(
-    ellipse at top left,
-    rgba(255, 122, 26, 0.08) 0%,
-    rgba(255, 255, 255, 0.95) 40%,
-    #fafafa 100%
-  ) !important;
-}
-
-.card {
-  @apply rounded-3xl border-2 border-primary bg-white shadow-md backdrop-blur-sm;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: #ffffff !important;
-  border-color: rgba(255, 122, 26, 0.5) !important; /* primary color with opacity */
-}
-
-.card:hover {
-  @apply shadow-xl;
-  transform: translateY(-2px);
-  border-color: rgba(255, 122, 26, 0.2) !important;
-}
-
-.card-feature {
-  @apply rounded-3xl border-2 border-primary bg-white shadow-md;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  background-color: #ffffff !important;
-}
-
-.card-feature:hover {
-  transform: translateY(-4px) scale(1.02);
-  border-color: rgba(255, 122, 26, 0.3) !important;
-}
-
-.glass-effect {
-  @apply bg-white/80 backdrop-blur-md;
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(255, 255, 255, 0.2) !important;
-}
-
-.text-gradient {
-  background: linear-gradient(135deg, #FF7A1A 0%, #FF9E3A 100%) !important;
-  -webkit-background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  background-clip: text !important;
-  color: transparent !important;
-}
-
-/* Remover transições automáticas de tema */
+/* Para evitar transições indesejadas */
 * {
   @apply transition-colors duration-200;
-  transition-property: background-color, border-color, color, fill, stroke;
+  transition-property: background-color, border-color, color;
 }
 
+/* Garantir que os backgrounds permaneçam claros */
+.bg-backgroundLight,
+.bg-white,
+.glass-effect,
+.gradient-hero {
+  background-color: #ffffff !important;
+}
 a {
   text-decoration: none;
-  color: inherit !important;
 }
 
 ul {
@@ -166,60 +40,47 @@ ul {
   padding-left: 0;
 }
 
-/* Seletor global para garantir tema claro */
-[class*="dark:"], 
-[class*="dark\\:"] {
-  /* Sobrescrever quaisquer classes dark do Tailwind */
-  background-color: inherit !important;
-  color: inherit !important;
-  border-color: inherit !important;
+.gradient-hero {
+  background: radial-gradient(
+    ellipse at top left,
+    rgba(255, 122, 26, 0.08) 0%,
+    rgba(255, 255, 255, 0.95) 40%,
+    #fafafa 100%
+  );
 }
 
-/* Remover todas as variações dark */
-.dark\:bg-gray-800,
-.dark\:bg-gray-900,
-.dark\:bg-slate-800,
-.dark\:bg-slate-900,
-.dark\:bg-zinc-800,
-.dark\:bg-zinc-900,
-.dark\:bg-neutral-800,
-.dark\:bg-neutral-900,
-.dark\:bg-stone-800,
-.dark\:bg-stone-900,
-[class*="dark:bg-"] {
-  background-color: inherit !important;
+.card {
+  @apply rounded-3xl border-2 border-primary bg-white shadow-md backdrop-blur-sm;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.dark\:text-white,
-.dark\:text-gray-100,
-.dark\:text-gray-200,
-.dark\:text-slate-100,
-.dark\:text-slate-200,
-.dark\:text-zinc-100,
-.dark\:text-zinc-200,
-.dark\:text-neutral-100,
-.dark\:text-neutral-200,
-.dark\:text-stone-100,
-.dark\:text-stone-200,
-[class*="dark:text-"] {
-  color: inherit !important;
+.card:hover {
+  @apply shadow-xl border-primary/20;
+  transform: translateY(-2px);
 }
 
-.dark\:border-gray-700,
-.dark\:border-gray-600,
-.dark\:border-slate-700,
-.dark\:border-slate-600,
-.dark\:border-zinc-700,
-.dark\:border-zinc-600,
-.dark\:border-neutral-700,
-.dark\:border-neutral-600,
-.dark\:border-stone-700,
-.dark\:border-stone-600,
-[class*="dark:border-"] {
-  border-color: inherit !important;
+.card-feature {
+  @apply rounded-3xl border-2 border-primary bg-white shadow-md;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Animações (mantidas como no original) */
+.card-feature:hover {
+  @apply border-primary/30 shadow-2xl;
+  transform: translateY(-4px) scale(1.02);
+}
+
+.glass-effect {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+.text-gradient {
+  /* Gradiente baseado no novo laranja principal do logotipo */
+  background: linear-gradient(135deg, #FF7A1A 0%, #FF9E3A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 .shine-effect {
   position: relative;
   overflow: hidden;
@@ -245,6 +106,7 @@ ul {
   left: 100%;
 }
 
+/* Gradient background animations */
 .bg-size-200 {
   background-size: 200% 200%;
 }
@@ -261,6 +123,7 @@ ul {
   background-position: 100% 100%;
 }
 
+/* Shimmer animation */
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
@@ -274,6 +137,7 @@ ul {
   animation: shimmer 3s infinite;
 }
 
+/* Pulse animation for badges */
 @keyframes pulse-glow {
   0%, 100% {
     opacity: 1;
@@ -289,17 +153,20 @@ ul {
   animation: pulse-glow 2s ease-in-out infinite;
 }
 
+/* Glass morphism effect */
 .glass-morphism {
-  background: rgba(255, 255, 255, 0.8) !important;
+  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+/* Perspective for 3D transforms */
 .perspective-1000 {
   perspective: 1000px;
 }
 
+/* Smooth gradient animation */
 @keyframes gradient-shift {
   0%, 100% {
     background-position: 0% 50%;
@@ -314,6 +181,7 @@ ul {
   animation: gradient-shift 3s ease infinite;
 }
 
+/* Floating animation */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);
@@ -327,6 +195,7 @@ ul {
   animation: float 3s ease-in-out infinite;
 }
 
+/* Glow pulse */
 @keyframes glow-pulse {
   0%, 100% {
     box-shadow: 0 0 20px rgba(255, 122, 26, 0.3);
@@ -340,6 +209,7 @@ ul {
   animation: glow-pulse 2s ease-in-out infinite;
 }
 
+/* Animated mesh gradient background */
 @keyframes mesh-gradient {
   0%, 100% {
     background-position: 0% 50%;
@@ -354,6 +224,7 @@ ul {
   animation: mesh-gradient 15s ease infinite;
 }
 
+/* Floating particles animation */
 @keyframes float-particles {
   0%, 100% {
     transform: translate(0, 0) scale(1);
@@ -373,6 +244,7 @@ ul {
   animation: float-particles 8s ease-in-out infinite;
 }
 
+/* Gradient orb animation */
 @keyframes gradient-orb {
   0% {
     transform: translate(0, 0) scale(1);
@@ -392,6 +264,7 @@ ul {
   animation: gradient-orb 12s ease-in-out infinite;
 }
 
+/* Wave animation */
 @keyframes wave {
   0%, 100% {
     transform: translateX(0) translateY(0);
@@ -411,6 +284,7 @@ ul {
   animation: wave 10s ease-in-out infinite;
 }
 
+/* Radial pulse animation */
 @keyframes radial-pulse {
   0%, 100% {
     transform: scale(1);
@@ -426,6 +300,7 @@ ul {
   animation: radial-pulse 4s ease-in-out infinite;
 }
 
+/* Grid pattern animation */
 @keyframes grid-shift {
   0% {
     background-position: 0 0;
@@ -439,11 +314,13 @@ ul {
   animation: grid-shift 20s linear infinite;
 }
 
+/* Noise texture overlay */
 .noise-texture {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
   opacity: 0.3;
 }
 
+/* Animated gradient border */
 @keyframes gradient-border {
   0% {
     background-position: 0% 50%;
@@ -461,45 +338,6 @@ ul {
   animation: gradient-border 3s ease infinite;
 }
 
-/* Otimizações para mobile (mantidas como no original) */
-@media screen and (max-width: 768px) {
-  * {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  
-  .motion-div, [class*="motion"] {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    will-change: auto !important;
-  }
-  
-  img, .relative, .absolute {
-    transform: translateZ(0);
-  }
-  
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-}
 
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-  .gradient-hero,
-  .glass-effect {
-    -webkit-backface-visibility: hidden;
-    -moz-backface-visibility: hidden;
-    -ms-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000;
-    -moz-perspective: 1000;
-    -ms-perspective: 1000;
-    perspective: 1000;
-  }
-}
+
+
