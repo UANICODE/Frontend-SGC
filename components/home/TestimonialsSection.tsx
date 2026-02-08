@@ -35,7 +35,7 @@ const TESTIMONIALS: Testimonial[] = [
     comment:
       "Uso sempre que saio do trabalho. Vejo logo o que está aberto perto de mim e quanto vou gastar.",
     location: "Beira",
-    image: "/public//images/testemunhos/rachid.jpeg",
+    image: "/images/rachid.jpeg",
     source: "manual",
   },
   {
@@ -45,7 +45,7 @@ const TESTIMONIALS: Testimonial[] = [
     comment:
       "Gosto de ver o cardápio antes de sair de casa. A app é simples e rápida, não complica.",
     location: "Beira",
-    image: "/public/images/testemunhos/zeca.png",
+    image: "/images/zeca.png",
     source: "manual",
   },
   // ============================================
