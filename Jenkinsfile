@@ -44,32 +44,37 @@ pipeline {
                 }
             }
         }
+stage('Deploy to VPS') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'vps-password-access',
+            passwordVariable: 'VPS_PASSWORD',
+            usernameVariable: 'VPS_USERNAME'
+        )]) {
+            sh """
+                sshpass -p \$VPS_PASSWORD ssh -o StrictHostKeyChecking=no root@${VPS_HOST} "
+                    cd ${VPS_DEPLOY_PATH}
 
-        stage('Deploy to VPS') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'vps-password-access',
-                    passwordVariable: 'VPS_PASSWORD',
-                    usernameVariable: 'VPS_USERNAME'
-                )]) {
-                    sh """
-                        sshpass -p \$VPS_PASSWORD ssh -o StrictHostKeyChecking=no root@${VPS_HOST} "
-                            cd ${VPS_DEPLOY_PATH}
-                            docker compose pull
-                            docker compose up -d --force-recreate
+                    # Atualiza somente a imagem do website
+                    docker pull ${DOCKER_IMAGE}
 
-                            if ! docker ps --filter 'name=foodnect-website' --format 'table {{.Names}}\\t{{.Status}}' | grep -q foodnect-website; then
-                                echo '❌ Container foodnect-website não está rodando!'
-                                docker logs foodnect-website 2>/dev/null || echo 'Container não existe'
-                                exit 1
-                            fi
+                    # Recria apenas o serviço foodnect-website
+                    docker compose up -d foodnect-website
 
-                            echo '✅ Site foodnect.uanicode.com deployed!'
-                        "
-                    """
-                }
-            }
+                    # Verifica se está rodando
+                    if ! docker ps --filter 'name=foodnect-website' --format 'table {{.Names}}\\t{{.Status}}' | grep -q foodnect-website; then
+                        echo '❌ Container foodnect-website não está rodando!'
+                        docker logs foodnect-website 2>/dev/null || echo 'Container não existe'
+                        exit 1
+                    fi
+
+                    echo '✅ Site foodnect.uanicode.com deployed!'
+                "
+            """
         }
+    }
+}
+
     }
 
     post {
