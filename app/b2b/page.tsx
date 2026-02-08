@@ -6,7 +6,7 @@ import { AnimatedBackground } from "@/components/AnimatedBackground";
 import { motion, AnimatePresence } from "framer-motion";
 import { StoreBadge } from "@/components/StoreBadges";
 import Image from "next/image";
-import { Eye, CheckCircle2, Globe, Zap, MessageSquare, Building2, MapPin, HelpCircle, Smartphone, ArrowRight, TrendingUp, Users, Clock, DollarSign, ChevronDown, Quote, Star } from "lucide-react";
+import { Eye, CheckCircle2, Globe, Zap, MessageSquare, Building2, MapPin, HelpCircle, Smartphone, ArrowRight, TrendingUp, Users, Clock, DollarSign, ChevronDown, Quote, Star, Megaphone, Users2 } from "lucide-react";
 
 const BENEFITS = [
   {
@@ -19,7 +19,7 @@ const BENEFITS = [
   {
     title: "Clientes prontos para decidir",
     description:
-      "Mostramos os Cardápios, preços e horário de funcionamento para que o cliente chegue já decidido.",
+      "Mostramos informacoes como Cardápios, preços  horário de funcionamento, etc para que o cliente consiga efectuar o pedido no seu estabelecimento.",
     icon: CheckCircle2,
     color: "from-green-500 to-emerald-500",
   },
@@ -40,10 +40,26 @@ const BENEFITS = [
   {
     title: "Feedback direto dos clientes",
     description:
-      "Saiba o que os seus clientes falam sobre o teu estabelecimento.",
+      "Saiba o que os seus clientes falam sobre o seu estabelecimento.",
     icon: MessageSquare,
     color: "from-indigo-500 to-blue-500",
+
   },
+ {
+  title: "Novo canal de marketing para ti",
+  description:
+    "Descubra um canal de marketing feito para a nossa realidade em Moçambique, totalmente focado no crescimento do seu estabelecimento, sem custos adicionais e com resultados reais na atração de clientes.",
+  icon: Megaphone,
+  color: "from-yellow-400 to-orange-500",
+},
+{
+  title: "Mais clientes para o seu estabelecimento",
+  description:
+    "A Foodnect conecta o seu estabelecimento a um fluxo constante de novos clientes de todo o país. Amplie a sua presença, alcance pessoas que ainda não conhecem o seu negócio e transforme visitas em pedidos reais, tudo de forma simples e direta.",
+  icon: Users2,
+  color: "from-red-500 to-pink-500",
+},
+
 ];
 
 const B2B_TESTIMONIALS = [
@@ -122,7 +138,7 @@ export default function B2BPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl font-bold tracking-tight text-textPrimaryLight md:text-5xl lg:text-6xl leading-tight"
             >
-              <span className="text-[#FF9E3A]">Foodnect</span> o parceiro que faz o teu negócio{" "}
+              <span className="text-[#FF9E3A]">Foodnect</span> o parceiro que faz o seu negócio{" "}
               <span className="text-gradient">vender mais.</span>
             </motion.h1>
             <motion.p
@@ -132,7 +148,7 @@ export default function B2BPage() {
               className="max-w-2xl text-lg text-textSecondaryLight leading-relaxed"
             >
               Mais visibilidade, mais clientes, menos esforço. A Foodnect coloca
-              o teu restaurante na frente de quem está pronto para decidir onde
+              o seu restaurante na frente de quem está pronto para decidir onde
               comer agora na Beira.
             </motion.p>
             
@@ -315,7 +331,7 @@ export default function B2BPage() {
             <p className="text-lg text-textSecondaryLight leading-relaxed">
               Instala a app, fala com a nossa equipa e coloca o teu
               estabelecimento em destaque para clientes que estão prontos para
-              decidir na Beira, Moçambique.
+              comer na Beira.
             </p>
             <div className="flex flex-wrap items-center gap-4">
               <StoreBadge variant="play" />

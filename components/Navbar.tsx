@@ -66,15 +66,16 @@ export function Navbar() {
         {/* Logo */}
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Link href="/" className="flex items-center group">
-            <div className="relative h-12 w-40 md:h-14 md:w-48">
-              <Image
-                src="/images/logo5.png"
-                alt="Foodnect"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
+        <div className="relative h-20 w-40 md:h-30 md:w-75 -mt-4 md:-mt-6">
+      <Image
+        src="/images/logo5.png"
+        alt="Foodnect"
+        fill
+        className="object-contain"
+        priority
+      />
+    </div>
+
           </Link>
         </motion.div>
 

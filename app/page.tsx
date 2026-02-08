@@ -172,7 +172,7 @@ export default function HomePage() {
                     transition={{ delay: 0.3, duration: 0.5 }}
                     className="text-xl md:text-2xl font-bold text-textPrimaryLight mb-3 leading-tight px-2"
                   >
-                    Com fome e sem paciência?
+                    Fome?
                   </motion.h3>
 
                   <motion.p
@@ -181,7 +181,7 @@ export default function HomePage() {
                     transition={{ delay: 0.4, duration: 0.5 }}
                     className="text-lg md:text-xl font-bold mb-8 px-2 text-[#FF9E3A]"
                   >
-                    Foodnect decide por ti.
+                    Daqui para aqui resolves.
                   </motion.p>
 
                   {/* Botão CTA */}
