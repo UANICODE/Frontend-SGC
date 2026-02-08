@@ -63,28 +63,23 @@ const BENEFITS = [
 ];
 
 const B2B_TESTIMONIALS = [
-  {
-    restaurant: "Tudo Pago",
-    comment:
-      "Com a Foodnect começámos a receber clientes que não nos conheciam, principalmente ao almoço.",
-    location: "Beira",
-  },
+ 
   {
     restaurant: "Ki Sabor Schema",
     comment:
-      "Ajudou-nos muito a mostrar o menu do dia, sem depender só da montra física.",
+      "Com a Foodnect começámos a receber clientes que não nos conheciam, e ajudou-nos muito a mostrar o menu do dia, sem depender só da montra física.",
     location: "Beira",
   },
   {
     restaurant: "ADY Bolos",
     comment:
-      "Aumentámos significativamente o número de pedidos, especialmente nos horários de pico. A plataforma é muito intuitiva.",
+      "Aumentámos significativamente o número de pedidos, a foodnect esta colaborando para o crescimento do nosso negocio, nos recomendamos a foodnect. ",
     location: "Beira",
   },
   {
     restaurant: "Ta Legal",
     comment:
-      "A Foodnect trouxe-nos novos clientes e facilitou muito a gestão dos pedidos. Recomendamos a todos os restaurantes.",
+      "A Foodnect trouxe-nos novos clientes e gostei bastante da parte em que voce pode abrir ate fechar o estabelecimento digitalmente, recomendo.",
     location: "Beira",
   },
 ];
@@ -93,7 +88,7 @@ const B2B_FAQ = [
   {
     question: "A Foodnect cobra comissão?",
     answer:
-      "Actualmente a Foodnect e totalmente grátis. NOTA: em caso de de aplicação de algum modelo, os estabelecimentos parceiros serão avisados.",
+      "Actualmente a Foodnect e totalmente grátis. NOTA: em caso de cobrança, os estabelecimentos parceiros serão avisados.",
     icon: DollarSign,
   },
   {

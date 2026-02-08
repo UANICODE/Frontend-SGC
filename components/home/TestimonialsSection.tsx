@@ -19,33 +19,33 @@ interface Testimonial {
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    name: "Mauro Zibane",
+    name: "Adriana Johane",
     role: "Utilizador Foodnect",
     rating: 5,
     comment:
-      "Eu e os meus amigos perdíamos sempre tempo a decidir onde comer. Agora em 2 minutos já temos restaurante e pedido feito.",
+      "Eu uso frequentemente a foodnect e ela ta me ajudando muito a descobrir lugares quando estou com fome e ate a fazer pedidos diretamente. Eu recomendo a foodnect",
     location: "Beira",
-    image: "/images/Mauro.PNG",
+    image: "",
     source: "manual",
   },
   {
-    name: "Ernesto Uanicela",
-    role: "Utilizador Foodnect",
-    rating: 5,
-    comment:
-      "Uso sempre que saio do trabalho. Vejo logo o que está aberto perto de mim e quanto vou gastar.",
-    location: "Beira",
-    image: "/images/Ernesto.jpeg",
-    source: "manual",
-  },
-  {
-    name: "Igor Parruque",
+    name: "Rachid",
     role: "Utilizador Foodnect",
     rating: 4,
     comment:
+      "Uso sempre que saio do trabalho. Vejo logo o que está aberto perto de mim e quanto vou gastar.",
+    location: "Beira",
+    image: "https://pktlucrbkljicperffne.supabase.co/storage/v1/object/public/imagens/cliente/1768074673864-d5ff1e47-e3cf-4bdd-8595-e76ef6fb4775.jpeg",
+    source: "manual",
+  },
+  {
+    name: "Zeca Sati",
+    role: "Utilizador Foodnect",
+    rating: 5,
+    comment:
       "Gosto de ver o cardápio antes de sair de casa. A app é simples e rápida, não complica.",
     location: "Beira",
-    image: "/images/Igor.jpeg",
+    image: "https://pktlucrbkljicperffne.supabase.co/storage/v1/object/public/imagens/cliente/1765565016416-76d67c58-8c89-4ebd-b9cd-7a2c29767c24.png",
     source: "manual",
   },
   // ============================================
