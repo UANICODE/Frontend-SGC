@@ -24,8 +24,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt">
-      <body className="min-h-screen bg-backgroundLight text-textPrimaryLight">
+    <html lang="pt" className="light">
+      <head>
+        {/* Meta tag para forçar light mode no Android */}
+        <meta
+          name="color-scheme"
+          content="light only"
+        />
+        <meta
+          name="theme-color"
+          content="#fafafa"
+          media="(prefers-color-scheme: light)"
+        />
+      </head>
+      <body className="min-h-screen bg-backgroundLight text-textPrimaryLight light-mode">
         <Navbar />
         <main className="pt-20">{children}</main>
         <Footer />

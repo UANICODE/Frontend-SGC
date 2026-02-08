@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 interface AnimatedBackgroundProps {
   variant?: "default" | "hero" | "section" | "gradient";
@@ -11,13 +12,35 @@ export function AnimatedBackground({
   variant = "default", 
   intensity = "medium" 
 }: AnimatedBackgroundProps) {
-  const opacityMap = {
+  const [isMobile, setIsMobile] = useState(false);
+  
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  // Em mobile, simplificar drasticamente
+  if (isMobile) {
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Background simplificado para mobile */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5" />
+      </div>
+    );
+  }
+
+const opacityMap = {
     light: { primary: 0.03, secondary: 0.02 },
     medium: { primary: 0.06, secondary: 0.04 },
     strong: { primary: 0.12, secondary: 0.08 },
   };
 
   const opacity = opacityMap[intensity];
+
 
   if (variant === "hero") {
     return (

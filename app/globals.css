@@ -2,22 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Adicione no início do arquivo */
 :root {
+  color-scheme: light only;
+  color-scheme: only light;
+}
+
+html {
   color-scheme: light;
 }
 
+body {
+  color-scheme: light;
+  background-color: #fafafa !important;
+  background: #fafafa !important;
+}
+
+/* Para evitar transições indesejadas */
 * {
   @apply transition-colors duration-200;
+  transition-property: background-color, border-color, color;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-    "Segoe UI", "Inter", sans-serif;
-  @apply bg-backgroundLight text-textPrimaryLight antialiased;
-  scroll-behavior: smooth;
+/* Garantir que os backgrounds permaneçam claros */
+.bg-backgroundLight,
+.bg-white,
+.glass-effect,
+.gradient-hero {
+  background-color: #ffffff !important;
 }
-
 a {
   text-decoration: none;
 }
@@ -326,3 +339,51 @@ ul {
 }
 
 
+
+
+/* Prevenir piscamentos e problemas de renderização no Android */
+@media screen and (max-width: 768px) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  
+  /* Otimizações para animações no mobile */
+  .motion-div, [class*="motion"] {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    will-change: auto !important; /* Evita will-change pesado */
+  }
+  
+  /* Prevenir transformações problemáticas */
+  img, .relative, .absolute {
+    transform: translateZ(0);
+  }
+  
+  /* Simplificar animações em mobile */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Fix específico para Chrome Android */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .gradient-hero,
+  .glass-effect {
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    -moz-perspective: 1000;
+    -ms-perspective: 1000;
+    perspective: 1000;
+  }
+}

@@ -2,68 +2,44 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 
 const phoneVariants = {
-  initial: { opacity: 0, y: 50, rotate: -8, scale: 0.9 },
+  initial: { opacity: 0, y: 50, scale: 0.9 },
   animate: { 
     opacity: 1, 
     y: 0, 
-    rotate: 0, 
     scale: 1,
   },
 };
 
 export function HeroMockup() {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.innerWidth <= 768);
+  }, []);
+
   return (
     <motion.div
       variants={phoneVariants}
       initial="initial"
       animate="animate"
       transition={{ 
-        duration: 0.8, 
-        ease: [0.4, 0, 0.2, 1],
-        type: "spring",
-        stiffness: 100,
-        damping: 15
+        duration: isMobile ? 0.5 : 0.8, // Mais rápido no mobile
+        ease: "easeOut"
       }}
-      whileHover={{ 
-        y: -10,
-        rotate: 2,
-        transition: { duration: 0.3 }
-      }}
-      className="mx-auto h-[550px] w-[350px] md:h-[650px] md:w-[420px] relative group"
+      className="mx-auto h-[550px] w-[350px] md:h-[650px] md:w-[420px] relative"
     >
-      {/* Glow effect animado */}
-      <motion.div
-        animate={{
-          opacity: [0.3, 0.6, 0.3],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 rounded-[36px] blur-xl -z-10"
-      />
-      <motion.div
-        animate={{
-          opacity: [0, 0.4, 0],
-          scale: [1, 1.2, 1],
-        }}
-        transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        className="absolute inset-0 bg-gradient-to-br from-secondary/20 via-transparent to-primary/20 rounded-[36px] blur-2xl -z-10"
-      />
+      {/* Background estático no mobile */}
+      {isMobile && (
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-[36px]" />
+      )}
       
       <motion.div
-        animate={{ 
-          y: [0, -5, 0],
-        }}
-        transition={{ 
+        animate={isMobile ? {} : { y: [0, -5, 0] }}
+        transition={isMobile ? {} : { 
           duration: 3,
           repeat: Infinity,
           ease: "easeInOut"
@@ -75,12 +51,19 @@ export function HeroMockup() {
           alt="Foodnect App - Beira, Moçambique"
           fill
           sizes="(min-width: 768px) 420px, 350px"
-          className="object-contain"
+          className={`object-contain transition-opacity duration-300 ${
+            isLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
           priority
+          onLoad={() => setIsLoaded(true)}
+          loading="eager"
         />
+        
+        {/* Fallback enquanto carrega */}
+        {!isLoaded && (
+          <div className="absolute inset-0 bg-gray-200 rounded-[36px] animate-pulse" />
+        )}
       </motion.div>
     </motion.div>
   );
 }
-
-

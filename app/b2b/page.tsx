@@ -224,11 +224,10 @@ export default function B2BPage() {
           >
             <div className="mx-auto h-[550px] w-[380px] md:h-[650px] md:w-[460px] relative">
               <motion.div
-                animate={{ y: [0, -10, 0], rotate: [0, -0.6, 0.6, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                whileHover={{ scale: 1.03, rotate: 0 }}
-                className="will-change-transform relative h-full w-full"
-              >
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative h-full w-full"
+                >
                 <Image
                   src="/images/res2.png"
                   alt="Foodnect"
