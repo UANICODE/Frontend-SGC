@@ -232,7 +232,7 @@ export function Footer() {
           </div>
         </motion.div>
       </div>
-      <div className="bg-orange-100 relative">
+      <div className="bg-orange-100 relative w-full">
         <div className="relative mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 py-6 text-xs md:flex-row md:px-6">
           <span className="font-bold text-dark-800 text-center md:text-left">
             © {new Date().getFullYear()} <span className="text-primary">Foodnect</span>. Todos os direitos reservados.
