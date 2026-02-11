@@ -102,7 +102,7 @@ export function TestimonialsSection() {
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#FF7A1A]/10 to-[#FF9E3A]/10 border border-[#FF7A1A]/20 mb-4">
               <Star className="h-4 w-4 text-[#FF7A1A] fill-[#FF7A1A]" />
-              <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">Testemunhos</span>
+              <span className="text-xs font-bold text-[#FF7A1A] uppercase tracking-wide">Classificações</span>
             </div>
             <h2 className="text-4xl font-bold text-textPrimaryLight md:text-5xl mb-4 leading-tight">
               Veja alguns clientes que ja contam com a <span className="text-[#FF9E3A]">Foodnect</span> no seu dia a dia
