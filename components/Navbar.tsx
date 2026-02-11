@@ -143,23 +143,20 @@ export function Navbar() {
         {/* CTA + menu mobile */}
         <div className="flex items-center gap-2">
           <motion.a
-            className="hidden md:flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-[#FF9E3A] to-primary bg-size-200 bg-pos-0 hover:bg-pos-100 px-6 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/50 transition-all duration-500 animate-pulse-glow"
-            whileHover={{
-              scale: 1.07,
-              boxShadow: "0 12px 34px rgba(255, 122, 26, 0.5)",
-            }}
-            whileTap={{ scale: 0.95 }}
-            href="#download"
-            onClick={(e) => {
-              e.preventDefault();
-              const element = document.getElementById("download");
-              if (element)
-                element.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-          >
-            <Download className="h-4 w-4" />
-            <span>Download App</span>
-          </motion.a>
+        className="hidden md:flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-[#FF9E3A] to-primary bg-size-200 bg-pos-0 hover:bg-pos-100 px-6 py-2.5 text-sm font-bold text-white shadow-xl shadow-primary/50 transition-all duration-500 animate-pulse-glow"
+        whileHover={{
+          scale: 1.07,
+          boxShadow: "0 12px 34px rgba(255, 122, 26, 0.5)",
+        }}
+        whileTap={{ scale: 0.95 }}
+        href="https://play.google.com/store/apps/details?id=com.foodnect.app"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <Download className="h-4 w-4" />
+        <span>Download App</span>
+      </motion.a>
+
 
           <button
             type="button"

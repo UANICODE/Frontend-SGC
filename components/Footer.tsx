@@ -241,7 +241,7 @@ export function Footer() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-3 text-orange-800 text-sm"
+            className="flex items-center gap-3  text-sm"
           >
             <div className="relative h-6 w-auto md:h-8">
               <Image
@@ -251,7 +251,7 @@ export function Footer() {
                 className="object-contain"
               />
             </div>
-            <span className="font-semibold text-dark-800">Desenvolvido pela UANICODE.</span>
+            <span className="black">Desenvolvido pela UANICODE.</span>
           </motion.div>
         </div>
       </div>
