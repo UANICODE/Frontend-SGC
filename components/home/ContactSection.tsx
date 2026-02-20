@@ -9,8 +9,7 @@ import {
   Facebook,
   Instagram,
   Youtube,
-  Twitter,
-  Linkedin,
+
   MessageCircle,
 } from "lucide-react";
 import { AnimatedBackground } from "@/components/AnimatedBackground";
@@ -101,11 +100,11 @@ export function ContactSection() {
   ];
 
   const socialLinks: SocialLink[] = [
-    { icon: Linkedin, label: "LinkedIn", href: "#" },
-    { icon: Facebook, label: "Facebook", href: "#" },
-    { icon: Instagram, label: "Instagram", href: "#" },
+    { icon: Youtube, label: "TikTok", href: "https://www.tiktok.com/@foodnectmz?_r=1&_t=ZS-944vI8zHqvl" },
+    { icon: Facebook, label: "Facebook", href: "https://www.facebook.com/share/1KAv3im9pU/?mibextid=wwXIfr" },
+    { icon: Instagram, label: "Instagram", href: "https://www.instagram.com/foodnect.mz?igsh=aGJ1ankwN2hieTQ3&utm_source=qr" },
   ];
-
+  
   return (
     <section
       id="contactos"

@@ -72,7 +72,7 @@ export function Footer() {
             >
                
             </motion.div>
-            <span>Fome? Daqui para aqui resolvi😎.</span>
+            <span>Fome? Daqui para aqui resolves😎.</span>
           </motion.div>
         </motion.div>
         <motion.div
@@ -196,7 +196,7 @@ export function Footer() {
               <ul className="space-y-2.5">
                 <li>
                   <a
-                    href="#"
+                    href="https://www.facebook.com/share/1KAv3im9pU/?mibextid=wwXIfr"
                     className="group flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-medium text-textSecondaryLight transition-all duration-200 hover:bg-primary/5 hover:text-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <Facebook className="h-5 w-5 text-primary" />
@@ -207,7 +207,7 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://www.instagram.com/foodnect.mz?igsh=aGJ1ankwN2hieTQ3&utm_source=qr"
                     className="group flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-medium text-textSecondaryLight transition-all duration-200 hover:bg-primary/5 hover:text-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <Instagram className="h-5 w-5 text-primary" />
@@ -218,7 +218,7 @@ export function Footer() {
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://www.tiktok.com/@foodnectmz?_r=1&_t=ZS-944vI8zHqvl"
                     className="group flex items-center gap-2.5 rounded-xl px-4 py-3 text-base font-medium text-textSecondaryLight transition-all duration-200 hover:bg-primary/5 hover:text-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     <Music2 className="h-5 w-5 text-primary" />
