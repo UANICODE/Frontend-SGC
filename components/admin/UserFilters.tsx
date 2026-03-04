@@ -1,0 +1,65 @@
+"use client";
+
+import { useState } from "react";
+
+interface Props {
+  onFilter: (filters: {
+    nome?: string;
+    email?: string;
+    ativo?: boolean;
+  }) => void;
+}
+
+export function UserFilters({ onFilter }: Props) {
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [ativo, setAtivo] = useState<string>("");
+
+  function handleFilter() {
+    onFilter({
+      nome: nome || undefined,
+      email: email || undefined,
+      ativo:
+        ativo === ""
+          ? undefined
+          : ativo === "true"
+          ? true
+          : false,
+    });
+  }
+
+  return (
+    <div className="bg-white p-6 rounded-2xl shadow flex flex-col md:flex-row gap-4 animate-fadeIn">
+      <input
+        placeholder="Filtrar por nome"
+        className="input flex-1"
+        value={nome}
+        onChange={(e) => setNome(e.target.value)}
+      />
+
+      <input
+        placeholder="Filtrar por email"
+        className="input flex-1"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      <select
+        className="input w-48"
+        value={ativo}
+        onChange={(e) => setAtivo(e.target.value)}
+      >
+        <option value="">Todos</option>
+        <option value="true">Ativos</option>
+        <option value="false">Inativos</option>
+      </select>
+
+      <button
+        onClick={handleFilter}
+        className="bg-primary text-white px-6 rounded-xl"
+      >
+        Filtrar
+      </button>
+    </div>
+  );
+}

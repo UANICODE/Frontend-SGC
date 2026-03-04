@@ -2,34 +2,34 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{ts,tsx}",       // detecta arquivos no app
+    "./components/**/*.{ts,tsx}",// detecta arquivos em components
   ],
   theme: {
     extend: {
       colors: {
-        primary: "#F4511E",
-        secondary: "#66BB6A",
+        /* ===== SISTEMA FIXO ===== */
         backgroundLight: "#FAFAFA",
         backgroundDark: "#121212",
+
         textPrimaryLight: "#212121",
         textPrimaryDark: "#FFFFFF",
+
         textSecondaryLight: "#757575",
         textSecondaryDark: "#BDBDBD",
-        borderLight: "#BDBDBD",
-        borderDark: "#333333",
+
+        borderLight: "#E5E7EB",
+        borderDark: "#2A2A2A",
+
         backgroundSkeleton: "#E1E9EE",
+
+        /* ===== DINÂMICAS (POR ESTABELECIMENTO) ===== */
+        primary: "var(--color-primary)",
+        secondary: "var(--color-secondary)",
       },
     },
-  },
-  // Workaround para erro ao carregar o preflight.css no ambiente actual
-  // Continua a gerar utilitários mas sem o reset de estilos base do Tailwind.
-  corePlugins: {
-    preflight: false,
   },
   plugins: [],
 };
 
 export default config;
-
-
