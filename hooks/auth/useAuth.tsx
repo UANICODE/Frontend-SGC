@@ -39,12 +39,22 @@ export function AuthProvider({
       .finally(() => setLoading(false));
   }, []);
 
-  const login = async (email: string, password: string) => {
-    await loginService({ email, password });
+ // useAuth.tsx
+const login = async (email: string, password: string) => {
+  try {
+    // chama o login e espera tokens
+    const authResponse = await loginService({ email, password });
+
+    // 🔐 Se login OK, chama getCurrentUserService
     const userData = await getCurrentUserService();
     setUser(userData);
     return userData;
-  };
+
+  } catch (error: any) {
+    // ⚠️ pega a mensagem do backend ou default
+    throw new Error(error?.message || "Erro ao fazer login");
+  }
+};
 
   const logout = async () => {
     await logoutService();

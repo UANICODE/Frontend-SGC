@@ -13,14 +13,16 @@ export default function SelectRolePage() {
   const handleSelect = (role: string) => {
     switch (role) {
       case "SUPERADMIN":
-        router.push("/superadmin/dashboard");
+        router.push("/superadmin/establishments");
         break;
       case "ADMIN":
-        router.push("/admin/dashboard");
+        router.push("/admin/establishments");
         break;
       case "ATENDENTE":
-        router.push("/attendant/dashboard");
+        router.push(`/attendant/establishments`);
         break;
+      default:
+        router.push("/");
     }
   };
 

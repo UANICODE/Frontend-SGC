@@ -1,20 +1,26 @@
-import { AuthProvider } from "@/hooks/auth/useAuth";
-import { ToastProvider } from "@/ context/ToastContext";
+// app/layout.tsx
+import { ClientOnly } from "@/ context/ClientOnly";
 import "./globals.css";
+import { ClientProviders } from "@/providers/ClientProviders";
+import { ToastProvider } from "@/ context/ToastContext";
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+
+export const metadata = {
+  title: "Meu App",
+  description: "Exemplo App com Toasts",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt">
       <body>
-        <AuthProvider>
-          <ToastProvider>
-            {children}
-          </ToastProvider>
-        </AuthProvider>
+        <ClientProviders>
+          <ClientOnly>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </ClientOnly>
+        </ClientProviders>
       </body>
     </html>
   );

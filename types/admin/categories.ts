@@ -46,6 +46,8 @@ export interface DeleteProductCategoryResponse {
 /* ================= LIST ================= */
 /* (estrutura paginada padrão do sistema) */
 
+/* ================= LIST ================= */
+
 export interface CategoryItemResponse {
   id: string;
   name: string;
@@ -57,15 +59,9 @@ export interface CategoryItemResponse {
 
 export interface ListCategoriesRequest {
   establishmentId: string;
-  page?: number;
-  size?: number;
-  name?: string;
+  name?: string; // filtro opcional
 }
 
-export interface ListCategoriesResponse {
-  content: CategoryItemResponse[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-}
+export type ListCategoriesResponse = CategoryItemResponse[]; // array direto, sem paginação
+
+

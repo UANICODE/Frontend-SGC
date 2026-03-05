@@ -25,6 +25,7 @@ export async function listProducts(
       "/api/admin/products/list",
       payload
     );
+    console.log("Produtos encontrados", data)
     return data;
   } catch (error) {
     handleHttpError(error);
@@ -100,9 +101,8 @@ export async function listCategories(
   establishmentId: string
 ): Promise<CategoryResponse[]> {
   try {
-    const { data } = await api.post<CategoryResponse[]>(
-      "/api/admin/categories/list",
-      { establishmentId }
+    const { data } = await api.get<CategoryResponse[]>(
+      `/api/admin/categories/list?establishmentId=${establishmentId}`
     );
     return data;
   } catch (error) {

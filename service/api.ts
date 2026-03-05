@@ -12,11 +12,17 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // ⚠️ IGNORA refresh para login ou logout
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/login") &&
+      !originalRequest.url?.includes("/logout")
+    ) {
       originalRequest._retry = true;
 
       try {
-        await api.post("/api/auth/refresh");
+        await api.post("/api/auth/refresh"); // cookie enviado automaticamente
         return api(originalRequest);
       } catch {
         window.location.href = "/login";

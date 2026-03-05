@@ -21,26 +21,28 @@ export function DeleteSupplierModal({
   const { showToast } = useToast();
   const [loading, setLoading] = React.useState(false);
 
-  async function handleDelete() {
-    try {
-      setLoading(true);
-
-      await deleteSupplier({
-        establishmentId,
-        supplierId: supplier.supplierId,
-      });
-
-      showToast("Fornecedor removido com sucesso!", "success");
-      onSuccess(); // 🔥 refresh
-      onClose();
-    } catch (error) {
-      if (error instanceof Error) {
-        showToast(error.message, "error");
-      }
-    } finally {
-      setLoading(false);
-    }
+ async function handleDelete() {
+  if (!supplier.id) {
+    showToast("Fornecedor inválido: ID ausente", "error");
+    return; // não tenta deletar
   }
+
+  setLoading(true);
+  try {
+    await deleteSupplier({
+      establishmentId,
+      supplierId: supplier.id, // ✅ envia o UUID correto
+    });
+
+    showToast("Fornecedor removido com sucesso!", "success");
+    onSuccess(); // refresh da tabela
+    onClose();
+  } catch (error) {
+    if (error instanceof Error) showToast(error.message, "error");
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">

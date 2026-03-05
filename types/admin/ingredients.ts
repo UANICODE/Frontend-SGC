@@ -3,16 +3,15 @@
    ============================================================ */
 
 export interface IngredientItemResponse {
-  id: string; // UUID
-  establishmentId: string; // UUID
+  id: string;
+  establishmentId: string;
   name: string;
   unitName: string;
   unitSymbol: string;
-  quantity: number; // BigDecimal → number
-  minimumLimit: number; // BigDecimal → number
+  quantity: number;
+  minimumLimit: number;
   statusName: string;
 }
-
 /* ============================================================
    CREATE
    Espelhando:

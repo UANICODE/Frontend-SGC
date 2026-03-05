@@ -3,7 +3,7 @@ import { handleHttpError } from "@/utils/httpErrorHandler";
 
 export async function getCurrentUserService() {
   try {
-    const response = await api.get("/api/auth/me");
+    const response = await api.get("/api/auth/user/me");
     return response.data;
   } catch (error) {
     handleHttpError(error);

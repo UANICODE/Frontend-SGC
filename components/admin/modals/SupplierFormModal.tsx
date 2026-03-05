@@ -26,7 +26,6 @@ export function SupplierFormModal({
   onSuccess,
 }: Props) {
   const { showToast } = useToast();
-
   const isEdit = !!supplier;
 
   const [form, setForm] = useState({
@@ -34,8 +33,8 @@ export function SupplierFormModal({
     email: "",
     phone: "",
     address: "",
-    nuit: "",
-    statusId: "",
+    nuit: ""
+
   });
 
   const [loading, setLoading] = useState(false);
@@ -47,15 +46,12 @@ export function SupplierFormModal({
         email: supplier.email ?? "",
         phone: supplier.phone ?? "",
         address: supplier.address ?? "",
-        nuit: supplier.nuit ?? "",
-        statusId: supplier.statusId,
+        nuit: supplier.nuit ?? ""
       });
     }
   }, [supplier]);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
@@ -66,10 +62,9 @@ export function SupplierFormModal({
       if (isEdit && supplier) {
         const payload: UpdateSupplierRequest = {
           establishmentId,
-          supplierId: supplier.supplierId,
+          supplierId: supplier.id,
           ...form,
         };
-
         await updateSupplier(payload);
         showToast("Fornecedor atualizado com sucesso!", "success");
       } else {
@@ -77,71 +72,50 @@ export function SupplierFormModal({
           establishmentId,
           ...form,
         };
-
         await createSupplier(payload);
         showToast("Fornecedor criado com sucesso!", "success");
       }
 
-      onSuccess(); // 🔥 reload tabela
+      onSuccess();
       onClose();
     } catch (error) {
-      if (error instanceof Error) {
-        showToast(error.message, "error");
-      }
+      if (error instanceof Error) showToast(error.message, "error");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-lg p-8 space-y-6">
-        <h2 className="text-xl font-bold">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl w-full max-w-lg p-8 space-y-6 shadow-lg relative animate-fadeIn">
+        <h2 className="text-2xl font-bold text-gray-800">
           {isEdit ? "Editar Fornecedor" : "Novo Fornecedor"}
         </h2>
 
         <div className="grid gap-4">
-          <input
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Nome"
-            className="input"
-          />
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Email"
-            className="input"
-          />
-          <input
-            name="phone"
-            value={form.phone}
-            onChange={handleChange}
-            placeholder="Telefone"
-            className="input"
-          />
-          <input
-            name="address"
-            value={form.address}
-            onChange={handleChange}
-            placeholder="Endereço"
-            className="input"
-          />
-          <input
-            name="nuit"
-            value={form.nuit}
-            onChange={handleChange}
-            placeholder="NUIT"
-            className="input"
-          />
+          {[
+            { name: "name", placeholder: "Nome" },
+            { name: "email", placeholder: "Email" },
+            { name: "phone", placeholder: "Telefone" },
+            { name: "address", placeholder: "Endereço" },
+            { name: "nuit", placeholder: "NUIT" },
+          ].map((field) => (
+            <input
+              key={field.name}
+              name={field.name}
+              value={form[field.name as keyof typeof form]}
+              onChange={handleChange}
+              placeholder={field.placeholder}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+            />
+          ))}
         </div>
 
         <div className="flex justify-end gap-4 pt-4">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg border"
+            disabled={loading}
+            className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-50 transition"
           >
             Cancelar
           </button>
@@ -149,9 +123,12 @@ export function SupplierFormModal({
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="px-6 py-2 bg-primary text-white rounded-lg"
+            className="px-6 py-2 bg-primary text-white rounded-lg flex items-center gap-2 justify-center hover:bg-primary/90 transition"
           >
-            {loading ? "Salvando..." : "Salvar"}
+            {loading && (
+              <div className="w-5 h-5 border-4 border-white border-t-transparent rounded-full animate-spin" />
+            )}
+            <span>{loading ? "Salvando..." : "Salvar"}</span>
           </button>
         </div>
       </div>

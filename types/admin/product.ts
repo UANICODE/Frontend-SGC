@@ -1,5 +1,4 @@
 /* ================= LIST ================= */
-
 export interface ListProductsRequest {
   establishmentId: string;
   page?: number;
@@ -28,6 +27,7 @@ export interface ProductItemResponse {
   categoryName?: string;
   productTypeId: string;
   productTypeName?: string;
+  ingredients?: IngredientItem[]; // ingredientes do produto composto
   createdAt?: string;
   updatedAt?: string;
 }
@@ -41,7 +41,6 @@ export interface ListProductsResponse {
 }
 
 /* ================= CREATE SIMPLE ================= */
-
 export interface CreateProductRequest {
   establishmentId: string;
   categoryId: string;
@@ -65,14 +64,13 @@ export interface CreateProductResponse {
 }
 
 /* ================= INGREDIENT ================= */
-
 export interface IngredientItem {
   ingredientId: string;
+  ingredientName: string;
   quantityUsed: number;
 }
 
 /* ================= CREATE COMPOSITE ================= */
-
 export interface CreateCompositeProductRequest {
   establishmentId: string;
   categoryId: string;
@@ -95,7 +93,6 @@ export interface CreateCompositeProductResponse {
 }
 
 /* ================= UPDATE ================= */
-
 export interface UpdateProductRequest {
   establishmentId: string;
   productId: string;
@@ -108,7 +105,13 @@ export interface UpdateProductRequest {
   controlsStock: boolean;
   allowNegativeStock: boolean;
   active: boolean;
-  ingredients?: IngredientItem[] | null;
+  ingredients?: IngredientItem[] | null; // null ou vazio = produto simples
+}
+
+
+export interface IngredientForBackend {
+  ingredientId: string;
+  quantityUsed: number;
 }
 
 export interface UpdateProductResponse {
@@ -119,7 +122,6 @@ export interface UpdateProductResponse {
 }
 
 /* ================= DEPENDENCIES ================= */
-
 export interface CategoryResponse {
   id: string;
   name: string;

@@ -10,21 +10,21 @@ import {
   DeleteProductCategoryResponse,
   ListCategoriesRequest,
   ListCategoriesResponse,
+  CategoryItemResponse,
 } from "@/types/admin/categories";
 
 /* ================= LIST ================= */
 
-export async function listCategories(
-  payload: ListCategoriesRequest
-): Promise<ListCategoriesResponse> {
+export async function listCategories(payload: ListCategoriesRequest): Promise<CategoryItemResponse[]> {
   try {
-    const { data } = await api.post<ListCategoriesResponse>(
-      "/api/admin/categories/list",
-      payload
+    const { data } = await api.get<CategoryItemResponse[]>(
+      `/api/admin/categories/list?establishmentId=${payload.establishmentId}`
     );
+    console.log("dados categ", data)
     return data;
   } catch (error) {
     handleHttpError(error);
+    return [];
   }
 }
 

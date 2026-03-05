@@ -8,6 +8,7 @@ import {
 import { IngredientItemResponse } from "@/types/admin/ingredients";
 import { useToast } from "@/ context/ToastContext";
 
+
 interface Props {
   establishmentId: string;
   ingredient: IngredientItemResponse | null;
@@ -51,7 +52,7 @@ export function IngredientModal({
           unitName,
           unitSymbol,
           quantity,
-          minimumLimit
+          minimumLimit,
         });
 
         showToast("Ingrediente atualizado com sucesso!", "success");
@@ -62,7 +63,7 @@ export function IngredientModal({
           unitName,
           unitSymbol,
           quantity,
-          minimumLimit
+          minimumLimit,
         });
 
         showToast("Ingrediente criado com sucesso!", "success");
@@ -80,62 +81,102 @@ export function IngredientModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white w-full max-w-md p-8 rounded-xl space-y-6">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white w-full max-w-md p-8 rounded-xl space-y-6 shadow-xl">
+
         <h2 className="text-xl font-bold text-primary">
           {isEdit ? "Editar Ingrediente" : "Novo Ingrediente"}
         </h2>
 
-        <input
-          className="w-full border p-3 rounded-lg"
-          placeholder="Nome"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+        {/* Nome */}
+        <div className="space-y-2">
+          <label htmlFor="name" className="text-sm font-medium text-gray-700">
+            Nome do ingrediente
+          </label>
+          <input
+            id="name"
+            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
 
-        <input
-          className="w-full border p-3 rounded-lg"
-          placeholder="Unidade"
-          value={unitName}
-          onChange={(e) => setUnitName(e.target.value)}
-        />
+        {/* Unidade */}
+        <div className="space-y-2">
+          <label htmlFor="unitName" className="text-sm font-medium text-gray-700">
+            Nome da unidade
+          </label>
+          <input
+            id="unitName"
+            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            value={unitName}
+            onChange={(e) => setUnitName(e.target.value)}
+          />
+        </div>
 
-        <input
-          className="w-full border p-3 rounded-lg"
-          placeholder="Símbolo"
-          value={unitSymbol}
-          onChange={(e) => setUnitSymbol(e.target.value)}
-        />
+        {/* Símbolo */}
+        <div className="space-y-2">
+          <label htmlFor="unitSymbol" className="text-sm font-medium text-gray-700">
+            Símbolo da unidade
+          </label>
+          <input
+            id="unitSymbol"
+            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            value={unitSymbol}
+            onChange={(e) => setUnitSymbol(e.target.value)}
+          />
+        </div>
 
-        <input
-          type="number"
-          className="w-full border p-3 rounded-lg"
-          placeholder="Quantidade"
-          value={quantity}
-          onChange={(e) => setQuantity(Number(e.target.value))}
-        />
+        {/* Quantidade */}
+        <div className="space-y-2">
+          <label htmlFor="quantity" className="text-sm font-medium text-gray-700">
+            Quantidade disponível
+          </label>
+          <input
+            id="quantity"
+            type="number"
+            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            value={quantity}
+            onChange={(e) => setQuantity(Number(e.target.value))}
+          />
+        </div>
 
-        <input
-          type="number"
-          className="w-full border p-3 rounded-lg"
-          placeholder="Limite Mínimo"
-          value={minimumLimit}
-          onChange={(e) => setMinimumLimit(Number(e.target.value))}
-        />
+        {/* Limite mínimo */}
+        <div className="space-y-2">
+          <label htmlFor="minimumLimit" className="text-sm font-medium text-gray-700">
+            Limite mínimo de estoque
+          </label>
+          <input
+            id="minimumLimit"
+            type="number"
+            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+            value={minimumLimit}
+            onChange={(e) => setMinimumLimit(Number(e.target.value))}
+          />
+        </div>
 
-        <div className="flex justify-end gap-4">
-          <button disabled={loading} onClick={onClose}>
+        {/* Botões */}
+        <div className="flex justify-end gap-4 pt-4">
+          <button
+            disabled={loading}
+            onClick={onClose}
+            className="px-5 py-2 rounded-lg border hover:bg-gray-50"
+          >
             Cancelar
           </button>
 
           <button
             disabled={loading}
             onClick={handleSubmit}
-            className="bg-primary text-white px-5 py-2 rounded-lg disabled:opacity-50"
+            className="bg-primary text-white px-5 py-2 rounded-lg flex items-center gap-2 disabled:opacity-50"
           >
+            {loading && (
+              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            )}
             {loading ? "Salvando..." : "Salvar"}
           </button>
         </div>
+
       </div>
     </div>
   );

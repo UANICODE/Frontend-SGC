@@ -78,3 +78,17 @@ ul {
 }
 
 
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt-print, #receipt-print * {
+    visibility: visible;
+  }
+
+  #receipt-print {
+    width: 80mm;
+    font-size: 12px;
+  }
+}

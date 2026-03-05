@@ -1,44 +1,36 @@
-import { useEffect, useState } from "react";
-import {
-  ListCategoriesRequest,
-  ListCategoriesResponse,
-} from "@/types/admin/categories";
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
 import { listCategories } from "@/service/admin/categories";
+import { ListCategoriesRequest, CategoryItemResponse } from "@/types/admin/categories";
 import { useToast } from "@/ context/ToastContext";
 
 
 export function useCategories(establishmentId: string) {
   const { showToast } = useToast();
 
-  const [data, setData] =
-    useState<ListCategoriesResponse | null>(null);
-
+  const [data, setData] = useState<CategoryItemResponse[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState<ListCategoriesRequest>({ establishmentId });
 
-  const [filters, setFilters] =
-    useState<ListCategoriesRequest>({
-      establishmentId,
-      page: 0,
-      size: 10,
-    });
-
-  async function fetchCategories() {
+  const fetchCategories = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await listCategories(filters);
-      setData(response);
+      // Passa o objeto correto, com establishmentId fixo e filtros opcionais
+      const response = await listCategories({ ...filters, establishmentId });
+      setData(response || []);
     } catch (error) {
-      if (error instanceof Error) {
-        showToast(error.message, "error");
-      }
+      setData([]);
+      if (error instanceof Error) showToast(error.message, "error");
     } finally {
       setLoading(false);
     }
-  }
+  }, [filters, establishmentId, showToast]);
 
+  // Dispara quando filters mudarem ou establishmentId mudar
   useEffect(() => {
     fetchCategories();
-  }, [filters]);
+  }, [fetchCategories]);
 
   return {
     data,

@@ -12,118 +12,104 @@ import {
   Wallet,
   BarChart3,
   Settings,
+  Menu,
+  X,
 } from "lucide-react";
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useState } from "react";
 
 export function AdminSidebar() {
   const params = useParams();
   const establishmentId = params?.establishmentId;
-
-  // Pegamos a rota atual para destacar item ativo
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (!establishmentId) return null;
 
   const basePath = `/admin/dashboard/${establishmentId}`;
-
-  // Função para verificar se o link é ativo
   const isActive = (path: string) => pathname.startsWith(path);
 
+  const links = [
+    { name: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard size={18} /> },
+    { name: "Produtos", href: `${basePath}/product`, icon: <Package size={18} /> },
+    { name: "Categorias", href: `${basePath}/product/categories`, icon: <Tags size={18} /> },
+    { name: "Tipos de Produto", href: `${basePath}/product/types`, icon: <Layers size={18} /> },
+    { name: "Ingredientes", href: `${basePath}/product/ingredient`, icon: <FlaskConical size={18} /> },
+    { name: "Estoque", href: `${basePath}/product/stock`, icon: <Warehouse size={18} /> },
+    { name: "Fornecedores", href: `${basePath}/supplier`, icon: <Truck size={18} /> },
+    { name: "Usuários", href: `${basePath}/users`, icon: <Users size={18} /> },
+    { name: "Caixas Abertos", href: `${basePath}/cash-registers`, icon: <Wallet size={18} /> },
+    { name: "Relatórios", href: `${basePath}/reports`, icon: <BarChart3 size={18} /> },
+    { name: "Personalização", href: `${basePath}/settings`, icon: <Settings size={18} /> },
+  ];
+
   return (
-    <aside className="w-64 bg-white border-r border-borderLight p-6">
-      <h2 className="text-lg font-bold mb-8">Admin</h2>
+    <>
+      {/* Botão hambúrguer apenas mobile */}
+      <button
+        className="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-md shadow-md"
+        onClick={() => setMobileOpen(true)}
+      >
+        <Menu size={24} />
+      </button>
 
-      <nav className="flex flex-col gap-4 text-sm">
-        <Link
-          href={`${basePath}`}
-          className={isActive(`${basePath}`) ? "font-bold text-primary" : ""}
-        >
-          <LayoutDashboard size={18} />
-          Dashboard
-        </Link>
+      {/* Sidebar desktop */}
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-borderLight p-6 h-screen">
+        <h2 className="text-lg font-bold mb-8">Admin</h2>
+        <nav className="flex flex-col gap-4 text-sm">
+          {links.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 ${
+                isActive(link.href) ? "font-bold text-primary" : ""
+              }`}
+            >
+              {link.icon}
+              <span>{link.name}</span>
+            </Link>
+          ))}
+        </nav>
+      </aside>
 
-        <Link
-          href={`${basePath}/product`}
-          className={isActive(`${basePath}/product`) ? "font-bold text-primary" : ""}
-        >
-          <Package size={18} />
-          Produtos
-        </Link>
+      {/* Sidebar mobile overlay */}
+      {mobileOpen && (
+        <>
+          {/* Fundo escuro */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-40 z-40"
+            onClick={() => setMobileOpen(false)}
+          />
 
-        <Link
-          href={`${basePath}/product/categories`}
-          className={isActive(`${basePath}/product/categories`) ? "font-bold text-primary" : ""}
-        >
-          <Tags size={18} />
-          Categorias
-        </Link>
+          {/* Menu lateral */}
+          <aside className="fixed top-0 left-0 w-64 bg-white h-screen z-50 p-6 shadow-lg">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-lg font-bold">Admin</h2>
+              <button onClick={() => setMobileOpen(false)}>
+                <X size={24} />
+              </button>
+            </div>
 
-        <Link
-          href={`${basePath}/product/types`}
-          className={isActive(`${basePath}/product/types`) ? "font-bold text-primary" : ""}
-        >
-          <Layers size={18} />
-          Tipos de Produto
-        </Link>
-
-        <Link
-          href={`${basePath}/product/ingredient`}
-          className={isActive(`${basePath}/product/ingredient`) ? "font-bold text-primary" : ""}
-        >
-          <FlaskConical size={18} />
-          Ingredientes
-        </Link>
-
-        <Link
-          href={`${basePath}/product/stock`}
-          className={isActive(`${basePath}/product/stock`) ? "font-bold text-primary" : ""}
-        >
-          <Warehouse size={18} />
-          Estoque
-        </Link>
-
-        <Link
-          href={`${basePath}/supplier`}
-          className={isActive(`${basePath}/supplier`) ? "font-bold text-primary" : ""}
-        >
-          <Truck size={18} />
-          Fornecedores
-        </Link>
-
-        <Link
-          href={`${basePath}/users`}
-          className={isActive(`${basePath}/users`) ? "font-bold text-primary" : ""}
-        >
-          <Users size={18} />
-          Usuários
-        </Link>
-
-        <Link
-          href={`${basePath}/cash-registers`}
-          className={isActive(`${basePath}/cash-registers`) ? "font-bold text-primary" : ""}
-        >
-          <Wallet size={18} />
-          Caixas Abertos
-        </Link>
-
-        <Link
-          href={`${basePath}/reports`}
-          className={isActive(`${basePath}/reports`) ? "font-bold text-primary" : ""}
-        >
-          <BarChart3 size={18} />
-          Relatórios
-        </Link>
-
-        <Link
-          href={`${basePath}/settings`}
-          className={isActive(`${basePath}/settings`) ? "font-bold text-primary" : ""}
-        >
-          <Settings size={18} />
-          Personalização
-        </Link>
-      </nav>
-    </aside>
+            <nav className="flex flex-col gap-4 text-sm">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 ${
+                    isActive(link.href) ? "font-bold text-primary" : ""
+                  }`}
+                  onClick={() => setMobileOpen(false)} // fecha ao clicar
+                >
+                  {link.icon}
+                  <span>{link.name}</span>
+                </Link>
+              ))}
+            </nav>
+          </aside>
+        </>
+      )}
+    </>
   );
 }

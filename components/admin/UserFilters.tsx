@@ -4,41 +4,33 @@ import { useState } from "react";
 
 interface Props {
   onFilter: (filters: {
-    nome?: string;
-    email?: string;
-    ativo?: boolean;
+    nome: string;
+    email: string;
+    ativo: string;
   }) => void;
 }
 
 export function UserFilters({ onFilter }: Props) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
-  const [ativo, setAtivo] = useState<string>("");
+  const [ativo, setAtivo] = useState("");
 
-  function handleFilter() {
-    onFilter({
-      nome: nome || undefined,
-      email: email || undefined,
-      ativo:
-        ativo === ""
-          ? undefined
-          : ativo === "true"
-          ? true
-          : false,
-    });
+  function applyFilter() {
+    onFilter({ nome, email, ativo });
   }
 
   return (
-    <div className="bg-white p-6 rounded-2xl shadow flex flex-col md:flex-row gap-4 animate-fadeIn">
+    <div className="bg-white p-6 rounded-2xl shadow flex flex-col md:flex-row gap-4">
+
       <input
-        placeholder="Filtrar por nome"
+        placeholder="Nome do usuário"
         className="input flex-1"
         value={nome}
         onChange={(e) => setNome(e.target.value)}
       />
 
       <input
-        placeholder="Filtrar por email"
+        placeholder="Email"
         className="input flex-1"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -55,7 +47,7 @@ export function UserFilters({ onFilter }: Props) {
       </select>
 
       <button
-        onClick={handleFilter}
+        onClick={applyFilter}
         className="bg-primary text-white px-6 rounded-xl"
       >
         Filtrar

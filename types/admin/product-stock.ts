@@ -48,7 +48,7 @@ export interface ProductStockItemResponse {
   productId: string;
   productName: string;
   quantity: number;
-  lastUpdateDate: string;
+  data: string;
 }
 
 export interface ListProductStocksResponse {

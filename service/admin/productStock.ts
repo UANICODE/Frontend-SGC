@@ -19,6 +19,7 @@ export async function listProductStocks(
       "/api/admin/product-stocks/list",
       payload
     );
+    console.log("dados stock", data)
     return data;
   } catch (error) {
     handleHttpError(error);

@@ -25,11 +25,12 @@ export function CardEstablishment({ establishment }: Props) {
         <div className="w-14 h-14 relative rounded-lg overflow-hidden border border-borderLight bg-gray-50">
           {establishment.urlImage ? (
             <Image
-              src={establishment.urlImage}
-              alt={`Logo ${establishment.tradeName}`}
-              fill
-              className="object-cover"
-            />
+          src={establishment.urlImage}
+          alt={`Logo ${establishment.tradeName}`}
+          fill
+          className="object-cover"
+          unoptimized // ⚡ ignora a validação de hostname
+        />
           ) : (
             <div className="flex items-center justify-center w-full h-full text-xs text-gray-400">
               Logo

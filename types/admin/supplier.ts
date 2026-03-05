@@ -5,14 +5,13 @@ export interface SupplierStatusItemResponse {
 }
 
 export interface SupplierItemResponse {
-  supplierId: string;
+  id: string;
   name: string;
   email?: string;
   phone?: string;
   address?: string;
   nuit?: string;
-  statusId: string;
-  statusName: string;
+  status: string;
 }
 
 export interface CreateSupplierRequest {
@@ -22,7 +21,7 @@ export interface CreateSupplierRequest {
   phone?: string;
   address?: string;
   nuit?: string;
-  statusId: string;
+
 }
 
 export interface UpdateSupplierRequest {
@@ -44,7 +43,7 @@ export interface DeleteSupplierRequest {
 export interface ChangeSupplierStatusRequest {
   establishmentId: string;
   supplierId: string;
-  statusId: string;
+  status: string;
 }
 
 export interface ListSuppliersRequest {
