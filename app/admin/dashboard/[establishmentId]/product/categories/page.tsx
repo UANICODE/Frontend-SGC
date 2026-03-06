@@ -6,9 +6,11 @@ import { CategoryItemResponse } from "@/types/admin/categories";
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import { useCategories } from "@/hooks/admin /product/categories/useCategories";
+import { useToast } from "@/ context/ToastContext";
 
 export default function CategoriesPage() {
   const params = useParams();
+    const { showToast } = useToast();
   let establishmentId: string | undefined;
 
   if (Array.isArray(params?.establishmentId)) {
@@ -36,11 +38,12 @@ export default function CategoriesPage() {
     );
   }, [data, filterText]);
 
-  const handleSuccess = () => {
-    refresh(); // 🔹 Só aqui recarrega do backend
-    setOpenModal(false);
-    setSelected(null);
-  };
+ const handleSuccess = () => {
+  refresh(); // 🔹 recarrega do backend
+  setOpenModal(false);
+  setSelected(null);
+  showToast("Categoria atualizada com sucesso!", "success"); // ✅ Toast adicionado
+};
 
   return (
     <div className="space-y-6">

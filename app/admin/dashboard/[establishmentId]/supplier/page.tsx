@@ -88,7 +88,10 @@ async function handleChangeStatus(supplier: SupplierItemResponse) {
             selected.id ? selected : null
           }
           onClose={() => setSelected(null)}
-          onSuccess={refresh}
+        onSuccess={() => {
+        refresh();
+        showToast(selected.id ? "Fornecedor atualizado!" : "Fornecedor criado!", "success");
+      }}
         />
       )}
 
@@ -97,7 +100,10 @@ async function handleChangeStatus(supplier: SupplierItemResponse) {
           establishmentId={establishmentId}
           supplier={deleteTarget}
           onClose={() => setDeleteTarget(null)}
-          onSuccess={refresh}
+         onSuccess={() => {
+          refresh();
+          showToast("Fornecedor removido com sucesso!", "success");
+        }}
         />
       )}
     </div>

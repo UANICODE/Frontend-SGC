@@ -9,6 +9,6 @@ export async function listCashRegisters(
     "/api/attendant/cash-registers/filter",
     payload
   );
-
+console.log("dinheiro", response.data)
   return response.data;
 }

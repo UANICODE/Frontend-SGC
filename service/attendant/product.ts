@@ -12,6 +12,7 @@ export async function listProducts(payload: {
       "/api/attendant/sales/products/filter",
       payload
     );
+    console.log("produtos", res.data)
     return res.data;
   } catch (e) {
     handleHttpError(e);

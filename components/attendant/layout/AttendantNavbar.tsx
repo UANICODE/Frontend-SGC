@@ -21,7 +21,7 @@ export function AttendantNavbar({
         className="font-bold text-lg"
         style={{ color: primaryColor }}
       >
-        {tradeName} - Painel do Atendente
+        {tradeName} - Painel de vendas
       </h1>
 
       <button
@@ -30,7 +30,7 @@ export function AttendantNavbar({
         }
         className="text-sm text-gray-500 hover:text-black transition"
       >
-        Trocar Estabelecimento
+        Meus Estabelecimentos
       </button>
     </header>
   );

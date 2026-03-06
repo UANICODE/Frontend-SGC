@@ -33,7 +33,7 @@ export interface SaleResponse {
 
 
 export interface PaymentSummary {
-  paymentMethodName: string;
-  total: number;
+  paymentMethod: string;
+  amount: number;
 }
 

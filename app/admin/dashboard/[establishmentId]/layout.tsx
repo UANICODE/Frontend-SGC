@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-screen bg-backgroundLight">
-      <AdminSidebar />
+      <AdminSidebar logo={data?.logoUrl} name={data?.tradeName} />
 
       <div className="flex-1 flex flex-col">
         <AdminNavbar logo={data?.logoUrl} name={data?.tradeName} />

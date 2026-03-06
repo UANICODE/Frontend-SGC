@@ -22,7 +22,7 @@ export function useCashRegisters(filters: Filters) {
 
       const result = await listCashRegisters({
         establishmentId: filters.establishmentId,
-        today: filters.today || null,
+        today: filters.today ?? false,
         status: filters.status || null,
       });
 
@@ -38,10 +38,20 @@ export function useCashRegisters(filters: Filters) {
     } finally {
       setLoading(false);
     }
-  }, [filters]);
+  }, [filters.establishmentId, filters.today, filters.status]);
 
+  // ==================== EFEITO DE FETCH ====================
   useEffect(() => {
+    // Faz o fetch inicial
     fetchData();
+
+    // Cria o intervalo de 2 minutos (120.000 ms)
+    const interval = setInterval(() => {
+      fetchData();
+    }, 120000);
+
+    // Limpa o intervalo ao desmontar o componente
+    return () => clearInterval(interval);
   }, [fetchData]);
 
   const openCash = useMemo(

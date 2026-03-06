@@ -13,6 +13,7 @@ export async function generateInventoryReport(
       params: { establishmentId },
     });
 
+    console.log("relatorio", res.data)
     return res.data;
   } catch (error) {
     handleHttpError(error);

@@ -9,7 +9,7 @@ export async function listAttendantEstablishments(): Promise<
     const { data } = await api.get<
       AttendantEstablishmentItem[]
     >("/api/attendant/establishments");
-
+console.log("esta aqui", data)
     return data;
   } catch (error) {
     handleHttpError(error);

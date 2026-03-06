@@ -4,7 +4,6 @@ import { useAttendantEstablishments } from "@/hooks/attendant/useAttendantEstabl
 import { EstablishmentCard } from "@/components/attendant/cards/EstablishmentCard";
 import { PageLoader } from "@/components/ui/PageLoader";
 
-
 export default function AttendantEstablishmentsPage() {
   const { data, loading } = useAttendantEstablishments();
 

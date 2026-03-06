@@ -32,12 +32,13 @@ export async function getSaleDetails(
 
 export async function addItem(
   saleId: string,
-  productId: string
+  productId: string,
+  quantity: number = 1 // quantidade inicial = 1
 ): Promise<Sale> {
   try {
     const res = await api.post(
       `/api/attendant/sales/${saleId}/items`,
-      { productId }
+      { productId, quantity } // envia quantity junto
     );
     return res.data;
   } catch (e) {
@@ -83,15 +84,20 @@ export async function archiveSale(saleId: string) {
   }
 }
 
-export async function finalizeSale(payload: {
-  saleId: string;
-  paymentMethodId: string
-}): Promise<Receipt> {
+export async function finalizeSale(
+  establishmentId: string,
+  payload: {
+    saleId: string;
+    paymentMethodId: string;
+  }
+): Promise<Receipt> {
   try {
+    console.log("DADOS ENV", payload)
     const res = await api.post(
-      "/api/attendant/sales/finalize",
+      `/api/attendant/sales/finalize?establishmentId=${establishmentId}`,
       payload
     );
+        console.log("DADOS retornados", res.data)
     return res.data;
   } catch (e) {
     handleHttpError(e);

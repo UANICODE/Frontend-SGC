@@ -3,8 +3,7 @@ export interface ListOpenCashRegistersRequest {
 }
 
 export interface PaymentMethodTotalResponse {
-  paymentMethodId: string;
-  paymentMethodName: string;
+  paymentMethod: string;
   total: number;
 }
 

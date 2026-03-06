@@ -12,15 +12,9 @@ export function AdminNavbar({
   return (
     <header className="h-16 bg-white border-b border-borderLight flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
-        {logo && (
-          <img
-            src={logo}
-            className="h-8 w-8 rounded-full object-cover"
-          />
-        )}
-
+       
         <span className="font-semibold text-primary">
-          {name}
+    
         </span>
       </div>
 

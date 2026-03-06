@@ -11,13 +11,14 @@ import { UserFilters } from "@/components/admin/UserFilters";
 
 import { ListUsersByEstablishmentResponse } from "@/types/admin/user";
 import { useUsers } from "@/hooks/admin /users/useUsers";
+import { useToast } from "@/ context/ToastContext";
 
 export default function UsersPage() {
   const params = useParams<{ establishmentId: string }>();
   const establishmentId = params.establishmentId;
 
   const { data, loading, refresh } = useUsers(establishmentId);
-
+  const { showToast } = useToast();
   const [filters, setFilters] = useState({
     nome: "",
     email: "",
@@ -90,7 +91,10 @@ export default function UsersPage() {
         <CreateUserModal
           establishmentId={establishmentId}
           onClose={() => setShowCreate(false)}
-          onSuccess={refresh}
+         onSuccess={() => {
+        refresh();
+        showToast("Usuário criado com sucesso!", "success");
+         }}
         />
       )}
 
@@ -99,7 +103,10 @@ export default function UsersPage() {
           establishmentId={establishmentId}
           user={selectedReset}
           onClose={() => setSelectedReset(null)}
-          onSuccess={refresh}
+          onSuccess={() => {
+          refresh();
+          showToast("Senha redefinida com sucesso!", "success");
+        }}
         />
       )}
     </div>

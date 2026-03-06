@@ -100,9 +100,9 @@ export default function LandingPage() {
           © {new Date().getFullYear()} SGC. Todos os direitos reservados.
         </p>
         <div className="flex justify-center space-x-6">
-          <Link href="#" className="text-textSecondaryLight hover:text-primary transition">Termos de Serviço</Link>
-          <Link href="#" className="text-textSecondaryLight hover:text-primary transition">Privacidade</Link>
-          <Link href="#" className="text-textSecondaryLight hover:text-primary transition">Contato</Link>
+          <Link href="https://uanicode.com/" className="text-textSecondaryLight hover:text-primary transition">Desenvolvido pela UANICODE</Link>
+          <Link href="https://foodnect.uanicode.com/" className="text-textSecondaryLight hover:text-primary transition">Outro produto nosso</Link>
+
         </div>
       </footer>
     </div>

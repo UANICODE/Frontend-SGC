@@ -8,6 +8,7 @@ import { IngredientItemResponse } from "@/types/admin/ingredients";
 import { useIngredients } from "@/hooks/admin /product/ingredient/useIngredients";
 import { IngredientModal } from "@/components/admin/modals/ IngredientModal";
 import { IngredientsTable } from "@/components/admin/tables/IngredientsTable";
+import { useToast } from "@/ context/ToastContext";
 
 export default function IngredientsPage() {
   const params = useParams();
@@ -15,7 +16,7 @@ export default function IngredientsPage() {
 
   const { data, loading, filters, setFilters, refresh } =
     useIngredients(establishmentId);
-
+  const { showToast } = useToast();
   const [selected, setSelected] =
     useState<IngredientItemResponse | null>(null);
 
@@ -65,7 +66,10 @@ export default function IngredientsPage() {
             setOpenModal(false);
             setSelected(null);
           }}
-          onSuccess={refresh}
+          onSuccess={() => {
+        refresh();
+        showToast(selected ? "Ingrediente atualizado!" : "Ingrediente criado!", "success");
+          }}
         />
       )}
 

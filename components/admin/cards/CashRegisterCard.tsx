@@ -20,33 +20,32 @@ export function CashRegisterCard({ cash }: Props) {
       <div className="mb-4">
         <p className="text-gray-500 text-sm">Total Vendido</p>
         <p className="text-2xl font-bold text-green-600">
-          {cash.totalSold.toLocaleString("pt-MZ", {
+          {cash.totalSold.toLocaleString("MZ", {
             style: "currency",
             currency: "MZN",
           })}
         </p>
       </div>
+        <div className="border-t pt-4 space-y-2">
+          <p className="text-sm font-semibold text-gray-600">
+            Totais por Método
+          </p>
 
-      <div className="border-t pt-4 space-y-2">
-        <p className="text-sm font-semibold text-gray-600">
-          Totais por Método
-        </p>
-
-        {cash.totalsByPaymentMethod.map((method) => (
-          <div
-            key={method.paymentMethodId}
-            className="flex justify-between text-sm bg-gray-50 p-2 rounded-lg"
-          >
-            <span>{method.paymentMethodName}</span>
-            <span className="font-medium">
-              {method.total.toLocaleString("pt-MZ", {
-                style: "currency",
-                currency: "MZN",
-              })}
-            </span>
-          </div>
-        ))}
-      </div>
+          {cash.totalsByPaymentMethod.map((method) => (
+            <div
+              key={method.paymentMethod} // usar o nome como key
+              className="flex justify-between text-sm bg-gray-50 p-2 rounded-lg"
+            >
+              <span>{method.paymentMethod}</span> {/* nome do método */}
+              <span className="font-medium">
+                {method.total.toLocaleString("MZ", {
+                  style: "currency",
+                  currency: "MZN",
+                })}
+              </span>
+            </div>
+          ))}
+        </div>
     </div>
   );
 }

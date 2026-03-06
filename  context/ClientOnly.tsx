@@ -1,3 +1,4 @@
+// app/components/ClientOnly.tsx
 "use client";
 
 import { useState, useEffect, ReactNode } from "react";

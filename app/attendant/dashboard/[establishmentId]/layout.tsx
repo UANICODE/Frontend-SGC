@@ -3,18 +3,20 @@
 import { AttendantSidebar } from "@/components/attendant/layout/AttendantSidebar";
 import { AttendantNavbar } from "@/components/attendant/layout/AttendantNavbar";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { useRouter, useParams } from "next/navigation";
 import { useEstablishment } from "@/hooks/admin /useEstablishment";
-import { useRouter } from "next/navigation";
 
 export default function AttendantLayout({
   children,
-  params,
-}: any) {
-  const { establishmentId } = params;
-  const { data, loading } =
-    useEstablishment(establishmentId);
-
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
+  const params = useParams();
+
+  const establishmentId = params.establishmentId as string;
+
+  const { data, loading } = useEstablishment(establishmentId);
 
   if (loading) return <PageLoader />;
 

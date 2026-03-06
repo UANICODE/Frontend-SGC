@@ -20,7 +20,7 @@ import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
 
-export function AdminSidebar() {
+export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
   const params = useParams();
   const establishmentId = params?.establishmentId;
   const pathname = usePathname();
@@ -45,6 +45,39 @@ export function AdminSidebar() {
     { name: "Personalização", href: `${basePath}/settings`, icon: <Settings size={18} /> },
   ];
 
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      {/* Topo com logo e nome */}
+      <div className="flex flex-col items-center mb-8">
+        {logo && (
+          <img
+            src={logo}
+            alt={name}
+            className="h-16 w-16 rounded-full object-cover mb-2 shadow-md"
+          />
+        )}
+        {name && <span className="font-bold text-lg text-primary text-center">{name}</span>}
+      </div>
+
+      {/* Links */}
+      <nav className="flex flex-col gap-2 text-sm overflow-hidden">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={`
+              flex items-center gap-3 px-3 py-2 rounded-md transition-colors
+              ${isActive(link.href) ? "bg-primary/10 font-bold text-primary" : "text-gray-700 hover:bg-gray-100"}
+            `}
+          >
+            {link.icon}
+            <span>{link.name}</span>
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+
   return (
     <>
       {/* Botão hambúrguer apenas mobile */}
@@ -56,57 +89,25 @@ export function AdminSidebar() {
       </button>
 
       {/* Sidebar desktop */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-borderLight p-6 h-screen">
-        <h2 className="text-lg font-bold mb-8">Admin</h2>
-        <nav className="flex flex-col gap-4 text-sm">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 ${
-                isActive(link.href) ? "font-bold text-primary" : ""
-              }`}
-            >
-              {link.icon}
-              <span>{link.name}</span>
-            </Link>
-          ))}
-        </nav>
+      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-borderLight p-6 h-screen overflow-y-auto sticky top-0 z-20">
+        <SidebarContent />
       </aside>
 
       {/* Sidebar mobile overlay */}
       {mobileOpen && (
         <>
-          {/* Fundo escuro */}
           <div
             className="fixed inset-0 bg-black bg-opacity-40 z-40"
             onClick={() => setMobileOpen(false)}
           />
 
-          {/* Menu lateral */}
-          <aside className="fixed top-0 left-0 w-64 bg-white h-screen z-50 p-6 shadow-lg">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-lg font-bold">Admin</h2>
+          <aside className="fixed top-0 left-0 w-64 bg-white h-screen z-50 p-6 shadow-lg overflow-y-auto">
+            <div className="flex justify-between items-center mb-6">
               <button onClick={() => setMobileOpen(false)}>
                 <X size={24} />
               </button>
             </div>
-
-            <nav className="flex flex-col gap-4 text-sm">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 ${
-                    isActive(link.href) ? "font-bold text-primary" : ""
-                  }`}
-                  onClick={() => setMobileOpen(false)} // fecha ao clicar
-                >
-                  {link.icon}
-                  <span>{link.name}</span>
-                </Link>
-              ))}
-            </nav>
+            <SidebarContent />
           </aside>
         </>
       )}

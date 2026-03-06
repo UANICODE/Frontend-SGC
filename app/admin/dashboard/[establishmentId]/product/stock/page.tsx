@@ -7,6 +7,7 @@ import { ProductStockItemResponse } from "@/types/admin/product-stock";
 import { ProductStockTable } from "@/components/admin/tables/ ProductStockTable";
 import { UpdateStockModal } from "@/components/admin/modals/UpdateStockModal";
 import { useProductStocks } from "@/hooks/admin /product/stock/ useProductStocks";
+import { useToast } from "@/ context/ToastContext";
 
 export default function ProductStockPage() {
   const params = useParams();
@@ -19,7 +20,7 @@ export default function ProductStockPage() {
   const { data, loading, refresh } = useProductStocks(establishmentId);
   const [selected, setSelected] =
     useState<ProductStockItemResponse | null>(null);
-
+  const { showToast } = useToast();
   return (
     <div className="space-y-10">
       <h1 className="text-3xl font-bold text-primary">Gestão de Stock</h1>
@@ -35,7 +36,10 @@ export default function ProductStockPage() {
           establishmentId={establishmentId}
           item={selected}
           onClose={() => setSelected(null)}
-          onSuccess={refresh} // 🔄 auto reload após atualização
+         onSuccess={() => {
+        refresh();
+        showToast("Stock atualizado com sucesso!", "success");
+      }}
         />
       )}
     </div>

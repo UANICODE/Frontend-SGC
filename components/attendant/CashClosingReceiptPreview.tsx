@@ -2,70 +2,101 @@
 
 import { CashClosingReceipt } from "@/types/attendant/CashRegister";
 
-
 interface Props {
   receipt: CashClosingReceipt;
   onClose: () => void;
-  onPrint: () => void;
 }
 
 export function CashClosingReceiptPreview({
   receipt,
   onClose,
-  onPrint,
 }: Props) {
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white w-96 p-6 rounded-xl space-y-4">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 print:bg-white print:block">
 
-        <div className="text-center">
-          {receipt.establishmentLogoUrl && (
-            <img
-              src={receipt.establishmentLogoUrl}
-              alt="logo"
-              className="h-12 mx-auto mb-2"
-            />
-          )}
+      <div className="bg-white w-96 p-6 rounded-xl space-y-4 print:w-[80mm] print:p-2 print:shadow-none print:rounded-none">
 
-          <h2 className="font-bold">
-            {receipt.establishmentName}
-          </h2>
+        {/* RECIBO POS */}
+        <div id="cash-closing-receipt" className="text-xs leading-tight font-mono">
 
-          <p className="text-xs text-gray-500">
-            {receipt.establishmentAddress}
-          </p>
+          <div className="text-center mb-2">
+            {receipt.establishmentLogoUrl && (
+              <img
+                src={receipt.establishmentLogoUrl}
+                alt="logo"
+                className="h-12 mx-auto mb-1"
+              />
+            )}
 
-          <p className="text-xs text-gray-500">
-            {receipt.establishmentPhone}
-          </p>
-        </div>
+            <p className="font-bold">{receipt.establishmentName}</p>
+            <p>{receipt.establishmentAddress}</p>
+            <p>{receipt.establishmentPhone}</p>
+          </div>
 
-        <div className="border-t pt-3 text-sm space-y-1">
-          <p>Operador: {receipt.userName}</p>
-          <p>Abertura: {new Date(receipt.openedAt).toLocaleString()}</p>
-          <p>Fechamento: {new Date(receipt.closedAt).toLocaleString()}</p>
-        </div>
+          <hr className="border-black my-1" />
 
-        <div className="border-t pt-3 text-sm space-y-1">
-          <p>Total Vendas: € {receipt.totalSales}</p>
-          <p>Total Cancelado: € {receipt.totalCancelled}</p>
-          <p className="font-bold">
-            Total Líquido: € {receipt.netTotal}
-          </p>
-          <p>Total Transações: {receipt.totalTransactions}</p>
-        </div>
+          <div className="space-y-1">
+            <p>Operador: {receipt.userName}</p>
+            <p>Abertura: {new Date(receipt.openedAt).toLocaleString()}</p>
+            <p>Fechamento: {new Date(receipt.closedAt).toLocaleString()}</p>
+          </div>
 
-        <div className="border-t pt-3 text-sm space-y-1">
-          <p className="font-semibold">Por Método:</p>
-          {receipt.payments.map((p, index) => (
-            <div key={index} className="flex justify-between">
-              <span>{p.paymentMethodName}</span>
-              <span>€ {p.total}</span>
+          <hr className="border-black my-1" />
+
+          <div className="space-y-1">
+            <div className="flex justify-between">
+              <span>Total Vendas</span>
+              <span>{receipt.totalSales} MZN</span>
             </div>
-          ))}
+
+            <div className="flex justify-between">
+              <span>Total Cancelado</span>
+              <span>{receipt.totalCancelled} MZN</span>
+            </div>
+
+            <div className="flex justify-between font-bold">
+              <span>Total Líquido</span>
+              <span>{receipt.netTotal} MZN</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Transações</span>
+              <span>{receipt.totalTransactions}</span>
+            </div>
+          </div>
+
+          <hr className="border-black my-1" />
+
+          <div>
+            <p className="font-semibold mb-1">Por Método</p>
+
+            {receipt.payments.map((p, index) => (
+              <div key={index} className="flex justify-between">
+                <span>{p.paymentMethod}</span>
+                <span>{p.amount} MZN</span>
+              </div>
+            ))}
+          </div>
+
+          <hr className="border-black my-2" />
+
+          <p className="text-center italic">
+            Fecho de Caixa
+          </p>
+
+          <p className="text-center italic">
+            SGC-Sistema de Gestao Comercial
+          </p>
+
         </div>
 
-        <div className="flex gap-2 pt-4">
+        {/* BOTÕES (não aparecem na impressão) */}
+        <div className="flex gap-2 pt-4 print:hidden">
           <button
             onClick={onClose}
             className="flex-1 border py-2 rounded-lg"
@@ -74,7 +105,7 @@ export function CashClosingReceiptPreview({
           </button>
 
           <button
-            onClick={onPrint}
+            onClick={handlePrint}
             className="flex-1 bg-black text-white py-2 rounded-lg"
           >
             Imprimir
@@ -82,6 +113,7 @@ export function CashClosingReceiptPreview({
         </div>
 
       </div>
+
     </div>
   );
 }

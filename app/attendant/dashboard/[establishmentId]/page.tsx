@@ -12,38 +12,28 @@ import { useOpenCashRegister } from "@/hooks/attendant/useOpenCashRegister";
 import { closeCashRegister } from "@/service/attendant/closeCash";
 import { createSale } from "@/service/attendant/sale";
 
-import { CashClosingReceipt } from "@/types/attendant/CashRegister";
-
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { CashClosingReceipt } from "@/types/attendant/CashRegister";
+import { useToast } from "@/ context/ToastContext";
+
+import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 export default function AttendantHome() {
   const { establishmentId } = useParams() as any;
   const router = useRouter();
+  const [sellingCashId, setSellingCashId] = useState<string | null>(null);
+  const { data: establishment } = useEstablishment(establishmentId);
+  const toast = useToast();
+  const [closingReceipt, setClosingReceipt] = useState<CashClosingReceipt | null>(null);
+  const [closingId, setClosingId] = useState<string | null>(null);
 
-  const { data: establishment } =
-    useEstablishment(establishmentId);
-
-  const [closingReceipt, setClosingReceipt] =
-    useState<CashClosingReceipt | null>(null);
-
-  const [closingId, setClosingId] =
-    useState<string | null>(null);
-
-  const { execute: executeOpenCash, loading: opening } =
-    useOpenCashRegister();
+  const { execute: executeOpenCash, loading: opening } = useOpenCashRegister();
 
   const [today, setToday] = useState(false);
-  const [status, setStatus] =
-    useState<"ABERTO" | "FECHADO" | null>(null);
+  const [status, setStatus] = useState<"ABERTO" | "FECHADO" | null>(null);
 
-  const {
-    data,
-    loading,
-    error,
-    openCash,
-    refresh,
-  } = useCashRegisters({
+  const { data, loading, error, openCash, refresh } = useCashRegisters({
     establishmentId,
     today,
     status,
@@ -52,33 +42,36 @@ export default function AttendantHome() {
   const [page, setPage] = useState(1);
   const pageSize = 6;
 
-  const paginated = data.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+  // Filtra duplicatas antes de paginar
+  const uniqueCashRegisters = useMemo(() => {
+    return Array.from(new Map(data.map(item => [item.id, item])).values());
+  }, [data]);
 
-  const totalPages = Math.ceil(data.length / pageSize);
+  const paginated = useMemo(() => {
+    return uniqueCashRegisters.slice((page - 1) * pageSize, page * pageSize);
+  }, [uniqueCashRegisters, page]);
+
+  const totalPages = Math.ceil(uniqueCashRegisters.length / pageSize);
 
   async function handleOpenCash() {
     try {
       await executeOpenCash(establishmentId);
+      toast.showToast("Caixa aberto com sucesso!", "success");
       await refresh();
     } catch (error: any) {
-      alert(error.message);
+      toast.showToast(error.message || "Erro ao abrir caixa", "error");
     }
   }
 
   async function handleCloseCash(cashId: string) {
     try {
       setClosingId(cashId);
-
       const receipt = await closeCashRegister(cashId);
-
       setClosingReceipt(receipt);
-
+      toast.showToast("Caixa fechado com sucesso!", "success");
       await refresh();
     } catch (error: any) {
-      alert(error.message);
+      toast.showToast(error.message || "Erro ao fechar caixa", "error");
     } finally {
       setClosingId(null);
     }
@@ -86,16 +79,16 @@ export default function AttendantHome() {
 
   async function handleSell(cashId: string) {
     try {
-      const sale = await createSale({
-        establishmentId,
-        cashRegisterId: cashId,
-      });
-
+      setSellingCashId(cashId);
+      const sale = await createSale({ establishmentId, cashRegisterId: cashId });
+      toast.showToast("Venda iniciada!", "success");
       router.push(
-        `/attendant/${establishmentId}/sales?saleId=${sale.saleId}&cashRegisterId=${cashId}`
+        `/attendant/dashboard/${establishmentId}/sales?saleId=${sale.saleId}&cashRegisterId=${cashId}`
       );
     } catch (error: any) {
-      alert(error.message);
+      toast.showToast(error.message || "Erro ao iniciar venda", "error");
+    } finally {
+      setSellingCashId(null);
     }
   }
 
@@ -103,19 +96,16 @@ export default function AttendantHome() {
 
   return (
     <div className="space-y-8">
-
       <div className="flex justify-between items-center">
-        <h1
-          className="text-2xl font-bold"
-          style={{ color: establishment.primaryColor }}
-        >
+        <h1 className="text-2xl font-bold" style={{ color: establishment.primaryColor }}>
           Meus Caixas
         </h1>
 
         <button
           onClick={refresh}
-          className="px-4 py-2 rounded-lg border text-sm hover:bg-gray-100"
+          className="px-4 py-2 rounded-lg border text-sm flex items-center gap-2 hover:bg-gray-100"
         >
+          <ArrowPathIcon className="w-5 h-5" />
           Atualizar
         </button>
       </div>
@@ -123,7 +113,7 @@ export default function AttendantHome() {
       <CashRegisterFilters
         today={today}
         status={status}
-        onTodayChange={() => setToday((prev) => !prev)}
+        onTodayChange={() => setToday(prev => !prev)}
         onStatusChange={setStatus}
       />
 
@@ -131,52 +121,48 @@ export default function AttendantHome() {
         <button
           onClick={handleOpenCash}
           disabled={opening}
-          className="px-6 py-3 rounded-xl text-white font-medium disabled:opacity-50"
-          style={{
-            backgroundColor: establishment.primaryColor,
-          }}
+          className="px-6 py-3 rounded-xl text-white flex items-center justify-center gap-2 disabled:opacity-50"
+          style={{ backgroundColor: establishment.primaryColor }}
         >
+          <PlusIcon className="w-5 h-5" />
           {opening ? "Abrindo..." : "Abrir Caixa"}
         </button>
       )}
 
-      {error && (
-        <div className="bg-red-100 text-red-600 p-4 rounded-xl">
-          {error}
+      {error && <div className="bg-red-100 text-red-600 p-4 rounded-xl">{error}</div>}
+
+      {paginated.length === 0 ? (
+        <div className="bg-gray-100 border rounded-xl p-8 text-center text-gray-500">
+          Não existem caixas para os filtros selecionados.
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {paginated.map((cash, idx) => (
+            <CashRegisterCard
+              key={`${cash.id}-${idx}`}
+              cash={cash}
+              primaryColor={establishment.primaryColor}
+              secondaryColor={establishment.secondaryColor}
+              onSell={handleSell}
+              onClose={handleCloseCash}
+              closing={closingId === cash.id}
+              sellingCashId={sellingCashId}
+            />
+          ))}
         </div>
       )}
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {paginated.map((cash) => (
-          <CashRegisterCard
-            key={cash.id}
-            cash={cash}
-            primaryColor={establishment.primaryColor}
-            secondaryColor={establishment.secondaryColor}
-            onSell={handleSell}
-            onClose={handleCloseCash}
-            closing={closingId === cash.id}
-          />
-        ))}
-      </div>
-
       {totalPages > 1 && (
         <div className="flex justify-center gap-2">
-          {Array.from({ length: totalPages }).map(
-            (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`px-3 py-1 rounded ${
-                  page === i + 1
-                    ? "bg-black text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {i + 1}
-              </button>
-            )
-          )}
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              className={`px-3 py-1 rounded ${page === i + 1 ? "bg-black text-white" : "bg-gray-200"}`}
+            >
+              {i + 1}
+            </button>
+          ))}
         </div>
       )}
 
@@ -184,10 +170,8 @@ export default function AttendantHome() {
         <CashClosingReceiptPreview
           receipt={closingReceipt}
           onClose={() => setClosingReceipt(null)}
-          onPrint={() => window.print()}
         />
       )}
-
     </div>
   );
 }

@@ -8,6 +8,7 @@ import { ProductFilters } from "@/components/admin/ProductFilters";
 import { ProductsTable } from "@/components/admin/tables/ProductsTable";
 import { ProductItemResponse } from "@/types/admin/product";
 import { useProducts } from "@/hooks/admin /product/useProducts";
+import { useToast } from "@/ context/ToastContext";
 
 
 export default function ProductsPage() {
@@ -18,7 +19,7 @@ export default function ProductsPage() {
     : establishmentIdParam;
 
   const productsHook = establishmentId ? useProducts(establishmentId) : null;
-
+  const { showToast } = useToast();
   const [openCreate, setOpenCreate] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItemResponse | null>(null);
 
@@ -51,7 +52,10 @@ export default function ProductsPage() {
         <CreateProductModal
           establishmentId={establishmentId}
           onClose={() => setOpenCreate(false)}
-          onSuccess={refresh}
+       onSuccess={() => {
+        refresh();
+        showToast(selectedProduct ? "Produto atualizado!" : "Produto criado!", "success");
+      }}
         />
       )}
 

@@ -26,6 +26,65 @@
 html {
   color-scheme: light;
 }
+/* IMPRESSÃO POS */
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  #cash-closing-receipt,
+  #cash-closing-receipt * {
+    visibility: visible;
+  }
+
+  #cash-closing-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+}
+
+/* TAMANHO DA PÁGINA */
+@page {
+  size: 80mm auto;
+  margin: 0;
+}
+
+
+
+@media print {
+
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt-print,
+  #receipt-print * {
+    visibility: visible;
+  }
+
+  #receipt-print {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm;
+  }
+
+}
+
+@page {
+  size: 80mm auto;
+  margin: 0;
+}
+
+
+
+
 
 body {
   @apply bg-backgroundLight text-textPrimaryLight;
