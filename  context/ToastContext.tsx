@@ -38,29 +38,30 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
 
-  {mounted &&
-  createPortal(
-    <div className="fixed top-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none">
-      <AnimatePresence>
-        {toasts.map((toast) => (
-          <motion.div
-            key={toast.id}
-            initial={{ opacity: 0, y: -25, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.25 }}
-            className={`pointer-events-auto px-6 py-3 rounded-xl shadow-lg text-white max-w-md w-auto ${
-              toast.type === "success" ? "bg-green-600" : "bg-red-600"
-            }`}
-          >
-            {toast.message}
-          </motion.div>
-        ))}
-      </AnimatePresence>
-    </div>,
-    document.body
-  )}
-
+      {mounted &&
+        createPortal(
+          <div className="fixed top-6 left-0 right-0 flex justify-center items-start pointer-events-none z-50">
+            <div className="flex flex-col items-center gap-4 w-auto max-w-md pointer-events-auto">
+              <AnimatePresence>
+                {toasts.map((toast) => (
+                  <motion.div
+                    key={toast.id}
+                    initial={{ opacity: 0, y: -25, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.25 }}
+                    className={`px-6 py-3 rounded-xl shadow-lg text-white w-full ${
+                      toast.type === "success" ? "bg-green-600" : "bg-red-600"
+                    }`}
+                  >
+                    {toast.message}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>,
+          document.body
+        )}
     </ToastContext.Provider>
   );
 }
