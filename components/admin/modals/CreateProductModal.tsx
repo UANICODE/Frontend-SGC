@@ -107,11 +107,12 @@ export function CreateProductModal({
   allowNegativeStock: form.allowNegativeStock,
   active: form.active,
    ingredients: productType === "composite"
-          ? form.ingredients?.map(i => ({
-              ingredientId: i.ingredientId,
-              quantityUsed: i.quantityUsed,
-            }))
-          : null,
+  ? form.ingredients?.map(i => ({
+      ingredientId: i.ingredientId,
+      ingredientName: i.ingredientName, // ✅ adicionado
+      quantityUsed: i.quantityUsed,
+  }))
+  : null,
 };
 
       await updateProduct(payload);
