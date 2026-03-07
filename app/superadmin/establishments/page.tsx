@@ -5,8 +5,11 @@ import { EstablishmentCard } from "@/components/superadmin/cards/EstablishmentCa
 import { useListEstablishments } from "@/hooks/superadmin/useListEstablishments";
 import { CreateEstablishmentModal } from "@/components/superadmin/modal/CreateEstablishmentModal";
 import { Plus } from "lucide-react";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
 export default function ListEstablishmentsPage() {
+    useRoleGuard([UserRole.SUPERADMIN]);
   const { data, loading } = useListEstablishments();
   const [open, setOpen] = useState(false);
 

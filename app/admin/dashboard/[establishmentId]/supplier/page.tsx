@@ -9,9 +9,13 @@ import { changeSupplierStatus } from "@/service/admin/supplier";
 import { SupplierItemResponse } from "@/types/admin/supplier";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 export default function SuppliersPage() {
 
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams<{ establishmentId: string }>();
 
   const establishmentId = params.establishmentId;

@@ -10,11 +10,18 @@ import { Receipt } from "@/types/attendant/sale/Receipt";
 import { PaymentModal } from "@/components/attendant/modals/PaymentModal";
 import { ReceiptPreview } from "@/components/attendant/ReceiptPreview";
 import { useToast } from "@/ context/ToastContext";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
+
 
 import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
 import { DollarSign, Minus, MinusIcon, Plus, ShoppingCart, ShoppingCartIcon, Trash2, TrashIcon } from "lucide-react";
 
 export default function SalesPage() {
+
+  useRoleGuard([UserRole.ATENDENTE]);
+
   const params = useParams<{ establishmentId: string }>();
   const search = useSearchParams();
   const router = useRouter();

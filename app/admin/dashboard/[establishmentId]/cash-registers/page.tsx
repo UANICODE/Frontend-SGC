@@ -1,10 +1,13 @@
 "use client";
 
 import { CashRegisterCard } from "@/components/admin/cards/CashRegisterCard";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { useOpenCashRegisters } from "@/hooks/admin /cash-register/useOpenCashRegisters";
 import { useParams } from "next/navigation";
 
 export default function OpenCashRegistersPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams<{ establishmentId: string }>();
   const establishmentId = params.establishmentId;
 

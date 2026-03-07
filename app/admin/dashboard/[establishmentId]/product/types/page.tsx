@@ -6,8 +6,12 @@ import { ProductTypeModal } from "@/components/admin/modals/ProductTypeModal";
 import { ProductTypesTable } from "@/components/admin/tables/ProductTypesTable";
 import { ProductTypeResponse } from "@/types/admin/product-types";
 import { useProductTypes } from "@/hooks/admin /product/types/useProductTypes";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 export default function ProductTypesPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams();
 
   // ✅ Garante que temos apenas uma string

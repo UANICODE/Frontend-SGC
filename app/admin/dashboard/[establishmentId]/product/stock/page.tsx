@@ -8,8 +8,12 @@ import { ProductStockTable } from "@/components/admin/tables/ ProductStockTable"
 import { UpdateStockModal } from "@/components/admin/modals/UpdateStockModal";
 import { useProductStocks } from "@/hooks/admin /product/stock/ useProductStocks";
 import { useToast } from "@/ context/ToastContext";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 export default function ProductStockPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams();
   const establishmentId = Array.isArray(params.establishmentId)
     ? params.establishmentId[0]

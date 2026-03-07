@@ -9,9 +9,13 @@ import { ProductsTable } from "@/components/admin/tables/ProductsTable";
 import { ProductItemResponse } from "@/types/admin/product";
 import { useProducts } from "@/hooks/admin /product/useProducts";
 import { useToast } from "@/ context/ToastContext";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 
 export default function ProductsPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams();
   const establishmentIdParam = params?.establishmentId;
   const establishmentId = Array.isArray(establishmentIdParam)

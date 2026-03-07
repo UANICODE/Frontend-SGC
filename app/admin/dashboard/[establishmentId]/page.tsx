@@ -6,8 +6,12 @@ import { useInventoryReport } from "@/hooks/admin /useInventoryReport";
 import { formatCurrency } from "@/lib/format";
 import { useParams } from "next/navigation";
 import { DollarSign, XCircle, TrendingUp, CreditCard, Package, Layers, CheckCircle } from "lucide-react";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 export default function DashboardHome() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams<{ establishmentId: string }>();
   const establishmentId = params.establishmentId;
 

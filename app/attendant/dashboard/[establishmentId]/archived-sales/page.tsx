@@ -17,8 +17,16 @@ import {
   TagIcon,
   CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
+
 
 export default function ArchivedSalesPage() {
+
+  useRoleGuard([UserRole.ATENDENTE]);
+
+
   const { establishmentId, cashRegisterId } = useParams() as any;
   const router = useRouter();
   const toast = useToast();

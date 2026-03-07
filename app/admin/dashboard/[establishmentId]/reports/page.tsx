@@ -9,8 +9,13 @@ import { openSalesReportWindow } from "@/utils/reports/salesReportWindow";
 import { openInventoryReportWindow } from "@/utils/reports/inventoryReportWindow";
 import { useParams } from "next/navigation";
 import { useToast } from "@/ context/ToastContext";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
+
 
 export default function ReportsPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams<{ establishmentId: string }>();
   const establishmentId = params.establishmentId;
   const { showToast } = useToast();

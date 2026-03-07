@@ -9,8 +9,12 @@ import { useIngredients } from "@/hooks/admin /product/ingredient/useIngredients
 import { IngredientModal } from "@/components/admin/modals/ IngredientModal";
 import { IngredientsTable } from "@/components/admin/tables/IngredientsTable";
 import { useToast } from "@/ context/ToastContext";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
 
 export default function IngredientsPage() {
+    useRoleGuard([UserRole.ADMIN]);
   const params = useParams();
   const establishmentId = params.establishmentId as string;
 

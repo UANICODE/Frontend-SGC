@@ -18,8 +18,12 @@ import { CashClosingReceipt } from "@/types/attendant/CashRegister";
 import { useToast } from "@/ context/ToastContext";
 
 import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
 export default function AttendantHome() {
+    useRoleGuard([UserRole.ATENDENTE]);
+
   const { establishmentId } = useParams() as any;
   const router = useRouter();
   const [sellingCashId, setSellingCashId] = useState<string | null>(null);

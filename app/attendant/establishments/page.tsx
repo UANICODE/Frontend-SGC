@@ -3,8 +3,13 @@
 import { useAttendantEstablishments } from "@/hooks/attendant/useAttendantEstablishments";
 import { EstablishmentCard } from "@/components/attendant/cards/EstablishmentCard";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { UserRole } from "@/enum/enum";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+
+
 
 export default function AttendantEstablishmentsPage() {
+  useRoleGuard([UserRole.ATENDENTE]);
   const { data, loading } = useAttendantEstablishments();
 
   if (loading) return <PageLoader />;

@@ -1,9 +1,15 @@
 "use client";
 
 import { CardEstablishment } from "@/components/admin/cards/CardEstablishment";
+import { UserRole } from "@/enum/enum";
 import { useAdminEstablishments } from "@/hooks/admin /useAdminEstablishments";
+import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
 export default function EstablishmentsPage() {
+
+  // 🔒 Protege a página apenas para ADMIN e SUPERADMIN
+  useRoleGuard([UserRole.ADMIN]);
+
   const { data, loading } = useAdminEstablishments();
 
   // ⚡ Loader centralizado
