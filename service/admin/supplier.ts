@@ -38,7 +38,7 @@ export async function changeSupplierStatus(
   data: ChangeSupplierStatusRequest
 ) {
   try {
-    await api.put("/admin/suppliers/change-status", data);
+    await api.put("/api/admin/suppliers/change-status", data);
   } catch (error) {
     handleHttpError(error);
   }

@@ -43,7 +43,7 @@ export async function updateIngredient(
   payload: UpdateIngredientRequest
 ): Promise<void> {
   try {
-    await api.put("/admin/ingredients", payload);
+    await api.put("/api/admin/ingredients", payload);
   } catch (error) {
     handleHttpError(error);
   }
