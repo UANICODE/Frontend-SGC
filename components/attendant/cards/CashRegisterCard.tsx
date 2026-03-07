@@ -1,6 +1,7 @@
 "use client";
 
 import { CashRegister } from "@/types/attendant/CashRegister";
+import { ShoppingCart, Lock, Clock, DollarSign, Ban } from "lucide-react";
 
 interface Props {
   cash: CashRegister;
@@ -34,24 +35,33 @@ export function CashRegisterCard({
       style={isOpen ? { borderColor: primaryColor } : undefined}
     >
       <div className="flex justify-between mb-3">
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 flex items-center gap-1">
+          <Clock size={14} />
           {new Date(cash.openedAt).toLocaleString()}
         </span>
 
         <span
-          className={`text-xs px-3 py-1 rounded-full font-semibold ${
+          className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1 ${
             isOpen
               ? "bg-green-100 text-green-700"
               : "bg-gray-200 text-gray-600"
           }`}
         >
+          <Lock size={14} />
           {cash.status}
         </span>
       </div>
 
       <div className="space-y-1 text-sm">
-        <p>Total Vendas: <strong>MZN {cash.totalSalesCalculated}</strong></p>
-        <p>Cancelado: <strong>MZN {cash.totalCancelled}</strong></p>
+        <p className="flex items-center gap-2">
+          <DollarSign size={16} />
+          Total Vendas: <strong>MZN {cash.totalSalesCalculated}</strong>
+        </p>
+
+        <p className="flex items-center gap-2">
+          <Ban size={16} />
+          Cancelado: <strong>MZN {cash.totalCancelled}</strong>
+        </p>
       </div>
 
       {isOpen && (
@@ -68,14 +78,18 @@ export function CashRegisterCard({
             {isSelling && (
               <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
             )}
+
+            {!isSelling && <ShoppingCart size={18} />}
+
             {isSelling ? "Abrindo Venda..." : "Vender"}
           </button>
 
           <button
             onClick={() => onClose(cash.id)}
             disabled={closing}
-            className="mt-2 w-full py-2 rounded-xl bg-red-600 text-white transform transition-all duration-200 hover:scale-105 disabled:opacity-50"
+            className="mt-2 w-full py-2 rounded-xl bg-red-600 text-white flex justify-center items-center gap-2 transform transition-all duration-200 hover:scale-105 disabled:opacity-50"
           >
+            <Lock size={18} />
             {closing ? "Fechando..." : "Fechar Caixa"}
           </button>
         </>

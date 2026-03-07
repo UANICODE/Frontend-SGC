@@ -7,6 +7,7 @@ import { ProductFilters } from "../ProductFilters";
 import { useToast } from "@/ context/ToastContext";
 import { useProducts } from "@/hooks/admin /product/useProducts";
 
+
 interface ProductsTableProps {
   establishmentId: string;
 }
@@ -64,7 +65,7 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-gray-200">
-          <table className="w-full border-collapse text-left min-w-[1200px]">
+          <table className="w-full border-collapse text-left min-w-[1200px]" style={{ borderSpacing: 0 }}>
             <thead>
               <tr className="bg-gray-100">
                 <th className="p-3 border-b font-semibold text-sm">ID</th>
@@ -81,12 +82,16 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
             </thead>
             <tbody>
               {filteredProducts.map((p, index) => (
-               <tr 
-                key={p.id} 
-                className="border-b transition-colors"
-              >
-                  <td className="p-3 text-sm text-gray-600">{p.id.substring(0, 8)}...</td>
-                  <td className="p-3">
+                <tr 
+                  key={p.id} 
+                  className="border-b"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    transition: 'none'
+                  }}
+                >
+                  <td className="p-3 text-sm text-gray-600" style={{ backgroundColor: 'inherit' }}>{p.id.substring(0, 8)}...</td>
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     {p.imageurl ? (
                       <img
                         src={p.imageurl}
@@ -99,19 +104,19 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
                       </div>
                     )}
                   </td>
-                  <td className="p-3 font-medium">{p.name}</td>
-                  <td className="p-3">
+                  <td className="p-3 font-medium" style={{ backgroundColor: 'inherit' }}>{p.name}</td>
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       p.ingredients?.length && p.ingredients.length > 0
-                        ? "bg-purple-100 text-purple-700" 
+                        ? " text-purple-700" 
                         : "bg-gray-100 text-gray-700"
                     }`}>
                       {p.ingredients?.length && p.ingredients.length > 0 ? "Composto" : "Simples"}
                     </span>
                   </td>
-                  <td className="p-3 text-sm">{p.categoryName || "-"}</td>
-                  <td className="p-3 font-medium">{p.price?.toFixed(2) || "0.00"} MT</td>
-                  <td className="p-3">
+                  <td className="p-3 text-sm" style={{ backgroundColor: 'inherit' }}>{p.categoryName || "-"}</td>
+                  <td className="p-3 font-medium" style={{ backgroundColor: 'inherit' }}>{p.price?.toFixed(2) || "0.00"} MT</td>
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     {p.stockQuantity !== null && p.stockQuantity !== undefined ? (
                       <span className={`text-sm ${
                         p.stockQuantity > 0 ? "text-green-600" : "text-red-600"
@@ -122,16 +127,16 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
                       <span className="text-sm text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       p.active 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-red-100 text-red-700"
+                        ? " text-green-700" 
+                        : " text-red-700"
                     }`}>
                       {p.active ? "Ativo" : "Inativo"}
                     </span>
                   </td>
-                  <td className="p-3">
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     {p.ingredients?.length && p.ingredients.length > 0 ? (
                       <div className="max-w-[200px]">
                         {p.ingredients.slice(0, 2).map((i, idx) => (
@@ -149,11 +154,11 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
                       <span className="text-sm text-gray-400">-</span>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="p-3" style={{ backgroundColor: 'inherit' }}>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleEdit(p)}
-                        className="px-3 py-1.5 bg-yellow-400 text-white rounded-md text-sm font-medium hover:bg-yellow-500 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+                        className="px-3 py-1.5  text-white rounded-md text-sm font-medium hover:bg-yellow-500 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-yellow-300"
                         disabled={loading}
                       >
                         Editar
@@ -164,7 +169,7 @@ export function ProductsTable({ establishmentId }: ProductsTableProps) {
                         className={`px-3 py-1.5 rounded-md text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 ${
                           deletingId === p.id
                             ? "bg-gray-400 cursor-not-allowed focus:ring-gray-300"
-                            : "bg-red-500 hover:bg-red-600 focus:ring-red-300"
+                            : " hover:bg-red-600 focus:ring-red-300"
                         }`}
                       >
                         {deletingId === p.id ? "..." : "Excluir"}

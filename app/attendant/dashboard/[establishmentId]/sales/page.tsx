@@ -11,7 +11,8 @@ import { PaymentModal } from "@/components/attendant/modals/PaymentModal";
 import { ReceiptPreview } from "@/components/attendant/ReceiptPreview";
 import { useToast } from "@/ context/ToastContext";
 
-import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
+import { DollarSign, Minus, MinusIcon, Plus, ShoppingCart, ShoppingCartIcon, Trash2, TrashIcon } from "lucide-react";
 
 export default function SalesPage() {
   const params = useParams<{ establishmentId: string }>();
@@ -169,74 +170,106 @@ export default function SalesPage() {
         </div>
       </div>
       {/* ================= VENDA ================= */}
-      <div className="w-96 bg-white p-6 rounded-2xl shadow space-y-4">
-        {sale?.items.length === 0 && <p className="text-gray-400 text-center">Nenhum item adicionado</p>}
+     
+<div className="w-96 bg-white p-6 rounded-2xl shadow space-y-4">
+  {sale?.items.length === 0 && (
+    <p className="text-gray-400 text-center flex items-center justify-center gap-2">
+      <ShoppingCart size={18} />
+      Nenhum item adicionado
+    </p>
+  )}
 
-        {sale?.items.map((item) => (
-          <div key={item.itemId} className="border-b pb-3">
-            <div className="flex justify-between font-medium">
-              <span>{item.productName}</span>
-              <span>MZN {item.subtotal}</span>
-            </div>
+  {sale?.items.map((item) => (
+    <div key={item.itemId} className="border-b pb-3">
+      <div className="flex justify-between font-medium">
+        <span className="flex items-center gap-2">
+          <ShoppingCart
+           size={16} />
+          {item.productName}
+        </span>
 
-            <div className="flex items-center gap-2 mt-2">
-              <button
-                onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
-                className="px-2 border rounded"
-                disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
-              >
-                -
-              </button>
+        <span className="flex items-center gap-1">
+          <DollarSign size={16} />
+          MZN {item.subtotal}
+        </span>
+      </div>
 
-              <span>{item.quantity}</span>
+      <div className="flex items-center gap-2 mt-2">
+        <button
+          onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
+          className="px-2 border rounded flex items-center justify-center"
+          disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
+        >
+          <Minus size={16} />
+        </button>
 
-              <button
-                onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
-                className="px-2 border rounded"
-                disabled={processingItemIds.includes(item.itemId)}
-              >
-                +
-              </button>
+        <span>{item.quantity}</span>
 
-              <button
-                onClick={() => handleRemove(item.itemId)}
-                className="ml-auto text-red-500 text-sm"
-                disabled={processingItemIds.includes(item.itemId)}
-              >
-                {processingItemIds.includes(item.itemId) ? "Processando..." : "Remover"}
-              </button>
-            </div>
-          </div>
-        ))}
+        <button
+          onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
+          className="px-2 border rounded flex items-center justify-center"
+          disabled={processingItemIds.includes(item.itemId)}
+        >
+          <Plus size={16} />
+        </button>
 
-        {/* TOTAIS */}
-        <div className="border-t pt-4 space-y-1 text-sm">
-          <p>Subtotal: MZN {sale?.subtotal}</p>
-          <p>Desconto: MZN {sale?.discount}</p>
-          <p className="font-bold text-lg">Total: MZN {sale?.total}</p>
-        </div>
+        <button
+          onClick={() => handleRemove(item.itemId)}
+          className="ml-auto text-red-500 text-sm flex items-center gap-1"
+          disabled={processingItemIds.includes(item.itemId)}
+        >
+          <Trash2 size={16} />
+          {processingItemIds.includes(item.itemId)
+            ? "Processando..."
+            : "Remover"}
+        </button>
+      </div>
+    </div>
+  ))}
+
+  {/* TOTAIS */}
+  <div className="border-t pt-4 space-y-1 text-sm">
+    <p className="flex items-center gap-1">
+      <DollarSign size={16} />
+      Subtotal: MZN {sale?.subtotal}
+    </p>
+
+    <p className="flex items-center gap-1">
+      <DollarSign size={16} />
+      Desconto: MZN {sale?.discount}
+    </p>
+
+    <p className="font-bold text-lg flex items-center gap-1">
+      <DollarSign size={18} />
+      Total: MZN {sale?.total}
+    </p>
+  </div>
 
         {/* AÇÕES */}
         <div className="space-y-2 pt-2">
           <button
             onClick={handleArchiveAndRedirect}
-            className="w-full border py-2 rounded-xl flex items-center gap-2 justify-center"
+            className="w-full bg-yellow-300 text-white py-2 rounded-xl flex items-center gap-2 justify-center
+            transition-all duration-200 hover:bg-yellow-500 hover:scale-[1.02] active:scale-[0.98]"
           >
             <ArchiveBoxIcon className="w-5 h-5" />
             Arquivar
           </button>
 
-          <button
-            disabled={sale?.items.length === 0 || finalizing}
-            onClick={() => setShowPayment(true)}
-            className={`w-full bg-green-600 text-white py-3 rounded-xl disabled:opacity-50 flex justify-center items-center gap-2`}
-          >
-            {finalizing && (
-              <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-            )}
-            {!finalizing && <CheckCircleIcon className="w-5 h-5" />}
-            {finalizing ? "Finalizando..." : "Finalizar Venda"}
-          </button>
+       <button
+        disabled={sale?.items.length === 0 || finalizing}
+        onClick={() => setShowPayment(true)}
+        className={`w-full bg-green-300 text-white py-3 rounded-xl disabled:opacity-50 flex justify-center items-center gap-2
+        transition-all duration-200 hover:bg-green-500 hover:scale-[1.02] active:scale-[0.98]`}
+      >
+        {finalizing && (
+          <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+        )}
+
+        {!finalizing && <CheckCircleIcon className="w-5 h-5" />}
+
+        {finalizing ? "Finalizando..." : "Finalizar Venda"}
+      </button>
         </div>
       </div>
 

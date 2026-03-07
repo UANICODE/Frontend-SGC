@@ -5,7 +5,6 @@ import { useSuperAdminDashboard } from "@/hooks/superadmin/useSuperAdminDashboar
 export default function SuperAdminDashboardPage() {
   const {
     loading,
-    salesToday,
     activeEstablishments,
     inactiveEstablishments,
     usersByEstablishment,

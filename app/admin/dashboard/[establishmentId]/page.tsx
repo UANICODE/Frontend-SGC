@@ -1,10 +1,11 @@
 "use client";
 
 import { KpiCard } from "@/components/admin/cards/KpiCard";
-import { useInventoryReport } from "@/hooks/admin /useInventoryReport";
 import { useSalesReport } from "@/hooks/admin /useSalesReport";
+import { useInventoryReport } from "@/hooks/admin /useInventoryReport";
 import { formatCurrency } from "@/lib/format";
 import { useParams } from "next/navigation";
+import { DollarSign, XCircle, TrendingUp, CreditCard, Package, Layers, CheckCircle } from "lucide-react";
 
 export default function DashboardHome() {
   const params = useParams<{ establishmentId: string }>();
@@ -39,12 +40,10 @@ export default function DashboardHome() {
         <h2 className="text-xl sm:text-2xl font-semibold text-primary">
           Resumo Financeiro
         </h2>
-
         <p className="text-sm sm:text-base text-textSecondaryLight mt-1">
           Período: {new Date(sales.startDate).toLocaleDateString()} até{" "}
           {new Date(sales.endDate).toLocaleDateString()}
         </p>
-
         <p className="text-xs sm:text-sm text-textSecondaryLight mt-1">
           Processado em: {new Date(sales.generatedAt).toLocaleString()}
         </p>
@@ -57,10 +56,10 @@ export default function DashboardHome() {
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <KpiCard title="Receita Bruta" value={formatCurrency(sales.totalSales ?? 0)} />
-          <KpiCard title="Cancelado" value={formatCurrency(sales.totalCancelled ?? 0)} />
-          <KpiCard title="Receita Líquida" value={formatCurrency(sales.netTotal ?? 0)} />
-          <KpiCard title="Ticket Médio" value={formatCurrency(sales.averageTicket ?? 0)} />
+          <KpiCard title="Receita Bruta" value={formatCurrency(sales.totalSales ?? 0)} icon={DollarSign} />
+          <KpiCard title="Cancelado" value={formatCurrency(sales.totalCancelled ?? 0)} icon={XCircle} />
+          <KpiCard title="Receita Líquida" value={formatCurrency(sales.netTotal ?? 0)} icon={TrendingUp} />
+          <KpiCard title="Ticket Médio" value={formatCurrency(sales.averageTicket ?? 0)} icon={CreditCard} />
         </div>
       </div>
 
@@ -71,10 +70,10 @@ export default function DashboardHome() {
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <KpiCard title="Total Transações" value={sales.totalTransactions ?? 0} />
-          <KpiCard title="Total Produtos" value={inventory.totalProducts ?? 0} />
-          <KpiCard title="Quantidade em Estoque" value={inventory.totalStockQuantity ?? 0} />
-          <KpiCard title="Produtos com Controle (%)" value={`${stockControlPercentage}%`} />
+          <KpiCard title="Total Transações" value={sales.totalTransactions ?? 0} icon={CreditCard} />
+          <KpiCard title="Total Produtos" value={inventory.totalProducts ?? 0} icon={Package} />
+          <KpiCard title="Quantidade em Estoque" value={inventory.totalStockQuantity ?? 0} icon={Layers} />
+          <KpiCard title="Produtos com Controle (%)" value={`${stockControlPercentage}%`} icon={CheckCircle} />
         </div>
       </div>
 
@@ -88,7 +87,6 @@ export default function DashboardHome() {
           <p><strong>Nome:</strong> {inventory.establishmentName ?? "-"}</p>
           <p><strong>Endereço:</strong> {inventory.address ?? "-"}</p>
           <p><strong>Telefone:</strong> {inventory.phone ?? "-"}</p>
-          
         </div>
       </div>
 

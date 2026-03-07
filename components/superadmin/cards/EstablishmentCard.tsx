@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ListEstablishmentsResponse } from "@/types/superadmin/establishment";
+import { Mail, Phone, CheckCircle, XCircle } from "lucide-react";
 
 interface Props {
   establishment: ListEstablishmentsResponse;
@@ -9,12 +9,11 @@ interface Props {
 
 export function EstablishmentCard({ establishment }: Props) {
   return (
-    <div className="bg-card border rounded-xl p-5 flex flex-col gap-4">
-
+    <div className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col gap-4 shadow hover:shadow-lg transition">
+      
       {/* Logo + Nome */}
       <div className="flex items-center gap-4">
-
-        <div className="w-16 h-16 rounded-lg overflow-hidden border flex items-center justify-center bg-muted shrink-0">
+        <div className="w-16 h-16 rounded-lg overflow-hidden border flex items-center justify-center bg-gray-50 shrink-0">
           {establishment.logoUrl ? (
             <img
               src={establishment.logoUrl}
@@ -22,53 +21,35 @@ export function EstablishmentCard({ establishment }: Props) {
               className="w-full h-full object-cover"
             />
           ) : (
-            <span className="text-xs text-muted-foreground">
-              Sem Logo
-            </span>
+            <span className="text-xs text-gray-400">Sem Logo</span>
           )}
         </div>
 
         <div className="min-w-0">
-          <h3 className="font-semibold truncate">
-            {establishment.tradeName}
-          </h3>
-          <p className="text-sm text-muted-foreground truncate">
-            {establishment.legalName}
-          </p>
+          <h3 className="font-semibold text-gray-900 truncate">{establishment.tradeName}</h3>
+          <p className="text-sm text-gray-500 truncate">{establishment.legalName}</p>
         </div>
       </div>
 
       {/* Informações */}
       <div className="text-sm space-y-1">
-        <p className="truncate">
-          <span className="text-muted-foreground">Email:</span>{" "}
-          {establishment.email}
+        <p className="flex items-center gap-2 truncate">
+          <Mail size={14} className="text-gray-400" /> {establishment.email}
         </p>
 
-        <p className="truncate">
-          <span className="text-muted-foreground">Telefone:</span>{" "}
-          {establishment.phone || "-"}
+        <p className="flex items-center gap-2 truncate">
+          <Phone size={14} className="text-gray-400" /> {establishment.phone || "-"}
         </p>
 
-        <p>
-          <span className="text-muted-foreground">Status:</span>{" "}
-          {establishment.status}
-        </p>
-
-        <p>
-          <span className="text-muted-foreground">Ativo:</span>{" "}
-          {establishment.active ? "Sim" : "Não"}
+        <p className="flex items-center gap-2">
+          {establishment.active ? (
+            <CheckCircle size={14} className="text-green-500" />
+          ) : (
+            <XCircle size={14} className="text-red-500" />
+          )}
+          Status: {establishment.active ? "Ativo" : "Inativo"}
         </p>
       </div>
-
-      {/* Botão */}
-      <Link
-        href={`/superadmin/establishments/${establishment.id}`}
-        className="mt-2 inline-block text-center bg-primary text-primary-foreground py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
-      >
-        Ver Detalhes
-      </Link>
-
     </div>
   );
 }

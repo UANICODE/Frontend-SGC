@@ -9,8 +9,9 @@ export function SuperAdminSidebar() {
   const menu = [
     {
       label: "Dashboard",
-      href: "/superadmin",
-    },
+      href: "/superadmin/establishments",
+    }
+    /*
     {
       label: "Estabelecimentos",
       href: "/superadmin/establishments",
@@ -26,7 +27,7 @@ export function SuperAdminSidebar() {
     {
       label: "Usuários por Estabelecimento",
       href: "/superadmin/users-by-establishment",
-    },
+    },*/
   ];
 
   return (

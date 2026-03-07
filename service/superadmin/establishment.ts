@@ -3,7 +3,8 @@ import { CreateEstablishmentRequest, CreateEstablishmentResponse, ListEstablishm
 
 export const establishmentService = {
   async list(): Promise<ListEstablishmentsResponse[]> {
-    const res = await api.get("/superadmin/establishments");
+    const res = await api.get("/api/superadmin/establishments");
+      console.log("dados", res.data)
     return res.data;
   },
 
@@ -11,9 +12,10 @@ export const establishmentService = {
     payload: CreateEstablishmentRequest
   ): Promise<CreateEstablishmentResponse> {
     const res = await api.post(
-      "/superadmin/establishments/create",
+      "/api/superadmin/establishments/create",
       payload
     );
+  
     return res.data;
   },
 };

@@ -6,7 +6,17 @@ import { useArchivedSales } from "@/hooks/attendant/useArchivedSales";
 import { useSale } from "@/hooks/attendant/useSale";
 import { useToast } from "@/ context/ToastContext";
 
-import { ArrowPathIcon, ArrowUturnLeftIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  ArrowUturnLeftIcon,
+  ArchiveBoxIcon,
+  ExclamationTriangleIcon,
+  InboxIcon,
+  ReceiptPercentIcon,
+  BanknotesIcon,
+  TagIcon,
+  CurrencyDollarIcon,
+} from "@heroicons/react/24/outline";
 
 export default function ArchivedSalesPage() {
   const { establishmentId, cashRegisterId } = useParams() as any;
@@ -32,12 +42,21 @@ export default function ArchivedSalesPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Vendas Arquivadas</h1>
+      <h1 className="text-2xl font-bold flex items-center gap-2">
+        <ArchiveBoxIcon className="w-7 h-7" />
+        Vendas Arquivadas
+      </h1>
 
-      {error && <div className="bg-red-100 text-red-600 p-4 rounded-xl">{error}</div>}
+      {error && (
+        <div className="bg-red-100 text-red-600 p-4 rounded-xl flex items-center gap-2">
+          <ExclamationTriangleIcon className="w-5 h-5" />
+          {error}
+        </div>
+      )}
 
       {data.length === 0 && (
-        <div className="bg-gray-100 p-6 rounded-xl text-gray-500 text-center">
+        <div className="bg-gray-100 p-6 rounded-xl text-gray-500 text-center flex flex-col items-center gap-2">
+          <InboxIcon className="w-8 h-8" />
           Não existem vendas arquivadas.
         </div>
       )}
@@ -48,11 +67,28 @@ export default function ArchivedSalesPage() {
             key={sale.saleId}
             className="bg-white p-6 rounded-xl shadow flex justify-between items-center"
           >
-            <div>
-              <p className="font-medium">Venda: #{sale.saleId.slice(0, 8)}</p>
-              <p className="font-medium">Subtotal: {sale.subtotal} MZN</p>
-              <p className="font-medium">Desconto: {sale.discount} MZN</p>
-              <p className="text-sm text-gray-500">Total: MZN {sale.total}</p>
+            <div className="space-y-2 text-sm">
+              
+              <p className="font-medium flex items-center gap-2">
+                <ReceiptPercentIcon className="w-5 h-5 text-gray-500" />
+                Venda: #{sale.saleId.slice(0, 8)}
+              </p>
+
+              <p className="font-medium flex items-center gap-2">
+                <BanknotesIcon className="w-5 h-5 text-gray-500" />
+                Subtotal: {sale.subtotal} MZN
+              </p>
+
+              <p className="font-medium flex items-center gap-2">
+                <TagIcon className="w-5 h-5 text-gray-500" />
+                Desconto: {sale.discount} MZN
+              </p>
+
+              <p className="text-sm text-gray-500 flex items-center gap-2">
+                <CurrencyDollarIcon className="w-5 h-5 text-gray-500" />
+                Total: MZN {sale.total}
+              </p>
+
             </div>
 
             <button
@@ -62,7 +98,7 @@ export default function ArchivedSalesPage() {
             >
               {restoringId === sale.saleId ? (
                 <>
-                  <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                  <ArrowPathIcon className="w-5 h-5 animate-spin" />
                   Restaurando...
                 </>
               ) : (

@@ -10,8 +10,7 @@ export default function SuperAdminLayout({
 }) {
   return (
     <div className="flex h-screen bg-background">
-      <SuperAdminSidebar />
-
+      
       <div className="flex-1 flex flex-col">
         <SuperAdminNavbar />
 
