@@ -29,7 +29,7 @@ export default function ProductsPage() {
 
   if (!establishmentId) return <p>Carregando...</p>;
 
-  const { data, filters, setFilters, refresh, loading } = productsHook!;
+  const {  setFilters, refresh, loading } = productsHook!;
 
   return (
     <div className="space-y-8">

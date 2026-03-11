@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { AuthUser, UserRole } from "@/types/auth/types";
 import { loginService } from "@/service/auth/login";
 import { logoutService } from "@/service/auth/logout";
@@ -23,12 +16,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export function AuthProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -39,36 +27,36 @@ export function AuthProvider({
       .finally(() => setLoading(false));
   }, []);
 
- // useAuth.tsx
-const login = async (email: string, password: string) => {
-  try {
-    // chama o login e espera tokens
-    const authResponse = await loginService({ email, password });
+  const login = async (email: string, password: string) => {
+    try {
+      await loginService({ email, password });
 
-    // 🔐 Se login OK, chama getCurrentUserService
-    const userData = await getCurrentUserService();
-    setUser(userData);
-    return userData;
-
-  } catch (error: any) {
-    // ⚠️ pega a mensagem do backend ou default
-    throw new Error(error?.message || "Erro ao fazer login");
-  }
-};
-
-  const logout = async () => {
-    await logoutService();
-    setUser(null);
-    window.location.href = "/auth";
+      const userData = await getCurrentUserService();
+      setUser(userData);
+      return userData;
+    } catch (error: any) {
+      throw new Error(error?.message || "Erro ao fazer login");
+    }
   };
 
-  const hasRole = (role: UserRole) =>
-    user?.roles.includes(role) ?? false;
+  const logout = async () => {
+    try {
+      await logoutService();
+
+      // limpa estado do usuário
+      setUser(null);
+
+      // redireciona para login
+      window.location.href = "/auth";
+    } catch (error) {
+      console.error("Erro no logout", error);
+    }
+  };
+
+  const hasRole = (role: UserRole) => user?.roles.includes(role) ?? false;
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, login, logout, hasRole }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, logout, hasRole }}>
       {children}
     </AuthContext.Provider>
   );
@@ -76,10 +64,6 @@ const login = async (email: string, password: string) => {
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext);
-
-  if (!context) {
-    throw new Error("useAuth deve estar dentro do AuthProvider");
-  }
-
+  if (!context) throw new Error("useAuth deve estar dentro do AuthProvider");
   return context;
 }

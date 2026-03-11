@@ -1,5 +1,7 @@
 "use client";
 
+import { useToast } from "@/ context/ToastContext";
+import { useAuth } from "@/hooks/auth/useAuth";
 import {
   LayoutDashboard,
   Package,
@@ -14,6 +16,7 @@ import {
   Settings,
   Menu,
   X,
+  LogOut
 } from "lucide-react";
 
 import Link from "next/link";
@@ -25,6 +28,9 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
   const establishmentId = params?.establishmentId;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { logout } = useAuth();
+  const { showToast } = useToast();
 
   if (!establishmentId) return null;
 
@@ -45,10 +51,19 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
     { name: "Personalização", href: `${basePath}/settings`, icon: <Settings size={18} /> },
   ];
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      showToast("Logout feito com sucesso!", "success");
+    } catch {
+      showToast("Erro ao sair.", "error");
+    }
+  };
+
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
       {/* Topo com logo e nome */}
-      <div className="flex flex-col items-center mb-8">
+      <div className="flex flex-col items-center mb-4">
         {logo && (
           <img
             src={logo}
@@ -59,8 +74,8 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
         {name && <span className="font-bold text-lg text-primary text-center">{name}</span>}
       </div>
 
-      {/* Links */}
-      <nav className="flex flex-col gap-2 text-sm overflow-hidden">
+      {/* Links com scroll */}
+      <nav className="flex-1 flex flex-col gap-2 text-sm overflow-y-auto">
         {links.map((link) => (
           <Link
             key={link.href}
@@ -74,13 +89,22 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
             <span>{link.name}</span>
           </Link>
         ))}
+
+        {/* Logout no final */}
+        <button
+          onClick={handleLogout}
+          className="mt-auto flex items-center gap-3 px-3 py-2 rounded-md text-red-600 hover:bg-red-600 hover:text-white transition"
+        >
+          <LogOut size={18} />
+          <span>Sair</span>
+        </button>
       </nav>
     </div>
   );
 
   return (
     <>
-      {/* Botão hambúrguer apenas mobile */}
+      {/* Botão hambúrguer mobile */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded-md shadow-md"
         onClick={() => setMobileOpen(true)}
@@ -100,7 +124,6 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
             className="fixed inset-0 bg-black bg-opacity-40 z-40"
             onClick={() => setMobileOpen(false)}
           />
-
           <aside className="fixed top-0 left-0 w-64 bg-white h-screen z-50 p-6 shadow-lg overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <button onClick={() => setMobileOpen(false)}>

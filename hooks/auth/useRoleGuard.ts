@@ -11,18 +11,17 @@ export function useRoleGuard(requiredRoles: UserRole | UserRole[]) {
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) return; // espera carregar usuário
 
     if (!user) {
-      router.replace("/auth");
+      router.replace("/auth"); // sem sessão, vai pro login
       return;
     }
 
-    // transforma em array caso seja uma role única
     const rolesArray = Array.isArray(requiredRoles) ? requiredRoles : [requiredRoles];
 
     if (!rolesArray.some(role => user.roles.includes(role))) {
-      router.replace("/"); // ou "/"
+      router.replace("/"); // sem permissão
     }
 
   }, [user, loading, requiredRoles, router]);

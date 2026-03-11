@@ -3,7 +3,7 @@ import axios from "axios";
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 15000,
-  withCredentials: true, // 🔥 ESSENCIAL PARA COOKIES HTTP ONLY
+  withCredentials: true,
 });
 
 // 🔐 Interceptor de refresh automático
@@ -12,7 +12,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // ⚠️ IGNORA refresh para login ou logout
+    // ignora login e logout
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -22,10 +22,13 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        await api.post("/api/auth/refresh"); // cookie enviado automaticamente
+        // Tenta refresh
+        await api.post("/api/auth/refresh"); 
         return api(originalRequest);
       } catch {
-        window.location.href = "/login";
+        // Sem sessão ativa: força redirecionamento
+        window.location.href = "/auth"; // ⚠️ usar rota de login
+        return Promise.reject(error);
       }
     }
 
