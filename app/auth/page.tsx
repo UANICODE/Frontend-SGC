@@ -15,12 +15,26 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<{ email?: string; password?: string; login?: string }>({});
   const [loading, setLoading] = useState(false);
-
-  // 🚨 Rate limit
   const [blockTime, setBlockTime] = useState(0);
-  const [maxBlockTime, setMaxBlockTime] = useState(0); // para barra de progresso
+  const [maxBlockTime, setMaxBlockTime] = useState(0);
 
-  // Contagem regressiva
+  // ✅ Mover a função para CIMA do handleLogin
+  const redirectByRole = (role: string) => {
+    switch (role) {
+      case "SUPERADMIN":
+        router.push("/superadmin/establishments");
+        break;
+      case "ADMIN":
+        router.push("/admin/establishments");
+        break;
+      case "ATENDENTE":
+        router.push(`/attendant/establishments`);
+        break;
+      default:
+        router.push("/");
+    }
+  };
+
   useEffect(() => {
     if (blockTime <= 0) return;
     const timer = setInterval(() => setBlockTime(prev => prev - 1), 1000);
@@ -44,61 +58,45 @@ export default function LoginPage() {
       if (user.roles.length > 1) {
         router.push("/select-role");
       } else {
-        redirectByRole(user.roles[0]);
+        redirectByRole(user.roles[0]); // ✅ Agora funciona!
       }
     } catch (err: any) {
-      // Detecta rate limit
-      if (err.message?.includes("Muitas tentativas")) {
+      if (err.message?.includes("estabelecimento está temporariamente bloqueado")) {
+        setError({ 
+          login: "⛔ Este estabelecimento está temporariamente bloqueado. Contacte o administrador para regularizar o pagamento." 
+        });
+      } else if (err.message?.includes("Muitas tentativas")) {
         const secondsMatch = err.message.match(/(\d+)/);
         if (secondsMatch) {
           const secs = parseInt(secondsMatch[0], 10);
           setBlockTime(secs);
           setMaxBlockTime(secs);
         }
+        setError({ login: err.message });
+      } else {
+        setError({ login: err.message || "Erro ao fazer login" });
       }
-      setError({ login: err.message || "Erro ao fazer login" });
     } finally {
       setLoading(false);
     }
   };
 
-  const redirectByRole = (role: string) => {
-    switch (role) {
-      case "SUPERADMIN":
-        router.push("/superadmin/establishments");
-        break;
-      case "ADMIN":
-        router.push("/admin/establishments");
-        break;
-      case "ATENDENTE":
-        router.push(`/attendant/establishments`);
-        break;
-      default:
-        router.push("/");
-    }
-  };
-
   const isButtonDisabled = loading || blockTime > 0 || password.length < 8;
-
-  // Porcentagem da barra de progresso
   const progressPercentage = maxBlockTime > 0 ? (blockTime / maxBlockTime) * 100 : 0;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 via-gray-50 to-white">
       <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-10 border border-gray-200">
-        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Image src={Logo} alt="SGC Logo" width={180} height={60} className="object-contain" />
         </div>
 
-        {/* Mensagem de erro */}
         {error.login && (
           <div className="mb-4 text-sm text-red-600 text-center font-medium animate-pulse">
             {error.login}
           </div>
         )}
 
-        {/* Barra de progresso Rate Limit */}
         {blockTime > 0 && (
           <div className="mb-4">
             <div className="text-center text-yellow-700 font-semibold mb-1">
@@ -114,8 +112,6 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleLogin} className="space-y-6">
-
-          {/* Email */}
           <div>
             <input
               type="email"
@@ -130,7 +126,6 @@ export default function LoginPage() {
             {error.email && <p className="text-red-600 text-sm mt-1">{error.email}</p>}
           </div>
 
-          {/* Senha */}
           <div>
             <input
               type="password"
@@ -145,7 +140,6 @@ export default function LoginPage() {
             {error.password && <p className="text-red-600 text-sm mt-1">{error.password}</p>}
           </div>
 
-          {/* Botão */}
           <button
             type="submit"
             disabled={isButtonDisabled}

@@ -4,6 +4,7 @@ import { AdminNavbar } from "@/components/admin/layout/AdminNavbar";
 import { AdminSidebar } from "@/components/admin/layout/AdminSidebar";
 import { useEstablishmentTheme } from "@/hooks/auth/useEstablishmentTheme";
 import { useLoggedEstablishment } from "@/hooks/auth/useLoggedEstablishment";
+import { EstablishmentBlockProvider } from "@/providers/EstablishmentBlockProvider";
 import { useParams } from "next/navigation";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -23,6 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   useEstablishmentTheme(data?.primaryColor, data?.secondaryColor);
 
   return (
+     <EstablishmentBlockProvider> 
     <div className="flex h-screen bg-backgroundLight">
       <AdminSidebar logo={data?.logoUrl} name={data?.tradeName} />
 
@@ -32,5 +34,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <main className="flex-1 p-8 overflow-y-auto">{children}</main>
       </div>
     </div>
+     </EstablishmentBlockProvider> 
   );
 }

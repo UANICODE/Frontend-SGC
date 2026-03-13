@@ -5,6 +5,7 @@ import { AttendantNavbar } from "@/components/attendant/layout/AttendantNavbar";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useRouter, useParams } from "next/navigation";
 import { useEstablishment } from "@/hooks/admin /useEstablishment";
+import { EstablishmentBlockProvider } from "@/providers/EstablishmentBlockProvider";
 
 export default function AttendantLayout({
   children,
@@ -26,6 +27,7 @@ export default function AttendantLayout({
   }
 
   return (
+     <EstablishmentBlockProvider>
     <div className="min-h-screen flex bg-gray-50">
 
       <AttendantSidebar
@@ -47,5 +49,6 @@ export default function AttendantLayout({
         </main>
       </div>
     </div>
+    </EstablishmentBlockProvider>
   );
 }
