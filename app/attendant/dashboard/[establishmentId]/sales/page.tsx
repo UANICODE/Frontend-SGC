@@ -13,19 +13,17 @@ import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
-
-
-import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon, CurrencyDollarIcon } from "@heroicons/react/24/outline";
-import { DollarSign, Minus, MinusIcon, Plus, ShoppingCart, ShoppingCartIcon, Trash2, TrashIcon } from "lucide-react";
+import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
+import { Minus, Plus, ShoppingCart, Trash2, DollarSign } from "lucide-react";
 
 export default function SalesPage() {
-
   useRoleGuard([UserRole.ATENDENTE]);
 
   const params = useParams<{ establishmentId: string }>();
   const search = useSearchParams();
   const router = useRouter();
   const toast = useToast();
+
   const establishmentId = params.establishmentId;
   const saleId = search.get("saleId");
   const cashRegisterId = search.get("cashRegisterId");
@@ -53,7 +51,7 @@ export default function SalesPage() {
   const [finalizing, setFinalizing] = useState(false);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
 
-  // ================= FLUXO DE VENDA =================
+  // ================= INIT =================
   useEffect(() => {
     async function initSale() {
       if (sale) return;
@@ -63,10 +61,13 @@ export default function SalesPage() {
     initSale();
   }, [saleId, cashRegisterId]);
 
-  // ================= BUSCAR PRODUTOS =================
+  // ================= PRODUTOS =================
   const loadProducts = useCallback(async () => {
     setProductsLoading(true);
-    const list = await listProducts({ establishmentId, name: searchName || undefined });
+    const list = await listProducts({
+      establishmentId,
+      name: searchName || undefined,
+    });
     setProducts(list || []);
     setProductsLoading(false);
   }, [searchName, establishmentId]);
@@ -75,16 +76,15 @@ export default function SalesPage() {
     loadProducts();
   }, [loadProducts]);
 
-  // ================= CONFIRMAR PAGAMENTO =================  {/* FOTO / CATÁLOGO */}
-   
-
+  // ================= PAGAMENTO =================
   async function handleConfirmPayment(methodId: string) {
+    if (!sale) return;
+
     try {
       setFinalizing(true);
       const receiptData = await handleFinalize(methodId);
       setReceipt(receiptData);
       setShowPayment(false);
-      await refreshSale(receiptData.saleNumber);
     } catch (e: any) {
       toast.showToast(e.message || "Erro ao finalizar venda", "error");
     } finally {
@@ -96,7 +96,6 @@ export default function SalesPage() {
     if (!sale) return;
     try {
       await handleArchive();
-      toast.showToast("Venda arquivada e redirecionando...", "success");
       router.push(`/attendant/dashboard/${establishmentId}/archived-sales`);
     } catch (e: any) {
       toast.showToast(e.message || "Erro ao arquivar venda", "error");
@@ -107,30 +106,32 @@ export default function SalesPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen gap-4">
         <span className="animate-spin border-4 border-gray-300 border-t-transparent rounded-full w-12 h-12"></span>
-        <span className="text-gray-500 text-lg">Processando venda...</span>
+        <span className="text-gray-500">Processando venda...</span>
       </div>
     );
   }
 
   return (
-    <div className="flex gap-8 p-6">
-     {/* ================= PRODUTOS ================= */}
-      <div className="flex-1 space-y-4">
+    <div className="h-screen flex flex-col lg:flex-row gap-4 p-3 md:p-4 overflow-hidden">
+
+      {/* ================= PRODUTOS ================= */}
+      <div className="flex-1 flex flex-col min-h-0">
         <input
           placeholder="Buscar produto..."
-          className="w-full p-3 border rounded-xl"
+          className="w-full p-3 border rounded-xl bg-white lg:sticky lg:top-0 z-10"
           onChange={(e) => setSearchName(e.target.value)}
         />
 
-        {productsLoading && <p className="text-sm text-gray-400">Carregando produtos...</p>}
+        {productsLoading && (
+          <p className="text-sm text-gray-400 mt-2">Carregando produtos...</p>
+        )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((p: ProductItem) => (
-            <div
-              key={p.id}
-              className="bg-white rounded-2xl shadow hover:shadow-lg transition flex flex-col overflow-hidden"
-            >
-              {/* FOTO / CATÁLOGO */}
+        <div className="flex-1 overflow-y-auto min-h-0 pr-1 mt-2">
+          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {products.map((p) => (
+              <div key={p.id} className="bg-white rounded-2xl shadow flex flex-col overflow-hidden">
+
+                {/* FOTO / CATÁLOGO */}
               <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
                 {p.catalogo ? (
                   <img
@@ -143,17 +144,15 @@ export default function SalesPage() {
                 )}
               </div>
 
-              {/* DETALHES */}
-              <div className="p-4 flex-1 flex flex-col justify-between">
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-gray-800">{p.name}</h3>
-                  <p className="text-sm text-gray-500">Categoria: {p.category}</p>
-                  <p className="text-sm text-gray-700 font-medium">Preço: MZN {p.price}</p>
-                  <p className="text-xs text-gray-400">Estoque: {p.stock}</p>
-                </div>
+                <div className="p-3 md:p-4 flex flex-col justify-between flex-1">
+                  <div>
+                    <h3 className="font-semibold text-sm md:text-base">{p.name}</h3>
+                    <p className="text-xs text-gray-500">{p.category}</p>
+                    <p className="text-sm font-medium">MZN {p.price}</p>
+                    <p className="text-xs text-gray-400">Estoque: {p.stock}</p>
+                  </div>
 
-                {/* BOTÃO ADICIONAR */}
-                <button
+                 <button
                   onClick={async () => handleAdd(p.id)}
                   disabled={addingProductIds.includes(p.id)}
                   className={`mt-3 w-full py-2 rounded-lg text-white flex justify-center items-center gap-2 transition ${
@@ -171,112 +170,92 @@ export default function SalesPage() {
                     </>
                   )}
                 </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-      {/* ================= VENDA ================= */}
-     
-<div className="w-96 bg-white p-6 rounded-2xl shadow space-y-4">
-  {sale?.items.length === 0 && (
-    <p className="text-gray-400 text-center flex items-center justify-center gap-2">
-      <ShoppingCart size={18} />
-      Nenhum item adicionado
-    </p>
-  )}
 
-  {sale?.items.map((item) => (
-    <div key={item.itemId} className="border-b pb-3">
-      <div className="flex justify-between font-medium">
-        <span className="flex items-center gap-2">
-          <ShoppingCart
-           size={16} />
-          {item.productName}
-        </span>
+      {/* ================= CARRINHO ================= */}
+      <div className="w-full lg:w-96 flex flex-col max-h-[45vh] lg:max-h-full">
+        <div className="bg-white p-4 md:p-6 rounded-2xl shadow flex flex-col h-full">
 
-        <span className="flex items-center gap-1">
-          <DollarSign size={16} />
-          MZN {item.subtotal}
-        </span>
-      </div>
+          <h2 className="text-lg md:text-xl font-bold mb-3 flex items-center gap-2">
+            <ShoppingCart size={18} />
+            Venda Atual
+          </h2>
 
-      <div className="flex items-center gap-2 mt-2">
-        <button
-          onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
-          className="px-2 border rounded flex items-center justify-center"
-          disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
-        >
-          <Minus size={16} />
-        </button>
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {sale?.items.length === 0 ? (
+              <p className="text-center text-gray-400">Nenhum item</p>
+            ) : (
+            sale?.items.map((item) => (
+                <div key={item.itemId} className="border-b pb-2">
 
-        <span>{item.quantity}</span>
+                  <div className="flex justify-between text-sm md:text-base">
+                    <span>{item.productName}</span>
+                    <span>MZN {item.subtotal}</span>
+                  </div>
 
-        <button
-          onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
-          className="px-2 border rounded flex items-center justify-center"
-          disabled={processingItemIds.includes(item.itemId)}
-        >
-          <Plus size={16} />
-        </button>
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
+                      disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
+                      className="w-8 h-8 border rounded"
+                    >
+                      <Minus size={16} />
+                    </button>
 
-        <button
-          onClick={() => handleRemove(item.itemId)}
-          className="ml-auto text-red-500 text-sm flex items-center gap-1"
-          disabled={processingItemIds.includes(item.itemId)}
-        >
-          <Trash2 size={16} />
-          {processingItemIds.includes(item.itemId)
-            ? "Processando..."
-            : "Remover"}
-        </button>
-      </div>
-    </div>
-  ))}
+                    <span>{item.quantity}</span>
 
-  {/* TOTAIS */}
-  <div className="border-t pt-4 space-y-1 text-sm">
-    <p className="flex items-center gap-1">
-      <DollarSign size={16} />
-      Subtotal: MZN {sale?.subtotal}
-    </p>
+                    <button
+                      onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
+                      disabled={processingItemIds.includes(item.itemId)}
+                      className="w-8 h-8 border rounded"
+                    >
+                      <Plus size={16} />
+                    </button>
 
-    <p className="flex items-center gap-1">
-      <DollarSign size={16} />
-      Desconto: MZN {sale?.discount}
-    </p>
+                    <button
+                      onClick={() => handleRemove(item.itemId)}
+                      disabled={processingItemIds.includes(item.itemId)}
+                      className="ml-auto text-red-500 text-sm"
+                    >
+                      {processingItemIds.includes(item.itemId)
+                        ? "processando..."
+                        : "Remover"}
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
 
-    <p className="font-bold text-lg flex items-center gap-1">
-      <DollarSign size={18} />
-      Total: MZN {sale?.total}
-    </p>
-  </div>
+          <div className="border-t pt-3 mt-3 space-y-2 text-sm">
+            <p>Subtotal: MZN {sale?.subtotal || 0}</p>
+            <p>Desconto: MZN {sale?.discount || 0}</p>
+            <p className="font-bold text-lg">Total: MZN {sale?.total || 0}</p>
 
-        {/* AÇÕES */}
-        <div className="space-y-2 pt-2">
-          <button
-            onClick={handleArchiveAndRedirect}
-            className="w-full bg-yellow-300 text-white py-2 rounded-xl flex items-center gap-2 justify-center
-            transition-all duration-200 hover:bg-yellow-500 hover:scale-[1.02] active:scale-[0.98]"
-          >
-            <ArchiveBoxIcon className="w-5 h-5" />
-            Arquivar
-          </button>
+            <button
+              onClick={handleArchiveAndRedirect}
+              className="w-full bg-yellow-400 text-white py-2 rounded-lg"
+            >
+              Arquivar
+            </button>
 
-       <button
-        disabled={sale?.items.length === 0 || finalizing}
-        onClick={() => setShowPayment(true)}
-        className={`w-full bg-green-300 text-white py-3 rounded-xl disabled:opacity-50 flex justify-center items-center gap-2
-        transition-all duration-200 hover:bg-green-500 hover:scale-[1.02] active:scale-[0.98]`}
-      >
-        {finalizing && (
-          <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-        )}
-
-        {!finalizing && <CheckCircleIcon className="w-5 h-5" />}
-
-        {finalizing ? "Finalizando..." : "Finalizar Venda"}
-      </button>
+            <button
+              disabled={sale?.items.length === 0 || finalizing}
+              onClick={() => setShowPayment(true)}
+              className="w-full bg-green-500 text-white py-3 rounded-lg flex items-center justify-center gap-2"
+            >
+              {finalizing && (
+                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+              )}
+              {!finalizing && <CheckCircleIcon className="w-5 h-5" />}
+              {finalizing ? "Finalizando..." : "Finalizar Venda"}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -290,38 +269,26 @@ export default function SalesPage() {
       {receipt && (
         <ReceiptPreview
           receipt={receipt}
-          onClose={() => setReceipt(null)}
-          onPrint={() => {
-            const printContent = document.getElementById("receipt-print");
-            if (printContent) {
-              const printWindow = window.open("", "", "width=300,height=600");
-              if (printWindow) {
-                printWindow.document.write(`
-                  <html>
-                    <head>
-                      <title>Recibo</title>
-                      <style>
-                        body{font-family:monospace;width:80mm;margin:0;padding:0;}
-                        #receipt{width:80mm;font-size:12px;}
-                        @page{size:80mm auto;margin:0;}
-                        @media print{body{width:80mm;}} img{max-width:100%;}
-                      </style>
-                    </head>
-                    <body>
-                      <div id="receipt">${printContent.innerHTML}</div>
-                    </body>
-                  </html>
-                `);
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-              }
-            }
+          onClose={() => {
+            setReceipt(null);
             router.push(`/attendant/dashboard/${establishmentId}`);
           }}
+          onPrint={() => window.print()}
         />
       )}
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

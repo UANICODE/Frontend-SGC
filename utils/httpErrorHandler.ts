@@ -35,10 +35,10 @@ export function handleHttpError(error: unknown): never {
         throw new Error(message || "Erro de validação.");
 
       case 500:
-        throw new Error("Erro interno do servidor.");
+        throw new Error("Oops! erro temporario");
 
       default:
-        throw new Error(message || "Erro inesperado.");
+        throw new Error(message || "Oops! Houve um erro inesperado.");
     }
   }
 

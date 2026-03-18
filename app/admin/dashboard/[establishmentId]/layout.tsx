@@ -6,34 +6,39 @@ import { useEstablishmentTheme } from "@/hooks/auth/useEstablishmentTheme";
 import { useLoggedEstablishment } from "@/hooks/auth/useLoggedEstablishment";
 import { EstablishmentBlockProvider } from "@/providers/EstablishmentBlockProvider";
 import { useParams } from "next/navigation";
+import { Info, Coffee } from "lucide-react";
+import { DashboardFooter } from "@/components/ui/DashboardFooter";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
   let establishmentId: string | undefined;
 
   if (Array.isArray(params?.establishmentId)) {
-    establishmentId = params.establishmentId[0]; // pega o primeiro se for array
+    establishmentId = params.establishmentId[0];
   } else {
-    establishmentId = params?.establishmentId; // se for string
+    establishmentId = params?.establishmentId;
   }
 
-
-  // só chama o hook se tiver valor
   const { data } = useLoggedEstablishment(establishmentId ?? "");
 
   useEstablishmentTheme(data?.primaryColor, data?.secondaryColor);
 
   return (
-     <EstablishmentBlockProvider> 
-    <div className="flex h-screen bg-backgroundLight">
-      <AdminSidebar logo={data?.logoUrl} name={data?.tradeName} />
+    <EstablishmentBlockProvider>
+      <div className="flex h-screen bg-backgroundLight">
+        {/* Sidebar */}
+        <AdminSidebar logo={data?.logoUrl} name={data?.tradeName} />
 
-      <div className="flex-1 flex flex-col">
-        <AdminNavbar logo={data?.logoUrl} name={data?.tradeName} />
+        {/* Conteúdo principal */}
+        <div className="flex-1 flex flex-col">
+          <AdminNavbar logo={data?.logoUrl} name={data?.tradeName} />
 
-        <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+          <main className="flex-1 p-8 overflow-y-auto">{children}</main>
+
+          {/* Footer */}
+             <DashboardFooter version="v1.0.3" />
+        </div>
       </div>
-    </div>
-     </EstablishmentBlockProvider> 
+    </EstablishmentBlockProvider>
   );
 }

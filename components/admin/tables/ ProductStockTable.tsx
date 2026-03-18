@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ProductStockItemResponse } from "@/types/admin/product-stock";
 
 interface Props {
@@ -10,7 +9,6 @@ interface Props {
 }
 
 export function ProductStockTable({ data, loading, onUpdate }: Props) {
-  // Loader centralizado
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-10">
@@ -42,19 +40,12 @@ export function ProductStockTable({ data, loading, onUpdate }: Props) {
 
         <tbody>
           {data.map((item) => {
-           // Função auxiliar para formatar a data
-            function formatDate(dateString: string | undefined) {
+            const formatDate = (dateString?: string) => {
               if (!dateString) return "-";
-              
-              // Substitui espaço por 'T' caso venha "YYYY-MM-DD HH:mm:ss"
               const parsedDate = new Date(dateString.replace(" ", "T"));
-              
-              // Confere se é válido
               if (isNaN(parsedDate.getTime())) return "-";
-
-              // Formato YYYY-MM-DD
               return parsedDate.toISOString().split("T")[0];
-            }
+            };
 
             return (
               <tr key={item.productId} className="border-t hover:bg-gray-50">
@@ -64,7 +55,7 @@ export function ProductStockTable({ data, loading, onUpdate }: Props) {
                 <td className="text-right pr-6">
                   <button
                     onClick={() => onUpdate(item)}
-                    className="text-primary"
+                    className="bg-primary text-white px-4 py-1 rounded hover:bg-primary/80 transition"
                   >
                     Atualizar
                   </button>

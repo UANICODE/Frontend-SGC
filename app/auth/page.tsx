@@ -18,7 +18,6 @@ export default function LoginPage() {
   const [blockTime, setBlockTime] = useState(0);
   const [maxBlockTime, setMaxBlockTime] = useState(0);
 
-  // ✅ Mover a função para CIMA do handleLogin
   const redirectByRole = (role: string) => {
     switch (role) {
       case "SUPERADMIN":
@@ -58,12 +57,12 @@ export default function LoginPage() {
       if (user.roles.length > 1) {
         router.push("/select-role");
       } else {
-        redirectByRole(user.roles[0]); // ✅ Agora funciona!
+        redirectByRole(user.roles[0]);
       }
     } catch (err: any) {
       if (err.message?.includes("estabelecimento está temporariamente bloqueado")) {
         setError({ 
-          login: "⛔ Este estabelecimento está temporariamente bloqueado. Contacte o administrador para regularizar o pagamento." 
+          login: "⛔ Este estabelecimento está temporariamente bloqueado. Contacte o administrador." 
         });
       } else if (err.message?.includes("Muitas tentativas")) {
         const secondsMatch = err.message.match(/(\d+)/);
@@ -85,22 +84,30 @@ export default function LoginPage() {
   const progressPercentage = maxBlockTime > 0 ? (blockTime / maxBlockTime) * 100 : 0;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 via-gray-50 to-white">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-10 border border-gray-200">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-100 via-gray-50 to-white relative overflow-hidden">
+      {/* Fundo decorativo com blur e formas geométricas */}
+      <div className="absolute top-[-100px] left-[-100px] w-72 h-72 bg-indigo-300 rounded-full opacity-20 blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-[-120px] right-[-80px] w-96 h-96 bg-indigo-200 rounded-full opacity-30 blur-3xl animate-pulse"></div>
+
+      {/* Card principal */}
+      <div className="relative w-full max-w-md bg-white/80 backdrop-blur-md shadow-2xl rounded-3xl p-10 border border-gray-200 overflow-hidden">
+        {/* Logo */}
         <div className="flex justify-center mb-8">
           <Image src={Logo} alt="SGC Logo" width={180} height={60} className="object-contain" />
         </div>
 
+        {/* Mensagens de erro */}
         {error.login && (
           <div className="mb-4 text-sm text-red-600 text-center font-medium animate-pulse">
             {error.login}
           </div>
         )}
 
+        {/* Timer de bloqueio */}
         {blockTime > 0 && (
           <div className="mb-4">
-            <div className="text-center text-yellow-700 font-semibold mb-1">
-              Tente novamente em {blockTime}s
+            <div className="text-center text-yellow-700 font-semibold mb-2">
+              ⏱ Tente novamente em {blockTime}s
             </div>
             <div className="w-full bg-yellow-100 h-2 rounded-full overflow-hidden">
               <div
@@ -111,13 +118,14 @@ export default function LoginPage() {
           </div>
         )}
 
+        {/* Formulário */}
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
             <input
               type="email"
               placeholder="Email"
-              className={`w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition ${
-                error.email ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition shadow-md ${
+                error.email ? "border-red-500 animate-shake" : "border-gray-300"
               }`}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -130,8 +138,8 @@ export default function LoginPage() {
             <input
               type="password"
               placeholder="Senha (mínimo 8 caracteres)"
-              className={`w-full border rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition ${
-                error.password ? "border-red-500" : "border-gray-300"
+              className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition shadow-md ${
+                error.password ? "border-red-500 animate-shake" : "border-gray-300"
               }`}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -140,14 +148,16 @@ export default function LoginPage() {
             {error.password && <p className="text-red-600 text-sm mt-1">{error.password}</p>}
           </div>
 
+          {/* Botão de login */}
           <button
             type="submit"
             disabled={isButtonDisabled}
-            className={`w-full py-3 rounded-xl text-white font-semibold transition ${
-              isButtonDisabled
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-indigo-700 hover:bg-indigo-600"
-            }`}
+            className={`w-full py-3 rounded-xl text-white font-bold text-lg transition-all duration-200
+              ${
+                isButtonDisabled
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0.5"
+              }`}
           >
             {blockTime > 0
               ? `Aguarde ${blockTime}s...`
@@ -156,6 +166,11 @@ export default function LoginPage() {
               : "Entrar"}
           </button>
         </form>
+
+        {/* Rodapé */}
+        <div className="mt-6 text-center text-gray-400 text-sm">
+          © {new Date().getFullYear()} SGC. Todos os direitos reservados.
+        </div>
       </div>
     </div>
   );

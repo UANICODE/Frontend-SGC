@@ -5,7 +5,7 @@ import { useSalesReport } from "@/hooks/admin /useSalesReport";
 import { useInventoryReport } from "@/hooks/admin /useInventoryReport";
 import { formatCurrency } from "@/lib/format";
 import { useParams } from "next/navigation";
-import { DollarSign, XCircle, TrendingUp, CreditCard, Package, Layers, CheckCircle } from "lucide-react";
+import { DollarSign, XCircle, TrendingUp, CreditCard, Package, Layers, CheckCircle, Phone, MapPin, Store,BarChart3, Calendar, Clock } from "lucide-react";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
@@ -39,19 +39,50 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8 animate-fadeIn px-4 sm:px-6 lg:px-10">
 
-      {/* CABEÇALHO DO RELATÓRIO */}
-      <div className="bg-white border border-borderLight rounded-xl p-4 sm:p-6 shadow-sm text-center sm:text-left">
+      {/* CABEÇALHO DO RELATÓRIO (MODERNO) */}
+<div className="bg-white border border-borderLight rounded-2xl p-6 shadow-sm">
+  
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+    {/* Lado esquerdo */}
+    <div className="flex items-center gap-4">
+      <div className="p-3 rounded-xl bg-primary/10 text-primary">
+        <BarChart3 size={24} />
+      </div>
+
+      <div>
         <h2 className="text-xl sm:text-2xl font-semibold text-primary">
           Resumo Financeiro
         </h2>
-        <p className="text-sm sm:text-base text-textSecondaryLight mt-1">
-          Período: {new Date(sales.startDate).toLocaleDateString()} até{" "}
-          {new Date(sales.endDate).toLocaleDateString()}
-        </p>
-        <p className="text-xs sm:text-sm text-textSecondaryLight mt-1">
-          Processado em: {new Date(sales.generatedAt).toLocaleString()}
+        <p className="text-sm text-gray-500">
+          Visão geral do desempenho do negócio
         </p>
       </div>
+    </div>
+
+    {/* Badge de período */}
+    <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-xl text-sm text-gray-700">
+      <Calendar size={16} />
+      {new Date(sales.startDate).toLocaleDateString()} →{" "}
+      {new Date(sales.endDate).toLocaleDateString()}
+    </div>
+  </div>
+
+  {/* Linha inferior */}
+  <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-sm text-gray-500">
+    
+    <div className="flex items-center gap-2">
+      <Clock size={14} />
+      Gerado em: {new Date(sales.generatedAt).toLocaleString()}
+    </div>
+
+    <div className="flex items-center gap-2 text-green-600 font-medium">
+      <TrendingUp size={16} />
+      Sistema atualizado
+    </div>
+
+  </div>
+</div>
 
       {/* KPIs FINANCEIROS */}
       <div>
@@ -81,18 +112,55 @@ export default function DashboardHome() {
         </div>
       </div>
 
-      {/* INFORMAÇÕES DO ESTABELECIMENTO */}
-      <div className="bg-white border border-borderLight rounded-xl p-4 sm:p-6 shadow-sm">
-        <h3 className="text-lg sm:text-xl font-semibold text-primary mb-3 text-center sm:text-left">
-          Estabelecimento
-        </h3>
+     {/* INFORMAÇÕES DO ESTABELECIMENTO */}
+<div className="bg-white border border-borderLight rounded-2xl p-6 shadow-sm">
+  <h3 className="text-lg sm:text-xl font-semibold text-primary mb-6 text-center sm:text-left">
+    Informações do Estabelecimento
+  </h3>
 
-        <div className="mt-2 space-y-2 text-sm sm:text-base">
-          <p><strong>Nome:</strong> {inventory.establishmentName ?? "-"}</p>
-          <p><strong>Endereço:</strong> {inventory.address ?? "-"}</p>
-          <p><strong>Telefone:</strong> {inventory.phone ?? "-"}</p>
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+    {/* Nome */}
+    <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+      <div className="p-2 rounded-lg bg-primary/10 text-primary">
+        <Store size={20} />
+      </div>
+      <div>
+        <p className="text-xs text-gray-500">Nome</p>
+        <p className="font-semibold text-gray-800">
+          {inventory.establishmentName ?? "-"}
+        </p>
+      </div>
+    </div>
+
+    {/* Endereço */}
+    <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+      <div className="p-2 rounded-lg bg-blue-100 text-blue-600">
+        <MapPin size={20} />
+      </div>
+      <div>
+        <p className="text-xs text-gray-500">Endereço</p>
+        <p className="font-semibold text-gray-800">
+          {inventory.address ?? "-"}
+        </p>
+      </div>
+    </div>
+
+    {/* Telefone */}
+      <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition">
+        <div className="p-2 rounded-lg bg-green-100 text-green-600">
+          <Phone size={20} />
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">Telefone</p>
+          <p className="font-semibold text-gray-800">
+            {inventory.phone ?? "-"}
+          </p>
         </div>
       </div>
+
+    </div>
+  </div>
 
     </div>
   );
