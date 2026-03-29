@@ -1,20 +1,29 @@
 "use client";
 import { useState } from "react";
-import { ProductItemResponse } from "@/types/admin/product";
+import { ListProductsRequest, ProductItemResponse } from "@/types/admin/product";
 import { deleteProduct } from "@/service/admin/products";
 import { CreateProductModal } from "../modals/CreateProductModal";
 import { ProductFilters } from "../ProductFilters";
 import { useToast } from "@/ context/ToastContext";
-import { useProducts } from "@/hooks/admin /product/useProducts";
+
 
 
 interface ProductsTableProps {
   establishmentId: string;
+  filters: ListProductsRequest;
+  setFilters: (value: ListProductsRequest) => void;
+  filteredProducts: ProductItemResponse[];
+  loading: boolean;
+  refresh: () => void;
 }
 
-export function ProductsTable({ establishmentId }: ProductsTableProps) {
+export function ProductsTable({  establishmentId,
+  filters,
+  setFilters,
+  filteredProducts,
+  loading,
+  refresh }: ProductsTableProps) {
   const { showToast } = useToast();
-  const { filters, setFilters, filteredProducts, loading, refresh } = useProducts(establishmentId);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItemResponse | null>(null);

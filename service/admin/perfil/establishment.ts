@@ -23,11 +23,14 @@ export async function getLoggedEstablishment(
 }
 
 export async function updateEstablishment(
+  establishmentId: string,
   data: UpdateEstablishmentRequest
 ): Promise<UpdateEstablishmentResponse> {
   try {
+    console.log("ID:", establishmentId);
+console.log("TYPE:", typeof establishmentId);
     const res = await api.put(
-      "/api/admin/establishment/update",
+      `/api/admin/establishment/update/${establishmentId}`,
       data
     );
 
@@ -35,4 +38,5 @@ export async function updateEstablishment(
   } catch (error) {
     handleHttpError(error);
   }
+
 }

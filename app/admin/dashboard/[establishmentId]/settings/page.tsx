@@ -15,9 +15,11 @@ export default function EstablishmentSettings() {
   const { showToast } = useToast();
   const params = useParams();
 
-  const establishmentId = Array.isArray(params?.establishmentId)
+const establishmentId = String(
+  Array.isArray(params?.establishmentId)
     ? params.establishmentId[0]
-    : params?.establishmentId;
+    : params?.establishmentId
+);
 
   const { data, loading, refresh } = useEstablishment(establishmentId ?? "");
 
@@ -41,13 +43,13 @@ export default function EstablishmentSettings() {
     if (!form) return;
     try {
       setSaving(true);
-      await updateEstablishment({
-        tradeName: form.tradeName,
-        email: form.email,
-        logoUrl: form.logoUrl,
-        primaryColor: form.primaryColor,
-        secondaryColor: form.secondaryColor,
-      });
+        await updateEstablishment(establishmentId, {
+      tradeName: form.tradeName,
+      email: form.email,
+      logoUrl: form.logoUrl,
+      primaryColor: form.primaryColor,
+      secondaryColor: form.secondaryColor,
+    });
 
       showToast("Estabelecimento atualizado com sucesso!", "success");
       setEditing(false);

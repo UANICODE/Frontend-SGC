@@ -1,12 +1,17 @@
 "use client";
 
-import { X, AlertTriangle } from "lucide-react";
+import { X, AlertTriangle, ShoppingCart } from "lucide-react";
 
 interface Props {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
   loading?: boolean;
+
+  title?: string;
+  description?: string;
+  confirmText?: string;
+  variant?: "danger" | "success";
 }
 
 export function ConfirmCloseCashModal({
@@ -14,8 +19,14 @@ export function ConfirmCloseCashModal({
   onClose,
   onConfirm,
   loading,
+  title = "Confirmar Fecho",
+  description = "Tem certeza que deseja fechar este caixa?",
+  confirmText = "Sim, Fechar",
+  variant = "danger",
 }: Props) {
   if (!open) return null;
+
+  const isDanger = variant === "danger";
 
   return (
     <>
@@ -28,13 +39,18 @@ export function ConfirmCloseCashModal({
       {/* Modal */}
       <div className="fixed inset-0 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-fadeIn">
-          
+
           {/* Header */}
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold flex items-center gap-2 text-red-600">
-              <AlertTriangle size={20} />
-              Confirmar Fecho
+            <h2
+              className={`text-lg font-bold flex items-center gap-2 ${
+                isDanger ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {isDanger ? <AlertTriangle size={20} /> : <ShoppingCart size={20} />}
+              {title}
             </h2>
+
             <button onClick={onClose}>
               <X />
             </button>
@@ -42,11 +58,15 @@ export function ConfirmCloseCashModal({
 
           {/* Conteúdo */}
           <p className="text-gray-600 text-sm mb-6">
-            Tem certeza que deseja fechar este caixa?
-            <br />
-            <span className="text-red-500 font-semibold">
-              Esta ação não pode ser desfeita.
-            </span>
+            {description}
+            {isDanger && (
+              <>
+                <br />
+                <span className="text-red-500 font-semibold">
+                  Esta ação não pode ser desfeita.
+                </span>
+              </>
+            )}
           </p>
 
           {/* Ações */}
@@ -61,14 +81,19 @@ export function ConfirmCloseCashModal({
             <button
               onClick={onConfirm}
               disabled={loading}
-              className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition flex items-center gap-2"
+              className={`px-4 py-2 rounded-lg text-white transition flex items-center gap-2 ${
+                isDanger
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
             >
               {loading && (
                 <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
               )}
-              {loading ? "Fechando..." : "Sim, Fechar"}
+              {loading ? "Processando..." : confirmText}
             </button>
           </div>
+
         </div>
       </div>
     </>

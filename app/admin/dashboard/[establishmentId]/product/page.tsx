@@ -47,9 +47,14 @@ export default function ProductsPage() {
           <p className="mt-4 text-gray-500">Carregando produtos...</p>
         </div>
       ) : (
-        <ProductsTable
-          establishmentId={establishmentId}
-        />
+       <ProductsTable
+        establishmentId={establishmentId}
+        filters={productsHook!.filters}
+        setFilters={productsHook!.setFilters}
+        filteredProducts={productsHook!.filteredProducts}
+        loading={productsHook!.loading}
+        refresh={productsHook!.refresh}
+      />
       )}
 
       {openCreate && (

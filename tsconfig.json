@@ -40,7 +40,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
-  ],
+, "hooks/admin /product/stock/useStockMovements", "service/admin/superProduct.ts"  ],
   "exclude": [
     "node_modules"
   ]

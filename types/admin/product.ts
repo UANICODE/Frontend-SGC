@@ -152,3 +152,13 @@ export interface ListIngredientsResponse {
   totalElements: number;
   totalPages: number;
 }
+
+export interface StockMovement {
+  productName: string;
+  movementType: string;
+  quantity: number;
+  quantityBefore: number;
+  quantityAfter: number;
+  responsibleUser: string;
+  createdAt: string;
+}

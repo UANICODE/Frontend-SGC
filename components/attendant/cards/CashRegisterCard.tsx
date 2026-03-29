@@ -30,7 +30,9 @@ export function CashRegisterCard({
   closing,
   sellingCashId,
 }: Props) {
+
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmSellOpen, setConfirmSellOpen] = useState(false); // 🔥 NOVO
 
   const isOpen = cash.status === "ABERTO";
   const isSelling = sellingCashId === cash.id;
@@ -45,6 +47,8 @@ export function CashRegisterCard({
         `}
         style={isOpen ? { borderColor: primaryColor } : undefined}
       >
+
+        {/* HEADER */}
         <div className="flex justify-between mb-3">
           <span className="text-sm text-gray-500 flex items-center gap-1">
             <Clock size={14} />
@@ -63,6 +67,7 @@ export function CashRegisterCard({
           </span>
         </div>
 
+        {/* INFO */}
         <div className="space-y-1 text-sm">
           <p className="flex items-center gap-2">
             <DollarSign size={16} />
@@ -79,12 +84,10 @@ export function CashRegisterCard({
           <>
             {/* BOTÃO VENDER */}
             <button
-              onClick={() => onSell(cash.id)}
+              onClick={() => setConfirmSellOpen(true)} // 🔥 ALTERADO
               disabled={isSelling}
-              className={`
-                mt-4 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
-                transform transition-all duration-200 hover:scale-105
-              `}
+              className="mt-4 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
+              transform transition-all duration-200 hover:scale-105"
               style={{ backgroundColor: secondaryColor }}
             >
               {isSelling && (
@@ -100,7 +103,8 @@ export function CashRegisterCard({
             <button
               onClick={() => setConfirmOpen(true)}
               disabled={closing}
-              className="mt-2 w-full py-2 rounded-xl bg-red-600 text-white flex justify-center items-center gap-2 transform transition-all duration-200 hover:scale-105 disabled:opacity-50"
+              className="mt-2 w-full py-2 rounded-xl bg-red-600 text-white flex justify-center items-center gap-2
+              transform transition-all duration-200 hover:scale-105 disabled:opacity-50"
             >
               <Lock size={18} />
               {closing ? "Fechando..." : "Fechar Caixa"}
@@ -109,7 +113,7 @@ export function CashRegisterCard({
         )}
       </div>
 
-      {/* MODAL DE CONFIRMAÇÃO */}
+      {/* MODAL FECHAR CAIXA */}
       <ConfirmCloseCashModal
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
@@ -119,6 +123,21 @@ export function CashRegisterCard({
           setConfirmOpen(false);
         }}
       />
+
+      {/* 🔥 MODAL CONFIRMAR VENDA (NOVO) */}
+          <ConfirmCloseCashModal
+          open={confirmSellOpen}
+          onClose={() => setConfirmSellOpen(false)}
+          loading={isSelling}
+          onConfirm={() => {
+            onSell(cash.id);
+            setConfirmSellOpen(false);
+          }}
+          title="Iniciar Venda"
+          description="Deseja realmente iniciar uma nova venda nesta caixa?"
+          confirmText="Sim, iniciar"
+          variant="success"
+        />
     </>
   );
 }

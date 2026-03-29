@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useSale } from "@/hooks/attendant/useSale";
 import { usePaymentMethods } from "@/hooks/attendant/usePaymentMethods";
@@ -13,8 +13,8 @@ import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
-import { PlusIcon, CheckCircleIcon, ArchiveBoxIcon } from "@heroicons/react/24/outline";
-import { Minus, Plus, ShoppingCart, Trash2, DollarSign } from "lucide-react";
+import { PlusIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { Minus, Plus, ShoppingCart } from "lucide-react";
 
 export default function SalesPage() {
   useRoleGuard([UserRole.ATENDENTE]);
@@ -30,7 +30,6 @@ export default function SalesPage() {
 
   const {
     sale,
-    loading,
     addingProductIds,
     processingItemIds,
     startSale,
@@ -44,7 +43,8 @@ export default function SalesPage() {
 
   const { methods } = usePaymentMethods();
 
-  const [products, setProducts] = useState<ProductItem[]>([]);
+  // 🔥 ESTADOS
+  const [allProducts, setAllProducts] = useState<ProductItem[]>([]);
   const [productsLoading, setProductsLoading] = useState(false);
   const [searchName, setSearchName] = useState("");
   const [showPayment, setShowPayment] = useState(false);
@@ -61,20 +61,35 @@ export default function SalesPage() {
     initSale();
   }, [saleId, cashRegisterId]);
 
-  // ================= PRODUTOS =================
+  // ================= PRODUTOS (1x API) =================
   const loadProducts = useCallback(async () => {
     setProductsLoading(true);
-    const list = await listProducts({
-      establishmentId,
-      name: searchName || undefined,
-    });
-    setProducts(list || []);
-    setProductsLoading(false);
-  }, [searchName, establishmentId]);
+
+    try {
+      const list = await listProducts({
+        establishmentId,
+      });
+
+      setAllProducts(list || []);
+    } catch (e) {
+      toast.showToast("Erro ao carregar produtos", "error");
+    } finally {
+      setProductsLoading(false);
+    }
+  }, [establishmentId]);
 
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  // ================= FILTRO FRONTEND =================
+  const filteredProducts = useMemo(() => {
+    if (!searchName) return allProducts;
+
+    return allProducts.filter((p) =>
+      p.name.toLowerCase().includes(searchName.toLowerCase())
+    );
+  }, [allProducts, searchName]);
 
   // ================= PAGAMENTO =================
   async function handleConfirmPayment(methodId: string) {
@@ -94,6 +109,7 @@ export default function SalesPage() {
 
   async function handleArchiveAndRedirect() {
     if (!sale) return;
+
     try {
       await handleArchive();
       router.push(`/attendant/dashboard/${establishmentId}/archived-sales`);
@@ -118,8 +134,9 @@ export default function SalesPage() {
       <div className="flex-1 flex flex-col min-h-0">
         <input
           placeholder="Buscar produto..."
-          className="w-full p-3 border rounded-xl bg-white lg:sticky lg:top-0 z-10"
+          value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
+          className="w-full p-3 border rounded-xl bg-white lg:sticky lg:top-0 z-10"
         />
 
         {productsLoading && (
@@ -128,21 +145,20 @@ export default function SalesPage() {
 
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 mt-2">
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {products.map((p) => (
+            {filteredProducts.map((p) => (
               <div key={p.id} className="bg-white rounded-2xl shadow flex flex-col overflow-hidden">
 
-                {/* FOTO / CATÁLOGO */}
-              <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
-                {p.catalogo ? (
-                  <img
-                    src={p.catalogo}
-                    alt={p.name}
-                    className="w-full h-full object-contain p-4"
-                  />
-                ) : (
-                  <div className="text-gray-400 text-sm">Sem imagem</div>
-                )}
-              </div>
+                <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+                  {p.catalogo ? (
+                    <img
+                      src={p.catalogo}
+                      alt={p.name}
+                      className="w-full h-full object-contain p-4"
+                    />
+                  ) : (
+                    <div className="text-gray-400 text-sm">Sem imagem</div>
+                  )}
+                </div>
 
                 <div className="p-3 md:p-4 flex flex-col justify-between flex-1">
                   <div>
@@ -152,24 +168,24 @@ export default function SalesPage() {
                     <p className="text-xs text-gray-400">Estoque: {p.stock}</p>
                   </div>
 
-                 <button
-                  onClick={async () => handleAdd(p.id)}
-                  disabled={addingProductIds.includes(p.id)}
-                  className={`mt-3 w-full py-2 rounded-lg text-white flex justify-center items-center gap-2 transition ${
-                    addingProductIds.includes(p.id)
-                      ? "bg-gray-500 cursor-not-allowed"
-                      : "bg-black hover:brightness-90"
-                  }`}
-                >
-                  {addingProductIds.includes(p.id) ? (
-                    "Adicionando..."
-                  ) : (
-                    <>
-                      <PlusIcon className="w-5 h-5" />
-                      Adicionar
-                    </>
-                  )}
-                </button>
+                  <button
+                    onClick={() => handleAdd(p.id)}
+                    disabled={addingProductIds.includes(p.id)}
+                    className={`mt-3 w-full py-2 rounded-lg text-white flex justify-center items-center gap-2 ${
+                      addingProductIds.includes(p.id)
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-black hover:brightness-90"
+                    }`}
+                  >
+                    {addingProductIds.includes(p.id) ? (
+                      "Adicionando..."
+                    ) : (
+                      <>
+                        <PlusIcon className="w-5 h-5" />
+                        Adicionar
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
             ))}
@@ -190,7 +206,7 @@ export default function SalesPage() {
             {sale?.items.length === 0 ? (
               <p className="text-center text-gray-400">Nenhum item</p>
             ) : (
-            sale?.items.map((item) => (
+              sale?.items.map((item) => (
                 <div key={item.itemId} className="border-b pb-2">
 
                   <div className="flex justify-between text-sm md:text-base">
@@ -249,10 +265,6 @@ export default function SalesPage() {
               onClick={() => setShowPayment(true)}
               className="w-full bg-green-500 text-white py-3 rounded-lg flex items-center justify-center gap-2"
             >
-              {finalizing && (
-                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
-              )}
-              {!finalizing && <CheckCircleIcon className="w-5 h-5" />}
               {finalizing ? "Finalizando..." : "Finalizar Venda"}
             </button>
           </div>
@@ -279,16 +291,3 @@ export default function SalesPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

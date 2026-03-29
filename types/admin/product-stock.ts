@@ -25,7 +25,7 @@ export interface AddProductStockResponse {
 export interface UpdateProductStockRequest {
   establishmentId: string;
   productId: string;
-  quantity: number;
+ quantityToAdd: number;
 }
 
 export interface UpdateProductStockResponse {
