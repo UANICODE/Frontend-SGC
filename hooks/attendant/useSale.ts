@@ -3,9 +3,11 @@ import { Sale } from "@/types/attendant/sale/Sale";
 import { Receipt } from "@/types/attendant/sale/Receipt";
 import { 
   addItem, 
+  addItemByWeight, 
   archiveSale, 
   createSale, 
   finalizeSale, 
+  generateReceipt, 
   getSaleDetails, 
   removeItem, 
   updateQuantity 
@@ -57,6 +59,38 @@ export function useSale(establishmentId: string) {
       setAddingProductIds((prev) => prev.filter((id) => id !== productId));
     }
   }
+
+  async function handleAddByWeight(productId: string, weightInGrams: number, totalPrice: number) {
+  if (!sale) return;
+  
+  setAddingProductIds((prev) => [...prev, productId]);
+  try {
+    await addItemByWeight(sale.saleId, productId, weightInGrams, totalPrice);
+    await refreshSale(sale.saleId);
+    toast.showToast("Item adicionado com sucesso!", "success");
+  } catch (e: any) {
+    toast.showToast(e.message || "Erro ao adicionar item", "error");
+  } finally {
+    setAddingProductIds((prev) => prev.filter((id) => id !== productId));
+  }
+}
+
+async function handleGenerateReceipt(): Promise<Receipt> {
+  if (!sale) throw new Error("Nenhuma venda ativa");
+  
+  setLoading(true);
+  try {
+    const receipt = await generateReceipt(sale.saleId, establishmentId);
+    toast.showToast("Recibo gerado com sucesso!", "success");
+    return receipt;
+  } catch (e: any) {
+    toast.showToast(e.message || "Erro ao gerar recibo", "error");
+    throw e;
+  } finally {
+    setLoading(false);
+  }
+}
+
 
   // Remover item da venda
   async function handleRemove(itemId: string) {
@@ -136,5 +170,7 @@ export function useSale(establishmentId: string) {
     handleQuantity,
     handleArchive,
     handleFinalize,
+     handleAddByWeight,
+     handleGenerateReceipt,
   };
 }

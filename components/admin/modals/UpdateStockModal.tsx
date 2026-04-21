@@ -19,9 +19,9 @@ export function UpdateStockModal({
   onSuccess,
 }: Props) {
   const { showToast } = useToast();
-  const [quantityToAdd, setQuantityToAdd] = useState(0);
+  const [quantityToAdd, setQuantityToAdd] = useState("");
   const [loading, setLoading] = useState(false);
-
+const quantityNumber = Number(quantityToAdd || 0);
   async function handleSubmit() {
     try {
       setLoading(true);
@@ -29,7 +29,7 @@ export function UpdateStockModal({
       await updateProductStock({
         establishmentId,
         productId: item.productId,
-        quantityToAdd,
+        quantityToAdd: quantityNumber,
       });
 
       showToast("Stock atualizado com sucesso!", "success");
@@ -45,8 +45,9 @@ export function UpdateStockModal({
     }
   }
 
-  const result = item.quantity + quantityToAdd;
-
+const result = Number(
+  (item.quantity + quantityNumber).toFixed(2)
+);
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl space-y-5 w-full max-w-md">
@@ -72,17 +73,35 @@ export function UpdateStockModal({
         </div>
 
         {/* 🔥 Input */}
-        <div>
-          <label className="text-sm text-gray-500">
-            Quantidade a adicionar
-          </label>
-          <input
-            type="number"
-            className="w-full border p-3 rounded-lg mt-1"
-            value={quantityToAdd}
-            onChange={(e) => setQuantityToAdd(Number(e.target.value))}
-          />
-        </div>
+    <div>
+  <label className="text-sm font-medium text-gray-600">
+    Quantidade a adicionar
+  </label>
+
+  <div className="relative mt-1">
+    <input
+      type="number"
+      step="0.001"
+      placeholder="Ex: 0.500"
+      value={quantityToAdd}
+      onChange={(e) => setQuantityToAdd(e.target.value)}
+      className="
+        w-full
+        border border-gray-300
+        rounded-xl
+        px-4 py-3
+        text-lg
+        font-semibold
+        outline-none
+        focus:ring-2 focus:ring-primary
+        focus:border-primary
+        transition
+      "
+    />
+
+ 
+  </div>
+</div>
 
         {/* 🔥 Preview do resultado */}
         <div className="text-sm text-gray-600">

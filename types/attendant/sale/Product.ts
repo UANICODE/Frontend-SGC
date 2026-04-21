@@ -5,4 +5,8 @@ export interface ProductItem {
   catalogo: string;
   price: number;
   stock: number;
+  isFixedPortion?: boolean;
+  isWeightBased?: boolean;
+  pricePerGram?: number;
+  minWeight?: number;
 }

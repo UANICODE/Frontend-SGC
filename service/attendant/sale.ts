@@ -46,6 +46,41 @@ export async function addItem(
   }
 }
 
+
+
+// service/attendant/sale.ts - adicione esta função
+
+export async function generateReceipt(
+  saleId: string,
+  establishmentId: string
+): Promise<Receipt> {
+  try {
+    const res = await api.get(
+      `/api/attendant/sales/${saleId}/receipt?establishmentId=${establishmentId}`
+    );
+    return res.data;
+  } catch (e) {
+    handleHttpError(e);
+  }
+}
+
+export async function addItemByWeight(
+  saleId: string,
+  productId: string,
+  weightInGrams: number,
+  totalPrice: number
+): Promise<Sale> {
+  try {
+    const res = await api.post(
+      `/api/attendant/sales/${saleId}/items/by-weight`,
+      { productId, weightInGrams }
+    );
+    return res.data;
+  } catch (e) {
+    handleHttpError(e);
+  }
+}
+
 export async function removeItem(
   saleId: string,
   itemId: string

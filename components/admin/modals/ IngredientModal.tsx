@@ -27,7 +27,9 @@ export function IngredientModal({
   const [name, setName] = useState(ingredient?.name ?? "");
   const [unitName, setUnitName] = useState(ingredient?.unitName ?? "");
   const [unitSymbol, setUnitSymbol] = useState(ingredient?.unitSymbol ?? "");
-  const [quantity, setQuantity] = useState(ingredient?.quantity ?? 0);
+const [quantity, setQuantity] = useState<number | undefined>(
+  ingredient?.quantity
+);
   const [minimumLimit, setMinimumLimit] = useState(
     ingredient?.minimumLimit ?? 0
   );
@@ -62,7 +64,7 @@ export function IngredientModal({
           name,
           unitName,
           unitSymbol,
-          quantity,
+          quantity: quantity ?? 0,
           minimumLimit,
         });
 
@@ -132,13 +134,18 @@ export function IngredientModal({
           <label htmlFor="quantity" className="text-sm font-medium text-gray-700">
             Quantidade disponível
           </label>
-          <input
-            id="quantity"
-            type="number"
-            className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-          />
+         <input
+        id="quantity"
+        type="number"
+        className="w-full border p-3 rounded-lg focus:ring-2 focus:ring-primary outline-none"
+        value={quantity ?? ""}
+        onChange={(e) =>
+          setQuantity(
+            e.target.value === "" ? undefined : Number(e.target.value)
+          )
+        }
+        placeholder="Ex: 10.5"
+      />
         </div>
 
         {/* Limite mínimo */}

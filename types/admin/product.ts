@@ -30,6 +30,11 @@ export interface ProductItemResponse {
   ingredients?: IngredientItem[]; // ingredientes do produto composto
   createdAt?: string;
   updatedAt?: string;
+   isFixedPortion: boolean;
+  portionQuantity?: number | null;
+  isWeightBased: boolean;
+  pricePerGram?: number;
+  minWeight?: number;
 }
 
 export interface ListProductsResponse {
@@ -53,6 +58,11 @@ export interface CreateProductRequest {
   allowNegativeStock: boolean;
   active: boolean;
   initialStockQuantity: number;
+  isFixedPortion?: boolean;
+  portionQuantity?: number | null;
+   isWeightBased?: boolean;
+  pricePerGram?: number | null;
+  minWeight?: number | null;
 }
 
 export interface CreateProductResponse {
@@ -105,6 +115,11 @@ export interface UpdateProductRequest {
   controlsStock: boolean;
   allowNegativeStock: boolean;
   active: boolean;
+   isFixedPortion: boolean;
+  portionQuantity?: number | null;
+   isWeightBased: boolean;
+  pricePerGram?: number | null;
+  minWeight?: number | null;
   ingredients?: IngredientItem[] | null; // null ou vazio = produto simples
 }
 
