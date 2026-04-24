@@ -18,6 +18,7 @@ import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { PlusIcon, CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { Minus, Plus, ShoppingCart, Scale, PrinterIcon } from "lucide-react";
 import { WeightProductModal } from "@/components/attendant/modals/WeightProductModal";
+import { finalizeSale } from "@/service/attendant/sale";
 
 export default function SalesPage() {
   useRoleGuard([UserRole.ATENDENTE]);
@@ -182,19 +183,31 @@ const handleEditItem = (item: SaleItem) => {
   };
 
   // ================= PAGAMENTO =================
-  async function handleConfirmPayment(methodId: string) {
-    if (!sale) return;
-    try {
-      setFinalizing(true);
-      const receiptData = await handleFinalize(methodId);
-      setReceipt(receiptData);
-      setShowPayment(false);
-    } catch (e: any) {
-      toast.showToast(e.message || "Erro ao finalizar venda", "error");
-    } finally {
-      setFinalizing(false);
-    }
+// 🆕 Adicione esta função (substitua a antiga handleConfirmPayment)
+async function handlePaymentConfirm(payments: { methodId: string; amount: number }[]) {
+  if (!sale) return;
+  
+  console.log("🔄 Finalizando com pagamentos:", payments);
+  
+  try {
+    setFinalizing(true);
+    const receiptData = await finalizeSale(establishmentId, {
+      saleId: sale.saleId,
+      // 🔥 Mapear methodId para paymentMethodId
+      payments: payments.map(p => ({
+        paymentMethodId: p.methodId,
+        amount: p.amount
+      }))
+    });
+    setReceipt(receiptData);
+    setShowPayment(false);
+  } catch (e: any) {
+    toast.showToast(e.message || "Erro ao finalizar venda", "error");
+    console.error("Erro:", e);
+  } finally {
+    setFinalizing(false);
   }
+}
 
   async function handleArchiveAndRedirect() {
     if (!sale) return;
@@ -470,12 +483,13 @@ const handleEditItem = (item: SaleItem) => {
       </div>
 
       {/* Modais */}
-      <PaymentModal
-        open={showPayment}
-        methods={methods}
-        onClose={() => setShowPayment(false)}
-        onConfirm={handleConfirmPayment}
-      />
+  <PaymentModal
+  open={showPayment}
+  methods={methods}
+  totalAmount={sale?.total || 0}
+  onClose={() => setShowPayment(false)}
+  onConfirm={handlePaymentConfirm}
+/>
 
       <WeightProductModal
         open={weightModalOpen}

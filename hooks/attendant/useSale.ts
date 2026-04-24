@@ -140,23 +140,23 @@ async function handleGenerateReceipt(): Promise<Receipt> {
     }
   }
 
-  async function handleFinalize(paymentMethodId: string): Promise<Receipt> {
-    if (!sale || sale.items.length === 0)
-      throw new Error("Venda vazia não pode ser finalizada.");
+async function handleFinalize(payments: { paymentMethodId: string; amount: number }[]): Promise<Receipt> {
+  if (!sale || sale.items.length === 0)
+    throw new Error("Venda vazia não pode ser finalizada.");
 
-    setLoading(true);
-    try {
-      const receipt = await finalizeSale(establishmentId, {
-        saleId: sale.saleId,
-        paymentMethodId,
-      });
-      setSale(null);
-      toast.showToast("Venda finalizada!", "success");
-      return receipt;
-    } finally {
-      setLoading(false);
-    }
+  setLoading(true);
+  try {
+    const receipt = await finalizeSale(establishmentId, {
+      saleId: sale.saleId,
+      payments: payments
+    });
+    setSale(null);
+    toast.showToast("Venda finalizada!", "success");
+    return receipt;
+  } finally {
+    setLoading(false);
   }
+}
 
   return {
     sale,

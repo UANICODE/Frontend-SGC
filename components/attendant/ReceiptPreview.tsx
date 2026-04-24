@@ -7,6 +7,7 @@ interface Props {
   onPrint: () => void;
   onClose: () => void;
 }
+import { QRCodeCanvas } from "qrcode.react";
 
 export function ReceiptPreview({ receipt, onPrint, onClose }: Props) {
   return (
@@ -52,13 +53,19 @@ export function ReceiptPreview({ receipt, onPrint, onClose }: Props) {
             <span>{receipt.total} MT</span>
           </div>
 
-          <div>Pagamento: {receipt.paymentMethod}</div>
+          <div>Metodos: {receipt.paymentMethod}</div>
           <div>{new Date(receipt.date).toLocaleString()}</div>
 
           {/* LINHA DE SEPARAÇÃO E MENSAGEM FINAL */}
           <hr className="my-1 border-t border-black"/>
-          <div className="text-center italic">----------</div>
-          <div className="text-center italic">Obrigado, volte sempre!</div>
+       
+               <div className="flex flex-col items-center mt-1">
+            <QRCodeCanvas value="https://www.uanicode.com" size={60} />
+            <div className="text-[10px] mt-1">Visite-nos</div>
+               <div className="text-center italic">----------</div>
+              <div className="text-center italic">Obrigado, volte sempre!</div>
+           <div className="text-center italic">----------</div>
+          </div>
 
         </div>
 

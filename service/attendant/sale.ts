@@ -119,20 +119,21 @@ export async function archiveSale(saleId: string) {
   }
 }
 
+// service/attendant/sale.ts - UNIFICADO
+
+// service/attendant/sale.ts
 export async function finalizeSale(
   establishmentId: string,
   payload: {
     saleId: string;
-    paymentMethodId: string;
+    payments: { paymentMethodId: string; amount: number }[];
   }
 ): Promise<Receipt> {
   try {
-    console.log("DADOS ENV", payload)
     const res = await api.post(
       `/api/attendant/sales/finalize?establishmentId=${establishmentId}`,
       payload
     );
-        console.log("DADOS retornados", res.data)
     return res.data;
   } catch (e) {
     handleHttpError(e);
