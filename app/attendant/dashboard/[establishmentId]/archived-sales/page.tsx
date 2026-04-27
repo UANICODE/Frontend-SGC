@@ -1,10 +1,13 @@
+// app/attendant/dashboard/[establishmentId]/archived-sales/page.tsx
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useArchivedSales } from "@/hooks/attendant/useArchivedSales";
 import { useSale } from "@/hooks/attendant/useSale";
-import { useToast } from "@/ context/ToastContext";
+import { useAssignSale } from "@/hooks/attendant/useAssignSale";
+import { AssignModal } from "@/components/attendant/modals/AssignModal";
 
 import {
   ArrowPathIcon,
@@ -16,24 +19,47 @@ import {
   BanknotesIcon,
   TagIcon,
   CurrencyDollarIcon,
+  UserGroupIcon,
+  TableCellsIcon,
+  PhoneIcon,
+  MapPinIcon,
 } from "@heroicons/react/24/outline";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+import { useToast } from "@/ context/ToastContext";
+import { useTables } from "@/hooks/admin /useTables";
+import { useWaiters } from "@/hooks/admin /useWaiters";
 
 
+interface ArchivedSale {
+  saleId: string;
+  subtotal: number;
+  discount: number;
+  total: number;
+  saleDate: string;  // ✅ Mudar de createdAt para saleDate
+  tableNumber?: string;
+  tableLocation?: string;
+  waiterName?: string;
+  waiterPhone?: string;
+}
 
 export default function ArchivedSalesPage() {
-
   useRoleGuard([UserRole.ATENDENTE]);
-
 
   const { establishmentId, cashRegisterId } = useParams() as any;
   const router = useRouter();
   const toast = useToast();
-  const { data, loading, error, restore: restoreSaleFromHook, restoringId } =
+  const { data, loading, error, restore: restoreSaleFromHook, restoringId, refresh } =
     useArchivedSales(establishmentId, cashRegisterId);
-
   const { sale } = useSale(establishmentId);
+  const { tables } = useTables(establishmentId);
+  const { waiters } = useWaiters(establishmentId);
+  const { assign, assigning } = useAssignSale(establishmentId);
+
+  const [assignModalOpen, setAssignModalOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState<any>(null);
+  const [selectedTableId, setSelectedTableId] = useState<string>("");
+  const [selectedWaiterId, setSelectedWaiterId] = useState<string>("");
 
   const handleRestore = async (saleId: string) => {
     try {
@@ -43,6 +69,25 @@ export default function ArchivedSalesPage() {
       );
     } catch (e: any) {
       toast.showToast(e.message || "Não foi possível recuperar a venda", "error");
+    }
+  };
+
+  const handleOpenAssign = (sale: ArchivedSale) => {
+    setSelectedSale(sale);
+    // Preencher com os valores atuais se já existirem
+    setSelectedTableId(sale.tableNumber ? 
+      tables.find(t => t.number === sale.tableNumber)?.id || "" : "");
+    setSelectedWaiterId(sale.waiterName ? 
+      waiters.find(w => w.name === sale.waiterName)?.id || "" : "");
+    setAssignModalOpen(true);
+  };
+
+  const handleAssign = async (tableId?: string, waiterId?: string) => {
+    if (selectedSale) {
+      await assign(selectedSale.saleId, { tableId, waiterId });
+      setAssignModalOpen(false);
+      setSelectedSale(null);
+      refresh(); // Recarregar a lista para mostrar os dados atualizados
     }
   };
 
@@ -70,55 +115,130 @@ export default function ArchivedSalesPage() {
       )}
 
       <div className="space-y-4">
-        {data.map((sale) => (
+        {data.map((sale: ArchivedSale) => (
           <div
             key={sale.saleId}
-            className="bg-white p-6 rounded-xl shadow flex justify-between items-center"
+            className="bg-white p-6 rounded-xl shadow hover:shadow-md transition"
           >
-            <div className="space-y-2 text-sm">
-              
-              <p className="font-medium flex items-center gap-2">
-                <ReceiptPercentIcon className="w-5 h-5 text-gray-500" />
-                Venda: #{sale.saleId.slice(0, 8)}
-              </p>
+            <div className="flex justify-between items-start flex-wrap gap-4">
+              <div className="space-y-2 text-sm flex-1">
+                <p className="font-medium flex items-center gap-2">
+                  <ReceiptPercentIcon className="w-5 h-5 text-gray-500" />
+                  Venda: #{sale.saleId.slice(0, 8)}
+                </p>
 
-              <p className="font-medium flex items-center gap-2">
-                <BanknotesIcon className="w-5 h-5 text-gray-500" />
-                Subtotal: {sale.subtotal} MZN
-              </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="flex items-center gap-2">
+                      <BanknotesIcon className="w-4 h-4 text-gray-500" />
+                      Subtotal: {sale.subtotal} MZN
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <TagIcon className="w-4 h-4 text-gray-500" />
+                      Desconto: {sale.discount} MZN
+                    </p>
+                    <p className="flex items-center gap-2 font-bold">
+                      <CurrencyDollarIcon className="w-4 h-4 text-gray-500" />
+                      Total: MZN {sale.total}
+                    </p>
+                  </div>
 
-              <p className="font-medium flex items-center gap-2">
-                <TagIcon className="w-5 h-5 text-gray-500" />
-                Desconto: {sale.discount} MZN
-              </p>
+                  {/* 🆕 Informações de Mesa e Garçom */}
+                  <div className="border-l pl-4">
+                    {sale.tableNumber ? (
+                      <p className="flex items-center gap-2 text-green-600">
+                        <TableCellsIcon className="w-4 h-4" />
+                        Mesa: {sale.tableNumber}
+                        {sale.tableLocation && (
+                          <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <MapPinIcon className="w-3 h-3" />
+                            {sale.tableLocation}
+                          </span>
+                        )}
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-gray-400">
+                        <TableCellsIcon className="w-4 h-4" />
+                        Mesa: Não atribuída
+                      </p>
+                    )}
 
-              <p className="text-sm text-gray-500 flex items-center gap-2">
-                <CurrencyDollarIcon className="w-5 h-5 text-gray-500" />
-                Total: MZN {sale.total}
-              </p>
+                    {sale.waiterName ? (
+                      <p className="flex items-center gap-2 text-blue-600 mt-1">
+                        <UserGroupIcon className="w-4 h-4" />
+                        Garçom: {sale.waiterName}
+                        {sale.waiterPhone && (
+                          <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <PhoneIcon className="w-3 h-3" />
+                            {sale.waiterPhone}
+                          </span>
+                        )}
+                      </p>
+                    ) : (
+                      <p className="flex items-center gap-2 text-gray-400 mt-1">
+                        <UserGroupIcon className="w-4 h-4" />
+                        Garçom: Não atribuído
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
 
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleOpenAssign(sale)}
+                  disabled={assigning === sale.saleId}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 hover:bg-purple-700 transition"
+                >
+                  {assigning === sale.saleId ? (
+                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                  ) : (
+                    <>
+                      <UserGroupIcon className="w-5 h-5" />
+                      {sale.tableNumber || sale.waiterName ? "Editar" : "Atribuir"}
+                    </>
+                  )}
+                </button>
+
+                <button
+                  disabled={restoringId === sale.saleId}
+                  onClick={() => handleRestore(sale.saleId)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 hover:bg-blue-700 transition"
+                >
+                  {restoringId === sale.saleId ? (
+                    <>
+                      <ArrowPathIcon className="w-5 h-5 animate-spin" />
+                      Restaurando...
+                    </>
+                  ) : (
+                    <>
+                      <ArrowUturnLeftIcon className="w-5 h-5" />
+                      Recuperar
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
-
-            <button
-              disabled={restoringId === sale.saleId}
-              onClick={() => handleRestore(sale.saleId)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50"
-            >
-              {restoringId === sale.saleId ? (
-                <>
-                  <ArrowPathIcon className="w-5 h-5 animate-spin" />
-                  Restaurando...
-                </>
-              ) : (
-                <>
-                  <ArrowUturnLeftIcon className="w-5 h-5" />
-                  Recuperar
-                </>
-              )}
-            </button>
           </div>
         ))}
       </div>
+
+      {/* Modal de Atribuição com valores atuais */}
+      <AssignModal
+        open={assignModalOpen}
+        onClose={() => {
+          setAssignModalOpen(false);
+          setSelectedSale(null);
+          setSelectedTableId("");
+          setSelectedWaiterId("");
+        }}
+        onConfirm={handleAssign}
+        tables={tables}
+        waiters={waiters}
+        saleNumber={selectedSale?.saleId?.slice(0, 8)}
+        initialTableId={selectedTableId}
+        initialWaiterId={selectedWaiterId}
+      />
     </div>
   );
 }

@@ -1,14 +1,18 @@
 import api from "@/service/api";
 import { handleHttpError } from "@/utils/httpErrorHandler";
 
+// types/attendant/sale/ArchivedSale.ts
 export interface ArchivedSale {
   saleId: string;
   subtotal: number;
   discount: number;
   total: number;
-  createdAt: string;
+  saleDate: string;  // ✅ Mudar de createdAt para saleDate
+  tableNumber?: string;
+  tableLocation?: string;
+  waiterName?: string;
+  waiterPhone?: string;
 }
-
 export async function listArchivedSales(
   establishmentId: string,
   cashRegisterId: string

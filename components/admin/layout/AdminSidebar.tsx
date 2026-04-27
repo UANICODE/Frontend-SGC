@@ -47,6 +47,7 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
     { name: "Estoque", href: `${basePath}/product/stock`, icon: <Warehouse size={18} /> },
     { name: "Fornecedores", href: `${basePath}/supplier`, icon: <Truck size={18} /> },
     { name: "Usuários", href: `${basePath}/users`, icon: <Users size={18} /> },
+    { name: "Mesas e Garçons", href: `${basePath}/tables-waiters`, icon: <LayoutDashboard size={18} /> },
     { name: "Caixas Abertos", href: `${basePath}/cash-registers`, icon: <Wallet size={18} /> },
     { name: "Relatórios", href: `${basePath}/reports`, icon: <BarChart3 size={18} /> },
     { name: "Personalização", href: `${basePath}/settings`, icon: <Settings size={18} /> },
