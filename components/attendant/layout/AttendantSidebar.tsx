@@ -20,7 +20,7 @@ export function AttendantSidebar({ establishmentId, tradeName, logoUrl, primaryC
   const [open, setOpen] = useState(false); // controle hamburger mobile
 
   const menu = [
-    { label: "Dashboard", path: `/attendant/dashboard/${establishmentId}`, icon: <HomeIcon className="w-5 h-5" /> },
+
     { label: "Caixa e Vendas", path: `/attendant/dashboard/${establishmentId}`, icon: <CurrencyDollarIcon className="w-5 h-5" /> },
     { label: "Vendas Arquivadas", path: `/attendant/dashboard/${establishmentId}/archived-sales`, icon: <ArchiveBoxIcon className="w-5 h-5" /> },
   ];

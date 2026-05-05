@@ -44,7 +44,7 @@ export default function SalesPage() {
     handleQuantity,
     handleArchive,
     handleFinalize,
-     handleGenerateReceipt,
+    handleGenerateReceipt,
   } = useSale(establishmentId);
 
   const { methods } = usePaymentMethods();
@@ -57,12 +57,19 @@ export default function SalesPage() {
   const [finalizing, setFinalizing] = useState(false);
   const [receipt, setReceipt] = useState<Receipt | null>(null);
   const [printingReceipt, setPrintingReceipt] = useState(false);
+  
+  // 🔥 Estado para armazenar valores locais dos inputs (fora do map)
+  const [localQuantities, setLocalQuantities] = useState<Record<string, string>>({});
 
-
-  // 🆕 Estados para modal de produto por peso
+  // Estados para modal de produto por peso
   const [weightModalOpen, setWeightModalOpen] = useState(false);
   const [selectedWeightProduct, setSelectedWeightProduct] = useState<ProductItem | null>(null);
   const [editingWeightItem, setEditingWeightItem] = useState<{ itemId: string; weight: number } | null>(null);
+
+  // Função para atualizar valor local
+  const updateLocalQuantity = useCallback((itemId: string, value: string) => {
+    setLocalQuantities(prev => ({ ...prev, [itemId]: value }));
+  }, []);
 
   // ================= INIT =================
   useEffect(() => {
@@ -72,7 +79,7 @@ export default function SalesPage() {
       else if (cashRegisterId) await startSale(cashRegisterId);
     }
     initSale();
-  }, [saleId, cashRegisterId]);
+  }, [saleId, cashRegisterId, sale, refreshSale, startSale]);
 
   // ================= PRODUTOS =================
   const loadProducts = useCallback(async () => {
@@ -100,114 +107,111 @@ export default function SalesPage() {
   }, [allProducts, searchName]);
 
   // ================= HANDLERS =================
- const handleProductClick = (product: ProductItem) => {
-  console.log("🔍 Produto clicado:", {
-    id: product.id,
-    name: product.name,
-    isWeightBased: product.isWeightBased,
-    isFixedPortion: product.isFixedPortion
-  });
-  
-  // Produto por peso
-  if (product.isWeightBased) {
-    console.log("✅ Produto por peso detectado, abrindo modal");
-    setSelectedWeightProduct(product);
-    setEditingWeightItem(null);
-    setWeightModalOpen(true);
-    return;
-  }
-  
-  // Produto normal ou com porção fixa
-  console.log("✅ Produto normal, chamando handleAdd");
-  handleAdd(product.id);
-};
+  const handleProductClick = (product: ProductItem) => {
+    if (product.isWeightBased) {
+      setSelectedWeightProduct(product);
+      setEditingWeightItem(null);
+      setWeightModalOpen(true);
+      return;
+    }
+    handleAdd(product.id);
+  };
 
-async function handlePrintReceipt() {
-  //console.log("🖨️ Tentando imprimir recibo...", { sale: sale?.saleId, saleIdParam: saleId });
-  
-  // Se não tem venda no estado, mas tem saleId na URL, tenta carregar
-  if (!sale && saleId) {
-    //console.log("📦 Venda não carregada, tentando carregar...");
-    await refreshSale(saleId);
-    // Aguarda um momento para o estado atualizar
-    await new Promise(resolve => setTimeout(resolve, 500));
+  async function handlePrintReceipt() {
+    if (!sale && saleId) {
+      await refreshSale(saleId);
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    if (!sale) {
+      toast.showToast("Nenhuma venda ativa. Inicie uma nova venda primeiro.", "error");
+      return;
+    }
+    
+    if (sale.items.length === 0) {
+      toast.showToast("Carrinho vazio, não há o que imprimir", "error");
+      return;
+    }
+    
+    try {
+      setPrintingReceipt(true);
+      const receiptData = await handleGenerateReceipt();
+      setReceipt(receiptData);
+    } catch (e: any) {
+      toast.showToast(e.message || "Erro ao gerar recibo", "error");
+    } finally {
+      setPrintingReceipt(false);
+    }
   }
-  
-  // Verifica novamente após tentar carregar
-  if (!sale) {
-    toast.showToast("Nenhuma venda ativa. Inicie uma nova venda primeiro.", "error");
-    return;
-  }
-  
-  if (sale.items.length === 0) {
-    toast.showToast("Carrinho vazio, não há o que imprimir", "error");
-    return;
-  }
-  
-  try {
-    setPrintingReceipt(true);
-    const receiptData = await handleGenerateReceipt();
-    setReceipt(receiptData);
-  } catch (e: any) {
-   // console.error("Erro ao gerar recibo:", e);
-    toast.showToast(e.message || "Erro ao gerar recibo", "error");
-  } finally {
-    setPrintingReceipt(false);
-  }
-}
 
-const handleEditItem = (item: SaleItem) => {
-  const product = allProducts.find(p => p.id === item.productId);
-  
-  if (product?.isWeightBased) {
-    setEditingWeightItem({
-      itemId: item.itemId,
-      weight: item.quantity,
-    });
-    setSelectedWeightProduct(product);
-    setWeightModalOpen(true);
-  }
-};
+  const handleEditItem = (item: SaleItem) => {
+    const product = allProducts.find(p => p.id === item.productId);
+    if (product?.isWeightBased) {
+      setEditingWeightItem({
+        itemId: item.itemId,
+        weight: item.quantity,
+      });
+      setSelectedWeightProduct(product);
+      setWeightModalOpen(true);
+    }
+  };
 
   const handleWeightConfirm = async (weightInGrams: number, totalPrice: number) => {
     if (editingWeightItem) {
-      // Atualizar item existente - a quantidade será o novo peso
       await handleQuantity(editingWeightItem.itemId, weightInGrams);
       toast.showToast("Peso atualizado com sucesso!", "success");
     } else {
-      // Adicionar novo item
       await handleAddByWeight(selectedWeightProduct!.id, weightInGrams, totalPrice);
     }
     setEditingWeightItem(null);
     setSelectedWeightProduct(null);
   };
 
+  // Função para lidar com o blur do input
+  const handleInputBlur = useCallback((itemId: string, currentQuantity: number, localValue: string) => {
+    let newQty = parseInt(localValue);
+    
+    if (isNaN(newQty) || localValue === "") {
+      updateLocalQuantity(itemId, currentQuantity.toString());
+      return;
+    }
+    
+    if (newQty <= 0) {
+      handleRemove(itemId);
+      setLocalQuantities(prev => {
+        const newState = { ...prev };
+        delete newState[itemId];
+        return newState;
+      });
+      return;
+    }
+    
+    if (newQty !== currentQuantity) {
+      handleQuantity(itemId, newQty);
+    }
+  }, [handleRemove, handleQuantity, updateLocalQuantity]);
+
   // ================= PAGAMENTO =================
-// 🆕 Adicione esta função (substitua a antiga handleConfirmPayment)
-async function handlePaymentConfirm(payments: { methodId: string; amount: number }[]) {
-  if (!sale) return;
-  
-  console.log("🔄 Finalizando com pagamentos:", payments);
-  
-  try {
-    setFinalizing(true);
-    const receiptData = await finalizeSale(establishmentId, {
-      saleId: sale.saleId,
-      // 🔥 Mapear methodId para paymentMethodId
-      payments: payments.map(p => ({
-        paymentMethodId: p.methodId,
-        amount: p.amount
-      }))
-    });
-    setReceipt(receiptData);
-    setShowPayment(false);
-  } catch (e: any) {
-    toast.showToast(e.message || "Erro ao finalizar venda", "error");
-    console.error("Erro:", e);
-  } finally {
-    setFinalizing(false);
+  async function handlePaymentConfirm(payments: { methodId: string; amount: number }[]) {
+    if (!sale) return;
+    
+    try {
+      setFinalizing(true);
+      const receiptData = await finalizeSale(establishmentId, {
+        saleId: sale.saleId,
+        payments: payments.map(p => ({
+          paymentMethodId: p.methodId,
+          amount: p.amount
+        }))
+      });
+      setReceipt(receiptData);
+      setShowPayment(false);
+    } catch (e: any) {
+      toast.showToast(e.message || "Erro ao finalizar venda", "error");
+    } finally {
+      setFinalizing(false);
+    }
   }
-}
 
   async function handleArchiveAndRedirect() {
     if (!sale) return;
@@ -245,12 +249,12 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
 
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 mt-2">
           <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {filteredProducts.map((p, index) => (
-            <div 
-              key={`prod-${p.id}-${index}`}
-              className="bg-white rounded-2xl shadow flex flex-col overflow-hidden hover:shadow-lg transition cursor-pointer"
-              onClick={() => handleProductClick(p)}
-            >
+            {filteredProducts.map((p, index) => (
+              <div 
+                key={`prod-${p.id}-${index}`}
+                className="bg-white rounded-2xl shadow flex flex-col overflow-hidden hover:shadow-lg transition cursor-pointer"
+                onClick={() => handleProductClick(p)}
+              >
                 <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
                   {p.catalogo ? (
                     <img
@@ -262,7 +266,6 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                     <div className="text-gray-400 text-sm">Sem imagem</div>
                   )}
                   
-                  {/* Badge para identificar tipo de produto */}
                   {p.isWeightBased && (
                     <span className="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
                       <Scale size={12} />
@@ -335,6 +338,8 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
               sale?.items.map((item, index) => {
                 const product = allProducts.find(p => p.id === item.productId);
                 const isWeightBased = product?.isWeightBased || item.isWeightBased;
+                const isFixedPortion = product?.isFixedPortion || false;
+                const localValue = localQuantities[item.itemId] ?? item.quantity.toString();
                 
                 return (
                   <div key={`cart-${item.itemId}-${index}`} className="border-b pb-3">
@@ -345,9 +350,13 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                           <p className="text-xs text-gray-500">
                             {item.quantity}g × {product?.pricePerGram?.toFixed(2)} MZN/g
                           </p>
+                        ) : isFixedPortion ? (
+                          <p className="text-xs text-gray-500">
+                            Porção fixa: {item.quantity} × MZN {(item.unitPrice / item.quantity).toFixed(2)}
+                          </p>
                         ) : (
                           <p className="text-xs text-gray-500">
-                            {item.quantity} × MZN {(item.unitPrice / item.quantity).toFixed(2)}
+                            {item.quantity} × MZN {item.unitPrice.toFixed(2)}
                           </p>
                         )}
                       </div>
@@ -357,9 +366,22 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                     </div>
 
                     <div className="flex items-center gap-2 mt-2">
-                      {/* 🔥 Para produtos por peso: NÃO mostrar botões + e - */}
-                      {!isWeightBased && (
-                        <>
+                      {isWeightBased && (
+                        <div className="flex items-center gap-2 flex-1">
+                          <span className="text-sm font-medium text-purple-600">{item.quantity}g</span>
+                          <button
+                            onClick={() => handleEditItem(item)}
+                            disabled={processingItemIds.includes(item.itemId)}
+                            className="text-blue-500 text-sm flex items-center gap-1 hover:text-blue-700 disabled:opacity-50"
+                          >
+                            <PencilIcon className="w-4 h-4" />
+                            Editar peso
+                          </button>
+                        </div>
+                      )}
+
+                      {!isWeightBased && !isFixedPortion && (
+                        <div className="flex items-center gap-2 flex-1">
                           <button
                             onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
                             disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
@@ -368,7 +390,22 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                             <Minus size={14} />
                           </button>
 
-                          <span className="w-16 text-center text-sm">{item.quantity}</span>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={localValue}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === "" || /^\d+$/.test(value)) {
+                                updateLocalQuantity(item.itemId, value);
+                              }
+                            }}
+                            onBlur={(e) => handleInputBlur(item.itemId, item.quantity, e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                            className="w-16 text-center border rounded py-1 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                            disabled={processingItemIds.includes(item.itemId)}
+                            placeholder="0"
+                          />
 
                           <button
                             onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
@@ -377,40 +414,35 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                           >
                             <Plus size={14} />
                           </button>
-                        </>
+                        </div>
                       )}
 
-                      {/* 🔥 Para produtos por peso: Mostrar o peso e botão editar */}
-                      {isWeightBased && (
+                      {isFixedPortion && !isWeightBased && (
                         <div className="flex items-center gap-2 flex-1">
-                          <span className="text-sm font-medium text-purple-600">
-                            {item.quantity}g
-                          </span>
                           <button
-                            onClick={() => {
-                              setEditingWeightItem({
-                                itemId: item.itemId,
-                                weight: item.quantity,
-                              });
-                              setSelectedWeightProduct(product || null);
-                              setWeightModalOpen(true);
-                            }}
-                            disabled={processingItemIds.includes(item.itemId)}
-                            className="text-blue-500 text-sm flex items-center gap-1 hover:text-blue-700"
+                            onClick={() => handleQuantity(item.itemId, item.quantity - 1)}
+                            disabled={processingItemIds.includes(item.itemId) || item.quantity <= 1}
+                            className="w-8 h-8 border rounded flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
                           >
-                            <PencilIcon className="w-4 h-4" />
-                            Editar peso
+                            <Minus size={14} />
+                          </button>
+                          <span className="w-16 text-center text-sm font-medium">{item.quantity}</span>
+                          <button
+                            onClick={() => handleQuantity(item.itemId, item.quantity + 1)}
+                            disabled={processingItemIds.includes(item.itemId)}
+                            className="w-8 h-8 border rounded flex items-center justify-center hover:bg-gray-100 disabled:opacity-50"
+                          >
+                            <Plus size={14} />
                           </button>
                         </div>
                       )}
 
-
                       <button
                         onClick={() => handleRemove(item.itemId)}
                         disabled={processingItemIds.includes(item.itemId)}
-                        className="ml-auto text-red-500 text-sm hover:text-red-700"
+                        className="ml-auto text-red-500 text-sm hover:text-red-700 disabled:opacity-50 transition"
                       >
-                        {processingItemIds.includes(item.itemId) ? "processando..." : "Remover"}
+                        {processingItemIds.includes(item.itemId) ? "salvando..." : "Remover"}
                       </button>
                     </div>
                   </div>
@@ -433,25 +465,17 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
               <span className="text-primary">MZN {sale?.total?.toFixed(2) || "0.00"}</span>
             </div>
 
-        {/* 🆕 BOTÃO IMPRIMIR RECIBO */}
-          <button
-            onClick={handlePrintReceipt}
-            disabled={sale?.items.length === 0 || printingReceipt}
-            className={`w-full py-2 rounded-lg flex items-center justify-center gap-2 transition ${
-              sale?.items.length === 0 || printingReceipt
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 text-white"
-            }`}
-          >
-            {printingReceipt ? (
-              "Gerando..."
-            ) : (
-              <>
-                <PrinterIcon className="w-5 h-5" />
-                Imprimir Recibo
-              </>
-            )}
-          </button>
+            <button
+              onClick={handlePrintReceipt}
+              disabled={sale?.items.length === 0 || printingReceipt}
+              className={`w-full py-2 rounded-lg flex items-center justify-center gap-2 transition ${
+                sale?.items.length === 0 || printingReceipt
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 text-white"
+              }`}
+            >
+              {printingReceipt ? "Gerando..." : <><PrinterIcon className="w-5 h-5" /> Imprimir Recibo</>}
+            </button>
 
             <button
               onClick={handleArchiveAndRedirect}
@@ -469,27 +493,19 @@ async function handlePaymentConfirm(payments: { methodId: string; amount: number
                   : "bg-green-500 hover:bg-green-600 text-white"
               }`}
             >
-              {finalizing ? (
-                "Finalizando..."
-              ) : (
-                <>
-                  <CheckCircleIcon className="w-5 h-5" />
-                  Finalizar Venda
-                </>
-              )}
+              {finalizing ? "Finalizando..." : <><CheckCircleIcon className="w-5 h-5" /> Finalizar Venda</>}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Modais */}
-  <PaymentModal
-  open={showPayment}
-  methods={methods}
-  totalAmount={sale?.total || 0}
-  onClose={() => setShowPayment(false)}
-  onConfirm={handlePaymentConfirm}
-/>
+      <PaymentModal
+        open={showPayment}
+        methods={methods}
+        totalAmount={sale?.total || 0}
+        onClose={() => setShowPayment(false)}
+        onConfirm={handlePaymentConfirm}
+      />
 
       <WeightProductModal
         open={weightModalOpen}
