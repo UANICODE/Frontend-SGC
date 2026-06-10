@@ -1,4 +1,4 @@
-import { transferStock } from "@/service/admin/ transferStock";
+import { transferStock } from "@/service/admin/transferStock";
 import { useState } from "react";
 
 export function useTransferStock() {

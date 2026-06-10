@@ -244,7 +244,7 @@ export default function ArchivedSalesPage() {
 
                     {/* Informações de Mesa e Garçom com design moderno */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 hover:border-opacity-50 transition-colors" style={{ hover: { borderColor: primaryColor } }}>
+<div className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50" style={{ borderColor: `var(--hover-color)` }}>
                         <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
                           <TableCellsIcon className="w-3 h-3" />
                           INFORMAÇÕES DA MESA
@@ -267,7 +267,7 @@ export default function ArchivedSalesPage() {
                         )}
                       </div>
 
-                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 hover:border-opacity-50 transition-colors" style={{ hover: { borderColor: secondaryColor } }}>
+                 <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50" style={{ borderColor: `var(--hover-color)` }}>
                         <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
                           <UserGroupIcon className="w-3 h-3" />
                           INFORMAÇÕES DO GARÇOM

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUserEstablishments } from "@/hooks/admin /useUserEstablishments";
-import { useTransferStock } from "@/hooks/admin /useTransferStock";
+import { useUserEstablishments } from "@/hooks/admin/useUserEstablishments";
+import { useTransferStock } from "@/hooks/admin/useTransferStock";
 
 export function TransferStockModal({
   open,

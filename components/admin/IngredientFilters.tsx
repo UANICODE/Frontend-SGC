@@ -19,8 +19,7 @@ export function IngredientFilters({ filters, setFilters }: Props) {
         onChange={(e) =>
           setFilters({
             ...filters,
-            name: e.target.value,
-            page: 0,
+            name: e.target.value
           })
         }
       />
