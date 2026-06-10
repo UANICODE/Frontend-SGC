@@ -3,6 +3,7 @@
 export interface CreateProductCategoryRequest {
   establishmentId: string;
   name: string;
+  isKitchen: boolean; 
   description?: string;
 }
 
@@ -19,6 +20,7 @@ export interface CreateProductCategoryResponse {
 export interface UpdateProductCategoryRequest {
   establishmentId: string;
   categoryId: string;
+  isKitchen: boolean; 
   name: string;
   description?: string;
 }
@@ -27,6 +29,7 @@ export interface UpdateProductCategoryResponse {
   id: string;
   name: string;
   description?: string;
+
   establishmentId: string;
   updatedAt: string;
 }
@@ -53,6 +56,7 @@ export interface CategoryItemResponse {
   name: string;
   description?: string;
   establishmentId: string;
+  isKitchen: boolean; 
   createdAt: string;
   updatedAt?: string;
 }
