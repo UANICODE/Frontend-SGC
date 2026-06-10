@@ -27,3 +27,25 @@ export interface CashClosingReceipt {
   totalTransactions: number;
   payments: PaymentSummary[];
 }
+
+
+// types/attendant/cash-register.ts
+export interface CashRegisterSaleItem {
+  productName: string;
+  unitPrice: number;
+  quantity: number;
+  subtotal: number;
+  imageUrl?: string;
+}
+
+export interface CashRegisterSale {
+  saleNumber: string;
+  attendantName?: string;
+  saleStatus: string;
+  paymentMethod: string;
+  subtotal: number;
+  discount: number;
+  total: number;
+  createdAt: string;
+  items: CashRegisterSaleItem[];
+}

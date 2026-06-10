@@ -1,8 +1,8 @@
 "use client";
 
 import { KpiCard } from "@/components/admin/cards/KpiCard";
-import { useSalesReport } from "@/hooks/admin /useSalesReport";
-import { useInventoryReport } from "@/hooks/admin /useInventoryReport";
+import { useSalesReport } from "@/hooks/admin/useSalesReport";
+import { useInventoryReport } from "@/hooks/admin/useInventoryReport";
 import { formatCurrency } from "@/lib/format";
 import { useParams } from "next/navigation";
 import { DollarSign, XCircle, TrendingUp, CreditCard, Package, Layers, CheckCircle, Phone, MapPin, Store,BarChart3, Calendar, Clock } from "lucide-react";

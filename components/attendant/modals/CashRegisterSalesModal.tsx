@@ -1,8 +1,8 @@
-// components/admin/modals/CashRegisterSalesModal.tsx
+// components/attendant/modals/CashRegisterSalesModal.tsx
 "use client";
 
 import { useMemo, useState, useEffect } from "react";
-import { CashRegisterSale } from "@/types/admin/cash-register";
+import { CashRegisterSale } from "@/types/attendant/CashRegister";
 import {
   XMarkIcon,
   ChevronDownIcon,
@@ -23,17 +23,17 @@ interface Props {
   onClose: () => void;
   sales: CashRegisterSale[];
   loading: boolean;
-  primaryColor?: string;
-  secondaryColor?: string;
-  establishmentLogo?: string;
-  establishmentName?: string;
-  establishmentAddress?: string;
-  establishmentPhone?: string;
-    cashRegisterInfo?: {
+  primaryColor: string;
+  secondaryColor: string;
+  cashRegisterInfo?: {
     openedAt: string;
     closedAt?: string;
     totalSales: number;
   };
+  establishmentLogo?: string;
+  establishmentName?: string;
+  establishmentAddress?: string;
+  establishmentPhone?: string;
 }
 
 export function CashRegisterSalesModal({
@@ -41,10 +41,10 @@ export function CashRegisterSalesModal({
   onClose,
   sales,
   loading,
-  primaryColor = "#4f46e5",
-  secondaryColor = "#7c3aed",
+  primaryColor,
+  secondaryColor,
+  cashRegisterInfo,
   establishmentLogo,
-   cashRegisterInfo,
   establishmentName,
   establishmentAddress,
   establishmentPhone,
@@ -58,6 +58,7 @@ export function CashRegisterSalesModal({
   const [logoImage, setLogoImage] = useState<string | null>(null);
   const [currentAttendantName, setCurrentAttendantName] = useState<string>("");
 
+  // Pegar o nome do atendente da primeira venda (ou do usuário logado)
   useEffect(() => {
     if (sales.length > 0 && sales[0].attendantName) {
       setCurrentAttendantName(sales[0].attendantName);
@@ -151,13 +152,13 @@ export function CashRegisterSalesModal({
       }
     }
     doc.text(`Emitido em: ${new Date().toLocaleString()}`, 14, yPos);
-    yPos += 8;
+    yPos += 12;
 
     // Atendente responsavel
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
     doc.text(`Atendente Responsavel: ${currentAttendantName || "Nao informado"}`, 14, yPos);
-    yPos += 12;
+    yPos += 8;
 
     // Cards de resumo
     const cardWidth = 55;
@@ -203,7 +204,7 @@ export function CashRegisterSalesModal({
           quantity: item.quantity,
           unitPrice: item.unitPrice,
           subtotal: item.subtotal,
-          saleNumber: sale.saleNumber.toString().slice(0, 8),
+          saleNumber: sale.saleNumber.slice(0, 8),
           saleDate: new Date(sale.createdAt).toLocaleDateString(),
         });
       });
@@ -251,7 +252,8 @@ export function CashRegisterSalesModal({
     doc.text("Assinatura do Atendente", 45, signatureY + 5);
     doc.text("Assinatura do Gerente", 145, signatureY + 5);
 
-    
+
+   
     // ================= RODAPE =================
     const pageCount = doc.getNumberOfPages();
     for (let i = 1; i <= pageCount; i++) {
@@ -259,14 +261,14 @@ export function CashRegisterSalesModal({
       doc.setFontSize(7);
       doc.setTextColor(150, 150, 150);
       doc.text(
-        `SGC - | Mocambique | www.uanicode.com | Pagina ${i} de ${pageCount}`,
+        `SGC - Mozambique | www.uanicode.com | Pagina ${i} de ${pageCount}`,
         doc.internal.pageSize.getWidth() / 2,
         doc.internal.pageSize.getHeight() - 8,
         { align: "center" }
       );
     }
 
-    doc.save(`Relatorio_Vendas_Admin_${new Date().toISOString().slice(0, 19)}.pdf`);
+    doc.save(`Relatorio_Vendas_Caixa_${new Date().toISOString().slice(0, 19)}.pdf`);
   };
 
   function hexToRgb(hex: string) {
@@ -294,6 +296,12 @@ export function CashRegisterSalesModal({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">Vendas do Caixa</h2>
+                {cashRegisterInfo && (
+                  <p className="text-white/80 text-sm">
+                    {cashRegisterInfo.closedAt ? 'Caixa Fechado' : 'Caixa Aberto'} • 
+                    {new Date(cashRegisterInfo.openedAt).toLocaleDateString()}
+                  </p>
+                )}
               </div>
             </div>
             <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
@@ -386,15 +394,14 @@ export function CashRegisterSalesModal({
               {filteredSales.map((sale) => {
                 const search = searchItems[sale.saleNumber] || "";
                 const items = sale.items.filter((i) => i.productName.toLowerCase().includes(search.toLowerCase()));
-                const saleNumberStr = sale.saleNumber.toString();
                 return (
-                  <div key={saleNumberStr} className="border rounded-xl overflow-hidden">
-                    <div className="p-4 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => setOpenSale(openSale === saleNumberStr ? null : saleNumberStr)}>
+                  <div key={sale.saleNumber} className="border rounded-xl overflow-hidden">
+                    <div className="p-4 cursor-pointer hover:bg-gray-50 transition-colors" onClick={() => setOpenSale(openSale === sale.saleNumber ? null : sale.saleNumber)}>
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#10b981" }}></div>
-                            <p className="font-mono text-sm font-semibold text-gray-700">Venda #{saleNumberStr.slice(0, 8)}</p>
+                            <p className="font-mono text-sm font-semibold text-gray-700">Venda #{sale.saleNumber.slice(0, 8)}</p>
                           </div>
                           <p className="text-sm text-gray-500 flex items-center gap-2"><CreditCardIcon className="w-4 h-4" />{sale.paymentMethod}</p>
                           <div className="flex items-center gap-4 text-xs text-gray-400">
@@ -406,12 +413,12 @@ export function CashRegisterSalesModal({
                           <p className="text-lg font-bold" style={{ color: primaryColor }}>MZN {sale.total.toFixed(2)}</p>
                           {sale.discount > 0 && <p className="text-xs text-green-600">Desconto: MZN {sale.discount.toFixed(2)}</p>}
                         </div>
-                        <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform ${openSale === saleNumberStr ? "rotate-180" : ""}`} />
+                        <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform ${openSale === sale.saleNumber ? "rotate-180" : ""}`} />
                       </div>
                     </div>
-                    {openSale === saleNumberStr && (
+                    {openSale === sale.saleNumber && (
                       <div className="border-t bg-gray-50 p-4 space-y-3">
-                        <input type="text" placeholder="Buscar produto..." value={search} onChange={(e) => setSearchItems({ ...searchItems, [saleNumberStr]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg" />
+                        <input type="text" placeholder="Buscar produto..." value={search} onChange={(e) => setSearchItems({ ...searchItems, [sale.saleNumber]: e.target.value })} className="w-full px-3 py-2 border border-gray-200 rounded-lg" />
                         <div className="space-y-2">
                           {items.map((item, i) => (
                             <div key={i} className="bg-white rounded-lg p-3 flex items-center gap-3">

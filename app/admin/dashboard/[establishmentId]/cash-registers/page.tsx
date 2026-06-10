@@ -1,20 +1,24 @@
+// app/admin/dashboard/[establishmentId]/cash-registers/page.tsx
 "use client";
 
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useOpenCashRegisters } from "@/hooks/admin /cash-register/useOpenCashRegisters";
-import { useCashRegisterSales } from "@/hooks/admin /cash-register/useCashRegisterSales";
+import { useOpenCashRegisters } from "@/hooks/admin/cash-register/useOpenCashRegisters";
+import { useCashRegisterSales } from "@/hooks/admin/cash-register/useCashRegisterSales";
 import { CashRegisterCard } from "@/components/admin/cards/CashRegisterCard";
 import { CashRegisterSalesModal } from "@/components/admin/modals/CashRegisterSalesModal";
+import { useEstablishment } from "@/hooks/admin/useEstablishment";
 
 export default function CashRegistersPage() {
   const { establishmentId } = useParams<{ establishmentId: string }>();
+  const { data: establishment } = useEstablishment(establishmentId);
 
   const { data, loading } = useOpenCashRegisters(establishmentId);
   const { data: sales, fetch, loading: loadingSales, error } =
     useCashRegisterSales();
 
   const [selectedCash, setSelectedCash] = useState<string | null>(null);
+  const [selectedCashInfo, setSelectedCashInfo] = useState<any>(null); // ✅ Adicionar este estado
 
   const [tab, setTab] = useState<"open" | "closed">("open");
   const [search, setSearch] = useState("");
@@ -33,15 +37,19 @@ export default function CashRegistersPage() {
       )
       .filter((c) =>
         date
-          ? new Date(c.closedAt || "")
-              .toISOString()
-              .slice(0, 10) === date
+          ? new Date(c.closedAt || "").toISOString().slice(0, 10) === date
           : true
       );
   }, [data, search, date]);
 
   const handleDetails = async (cash: any) => {
     setSelectedCash(cash.cashRegisterId);
+    // ✅ Salvar as informações do caixa selecionado
+    setSelectedCashInfo({
+      openedAt: cash.openedAt,
+      closedAt: cash.closedAt,
+      totalSales: cash.totalSold,
+    });
     await fetch(establishmentId, cash.cashRegisterId);
   };
 
@@ -49,19 +57,14 @@ export default function CashRegistersPage() {
 
   return (
     <div className="space-y-6">
-
-      <h1 className="text-3xl font-bold">
-        Gestão de Caixas
-      </h1>
+      <h1 className="text-3xl font-bold">Gestão de Caixas</h1>
 
       {/* Tabs */}
       <div className="flex gap-3">
         <button
           onClick={() => setTab("open")}
           className={`px-4 py-2 rounded-lg ${
-            tab === "open"
-              ? "bg-primary text-white"
-              : "bg-gray-200"
+            tab === "open" ? "bg-primary text-white" : "bg-gray-200"
           }`}
         >
           Abertos
@@ -70,9 +73,7 @@ export default function CashRegistersPage() {
         <button
           onClick={() => setTab("closed")}
           className={`px-4 py-2 rounded-lg ${
-            tab === "closed"
-              ? "bg-primary text-white"
-              : "bg-gray-200"
+            tab === "closed" ? "bg-primary text-white" : "bg-gray-200"
           }`}
         >
           Fechados
@@ -88,7 +89,6 @@ export default function CashRegistersPage() {
             onChange={(e) => setSearch(e.target.value)}
             className="border p-2 rounded-lg"
           />
-
           <input
             type="date"
             value={date}
@@ -115,17 +115,24 @@ export default function CashRegistersPage() {
 
       {/* ERRO */}
       {error && (
-        <div className="bg-red-100 text-red-600 p-3 rounded-lg">
-          {error}
-        </div>
+        <div className="bg-red-100 text-red-600 p-3 rounded-lg">{error}</div>
       )}
 
       {/* MODAL */}
       <CashRegisterSalesModal
         open={!!selectedCash}
-        onClose={() => setSelectedCash(null)}
+        onClose={() => {
+          setSelectedCash(null);
+          setSelectedCashInfo(null);
+        }}
         sales={sales}
         loading={loadingSales}
+        primaryColor={establishment?.primaryColor}
+        secondaryColor={establishment?.secondaryColor}
+        establishmentLogo={establishment?.logoUrl}
+        establishmentName={establishment?.tradeName}
+          cashRegisterInfo={selectedCashInfo} 
+    
       />
     </div>
   );

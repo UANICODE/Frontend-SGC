@@ -12,7 +12,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "module": "esnext",
-   "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -39,23 +39,11 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-, "hooks/admin /product/stock/useStockMovements", "service/admin/superProduct.ts"  ],
+    ".next/dev/types/**/*.ts",
+    "hooks/admin /product/stock/useStockMovements",
+    "service/admin/superProduct.ts"
+  ],
   "exclude": [
     "node_modules"
   ]
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -5,8 +5,8 @@ import { useState } from "react";
 
 import { IngredientFilters } from "@/components/admin/IngredientFilters";
 import { IngredientItemResponse } from "@/types/admin/ingredients";
-import { useIngredients } from "@/hooks/admin /product/ingredient/useIngredients";
-import { IngredientModal } from "@/components/admin/modals/ IngredientModal";
+import { useIngredients } from "@/hooks/admin/product/ingredient/useIngredients";
+import { IngredientModal } from "@/components/admin/modals/IngredientModal";
 import { IngredientsTable } from "@/components/admin/tables/IngredientsTable";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";

@@ -1,3 +1,4 @@
+// components/attendant/cards/CashRegisterCard.tsx (adicione o botão Ver Vendas)
 "use client";
 
 import { CashRegister } from "@/types/attendant/CashRegister";
@@ -6,7 +7,8 @@ import {
   Lock,
   Clock,
   DollarSign,
-  Ban
+  Ban,
+  Eye,
 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmCloseCashModal } from "../modals/ConfirmCloseCashModal";
@@ -19,6 +21,7 @@ interface Props {
   closing?: boolean;
   onSell: (cashId: string) => void;
   sellingCashId?: string | null;
+  onViewSales?: (cashId: string) => void; // NOVO
 }
 
 export function CashRegisterCard({
@@ -29,10 +32,11 @@ export function CashRegisterCard({
   onClose,
   closing,
   sellingCashId,
+  onViewSales, // NOVO
 }: Props) {
 
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmSellOpen, setConfirmSellOpen] = useState(false); // 🔥 NOVO
+  const [confirmSellOpen, setConfirmSellOpen] = useState(false);
 
   const isOpen = cash.status === "ABERTO";
   const isSelling = sellingCashId === cash.id;
@@ -47,7 +51,6 @@ export function CashRegisterCard({
         `}
         style={isOpen ? { borderColor: primaryColor } : undefined}
       >
-
         {/* HEADER */}
         <div className="flex justify-between mb-3">
           <span className="text-sm text-gray-500 flex items-center gap-1">
@@ -80,13 +83,24 @@ export function CashRegisterCard({
           </p>
         </div>
 
+        {/* Botão Ver Vendas - Disponível para todos os caixas */}
+        <button
+          onClick={() => onViewSales?.(cash.id)}
+          className="mt-2 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
+          transform transition-all duration-200 hover:scale-105"
+          style={{ backgroundColor: primaryColor }}
+        >
+          <Eye size={18} />
+          Ver Vendas
+        </button>
+
         {isOpen && (
           <>
             {/* BOTÃO VENDER */}
             <button
-              onClick={() => setConfirmSellOpen(true)} // 🔥 ALTERADO
+              onClick={() => setConfirmSellOpen(true)}
               disabled={isSelling}
-              className="mt-4 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
+              className="mt-2 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
               transform transition-all duration-200 hover:scale-105"
               style={{ backgroundColor: secondaryColor }}
             >
@@ -124,20 +138,20 @@ export function CashRegisterCard({
         }}
       />
 
-      {/* 🔥 MODAL CONFIRMAR VENDA (NOVO) */}
-          <ConfirmCloseCashModal
-          open={confirmSellOpen}
-          onClose={() => setConfirmSellOpen(false)}
-          loading={isSelling}
-          onConfirm={() => {
-            onSell(cash.id);
-            setConfirmSellOpen(false);
-          }}
-          title="Iniciar Venda"
-          description="Deseja realmente iniciar uma nova venda nesta caixa?"
-          confirmText="Sim, iniciar"
-          variant="success"
-        />
+      {/* MODAL CONFIRMAR VENDA */}
+      <ConfirmCloseCashModal
+        open={confirmSellOpen}
+        onClose={() => setConfirmSellOpen(false)}
+        loading={isSelling}
+        onConfirm={() => {
+          onSell(cash.id);
+          setConfirmSellOpen(false);
+        }}
+        title="Iniciar Venda"
+        description="Deseja realmente iniciar uma nova venda nesta caixa?"
+        confirmText="Sim, iniciar"
+        variant="success"
+      />
     </>
   );
 }

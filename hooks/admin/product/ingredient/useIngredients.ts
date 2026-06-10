@@ -22,9 +22,7 @@ export function useIngredients(establishmentId: string) {
     useState<ListIngredientsRequest>({
       establishmentId,
       name: "",
-      statusId: undefined,
-      page: 0,
-      size: 10,
+      statusId: undefined
     });
 
   async function fetchIngredients() {

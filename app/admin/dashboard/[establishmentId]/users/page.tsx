@@ -10,7 +10,7 @@ import { UserFilters } from "@/components/admin/UserFilters";
 
 
 import { ListUsersByEstablishmentResponse } from "@/types/admin/user";
-import { useUsers } from "@/hooks/admin /users/useUsers";
+import { useUsers } from "@/hooks/admin/users/useUsers";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";

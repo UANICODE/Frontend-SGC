@@ -6,8 +6,8 @@ import { useState } from "react";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { UserRole } from "@/enum/enum";
 import { PlusIcon, PencilIcon, TrashIcon, TableCellsIcon, UserGroupIcon } from "@heroicons/react/24/outline";
-import { useTables } from "@/hooks/admin /useTables";
-import { useWaiters } from "@/hooks/admin /useWaiters";
+import { useTables } from "@/hooks/admin/useTables";
+import { useWaiters } from "@/hooks/admin/useWaiters";
 import { WaiterModal } from "@/components/admin/modals/WaiterModal";
 import { TableModal } from "@/components/admin/modals/TableModal";
 

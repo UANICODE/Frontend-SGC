@@ -5,7 +5,7 @@ import { uploadProductImage } from "@/utils/uploadProductImage";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useToast } from "@/ context/ToastContext";
-import { useEstablishment } from "@/hooks/admin /useEstablishment";
+import { useEstablishment } from "@/hooks/admin/useEstablishment";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 

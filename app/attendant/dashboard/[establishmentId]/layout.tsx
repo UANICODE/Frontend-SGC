@@ -4,7 +4,7 @@ import { AttendantSidebar } from "@/components/attendant/layout/AttendantSidebar
 import { AttendantNavbar } from "@/components/attendant/layout/AttendantNavbar";
 import { PageLoader } from "@/components/ui/PageLoader";
 import { useRouter, useParams } from "next/navigation";
-import { useEstablishment } from "@/hooks/admin /useEstablishment";
+import { useEstablishment } from "@/hooks/admin/useEstablishment";
 import { EstablishmentBlockProvider } from "@/providers/EstablishmentBlockProvider";
 import { DashboardFooter } from "@/components/ui/DashboardFooter";
 

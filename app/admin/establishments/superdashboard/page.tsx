@@ -3,8 +3,8 @@
 import { SalesChart } from "@/components/admin/SalesChart";
 import { SuperProductSearch } from "@/components/admin/SuperProductSearch";
 import { DashboardFooter } from "@/components/ui/DashboardFooter";
-import { useSuperDashboard } from "@/hooks/admin /useSuperDashboard";
-import { useSuperSales } from "@/hooks/admin /useSuperSales";
+import { useSuperDashboard } from "@/hooks/admin/useSuperDashboard";
+import { useSuperSales } from "@/hooks/admin/useSuperSales";
 import { Package, DollarSign, Store, AlertTriangle, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 

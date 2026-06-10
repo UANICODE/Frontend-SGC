@@ -90,8 +90,7 @@ export interface ListIngredientsRequest {
   establishmentId: string;
   name?: string;
   statusId?: string;
-  page: number;
-  size: number;
+
 }
 
 /* ============================================================

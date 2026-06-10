@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ProductTypeModal } from "@/components/admin/modals/ProductTypeModal";
 import { ProductTypesTable } from "@/components/admin/tables/ProductTypesTable";
 import { ProductTypeResponse } from "@/types/admin/product-types";
-import { useProductTypes } from "@/hooks/admin /product/types/useProductTypes";
+import { useProductTypes } from "@/hooks/admin/product/types/useProductTypes";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 

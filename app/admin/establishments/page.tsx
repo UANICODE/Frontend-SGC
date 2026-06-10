@@ -2,7 +2,7 @@
 
 import { CardEstablishment } from "@/components/admin/cards/CardEstablishment";
 import { UserRole } from "@/enum/enum";
-import { useAdminEstablishments } from "@/hooks/admin /useAdminEstablishments";
+import { useAdminEstablishments } from "@/hooks/admin/useAdminEstablishments";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { useRouter } from "next/navigation";
 import { Sparkles } from "lucide-react";

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSuperProduct } from "@/hooks/admin /useSuperProduct";
+import { useSuperProduct } from "@/hooks/admin/useSuperProduct";
 import { Search, X } from "lucide-react";
 
 export function SuperProductSearch() {

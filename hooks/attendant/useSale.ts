@@ -7,6 +7,7 @@ import {
   archiveSale, 
   createSale, 
   finalizeSale, 
+  generateKitchenReceipt, 
   generateReceipt, 
   getSaleDetails, 
   removeItem, 
@@ -140,6 +141,25 @@ async function handleGenerateReceipt(): Promise<Receipt> {
     }
   }
 
+
+  // Adicione esta função
+async function handleGenerateKitchenReceipt(): Promise<Receipt> {
+  if (!sale) throw new Error("Nenhuma venda ativa");
+  
+  setLoading(true);
+  try {
+    const receipt = await generateKitchenReceipt(sale.saleId, establishmentId);
+    toast.showToast("Recibo da cozinha gerado com sucesso!", "success");
+    return receipt;
+  } catch (e: any) {
+    toast.showToast(e.message || "Erro ao gerar recibo da cozinha", "error");
+    throw e;
+  } finally {
+    setLoading(false);
+  }
+}
+
+
 async function handleFinalize(payments: { paymentMethodId: string; amount: number }[]): Promise<Receipt> {
   if (!sale || sale.items.length === 0)
     throw new Error("Venda vazia não pode ser finalizada.");
@@ -172,5 +192,6 @@ async function handleFinalize(payments: { paymentMethodId: string; amount: numbe
     handleFinalize,
      handleAddByWeight,
      handleGenerateReceipt,
+       handleGenerateKitchenReceipt,
   };
 }

@@ -8,6 +8,7 @@ import { useArchivedSales } from "@/hooks/attendant/useArchivedSales";
 import { useSale } from "@/hooks/attendant/useSale";
 import { useAssignSale } from "@/hooks/attendant/useAssignSale";
 import { AssignModal } from "@/components/attendant/modals/AssignModal";
+import { useEstablishment } from "@/hooks/admin/useEstablishment";
 
 import {
   ArrowPathIcon,
@@ -23,20 +24,22 @@ import {
   TableCellsIcon,
   PhoneIcon,
   MapPinIcon,
+  SparklesIcon,
+  ClockIcon,
+  CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { useToast } from "@/ context/ToastContext";
-import { useTables } from "@/hooks/admin /useTables";
-import { useWaiters } from "@/hooks/admin /useWaiters";
-
+import { useTables } from "@/hooks/admin/useTables";
+import { useWaiters } from "@/hooks/admin/useWaiters";
 
 interface ArchivedSale {
   saleId: string;
   subtotal: number;
   discount: number;
   total: number;
-  saleDate: string;  // ✅ Mudar de createdAt para saleDate
+  saleDate: string;
   tableNumber?: string;
   tableLocation?: string;
   waiterName?: string;
@@ -49,6 +52,7 @@ export default function ArchivedSalesPage() {
   const { establishmentId, cashRegisterId } = useParams() as any;
   const router = useRouter();
   const toast = useToast();
+  const { data: establishment } = useEstablishment(establishmentId);
   const { data, loading, error, restore: restoreSaleFromHook, restoringId, refresh } =
     useArchivedSales(establishmentId, cashRegisterId);
   const { sale } = useSale(establishmentId);
@@ -74,7 +78,6 @@ export default function ArchivedSalesPage() {
 
   const handleOpenAssign = (sale: ArchivedSale) => {
     setSelectedSale(sale);
-    // Preencher com os valores atuais se já existirem
     setSelectedTableId(sale.tableNumber ? 
       tables.find(t => t.number === sale.tableNumber)?.id || "" : "");
     setSelectedWaiterId(sale.waiterName ? 
@@ -87,143 +90,257 @@ export default function ArchivedSalesPage() {
       await assign(selectedSale.saleId, { tableId, waiterId });
       setAssignModalOpen(false);
       setSelectedSale(null);
-      refresh(); // Recarregar a lista para mostrar os dados atualizados
+      refresh();
     }
   };
 
-  if (loading) return <PageLoader />;
+  if (loading || !establishment) return <PageLoader />;
+
+  const primaryColor = establishment.primaryColor;
+  const secondaryColor = establishment.secondaryColor;
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold flex items-center gap-2">
-        <ArchiveBoxIcon className="w-7 h-7" />
-        Vendas Arquivadas
-      </h1>
-
-      {error && (
-        <div className="bg-red-100 text-red-600 p-4 rounded-xl flex items-center gap-2">
-          <ExclamationTriangleIcon className="w-5 h-5" />
-          {error}
-        </div>
-      )}
-
-      {data.length === 0 && (
-        <div className="bg-gray-100 p-6 rounded-xl text-gray-500 text-center flex flex-col items-center gap-2">
-          <InboxIcon className="w-8 h-8" />
-          Não existem vendas arquivadas.
-        </div>
-      )}
-
-      <div className="space-y-4">
-        {data.map((sale: ArchivedSale) => (
-          <div
-            key={sale.saleId}
-            className="bg-white p-6 rounded-xl shadow hover:shadow-md transition"
-          >
-            <div className="flex justify-between items-start flex-wrap gap-4">
-              <div className="space-y-2 text-sm flex-1">
-                <p className="font-medium flex items-center gap-2">
-                  <ReceiptPercentIcon className="w-5 h-5 text-gray-500" />
-                  Venda: #{sale.saleId.slice(0, 8)}
-                </p>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="flex items-center gap-2">
-                      <BanknotesIcon className="w-4 h-4 text-gray-500" />
-                      Subtotal: {sale.subtotal} MZN
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <TagIcon className="w-4 h-4 text-gray-500" />
-                      Desconto: {sale.discount} MZN
-                    </p>
-                    <p className="flex items-center gap-2 font-bold">
-                      <CurrencyDollarIcon className="w-4 h-4 text-gray-500" />
-                      Total: MZN {sale.total}
-                    </p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* Header com gradiente usando cores do estabelecimento */}
+        <div 
+          className="relative overflow-hidden rounded-2xl shadow-2xl"
+          style={{ 
+            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`
+          }}
+        >
+          <div className="absolute inset-0 bg-black opacity-10"></div>
+          <div className="relative px-8 py-12">
+            <div className="flex items-center justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
+                    <ArchiveBoxIcon className="w-8 h-8 text-white" />
                   </div>
-
-                  {/* 🆕 Informações de Mesa e Garçom */}
-                  <div className="border-l pl-4">
-                    {sale.tableNumber ? (
-                      <p className="flex items-center gap-2 text-green-600">
-                        <TableCellsIcon className="w-4 h-4" />
-                        Mesa: {sale.tableNumber}
-                        {sale.tableLocation && (
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <MapPinIcon className="w-3 h-3" />
-                            {sale.tableLocation}
-                          </span>
-                        )}
-                      </p>
-                    ) : (
-                      <p className="flex items-center gap-2 text-gray-400">
-                        <TableCellsIcon className="w-4 h-4" />
-                        Mesa: Não atribuída
-                      </p>
-                    )}
-
-                    {sale.waiterName ? (
-                      <p className="flex items-center gap-2 text-blue-600 mt-1">
-                        <UserGroupIcon className="w-4 h-4" />
-                        Garçom: {sale.waiterName}
-                        {sale.waiterPhone && (
-                          <span className="text-xs text-gray-500 flex items-center gap-1">
-                            <PhoneIcon className="w-3 h-3" />
-                            {sale.waiterPhone}
-                          </span>
-                        )}
-                      </p>
-                    ) : (
-                      <p className="flex items-center gap-2 text-gray-400 mt-1">
-                        <UserGroupIcon className="w-4 h-4" />
-                        Garçom: Não atribuído
-                      </p>
-                    )}
-                  </div>
+                  <h1 className="text-3xl font-bold text-white tracking-tight">
+                    Vendas Arquivadas
+                  </h1>
                 </div>
+                <p className="text-white/90 text-sm flex items-center gap-2">
+                  <SparklesIcon className="w-4 h-4" />
+                  Gerencie e recupere vendas arquivadas do sistema
+                </p>
               </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={() => handleOpenAssign(sale)}
-                  disabled={assigning === sale.saleId}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 hover:bg-purple-700 transition"
-                >
-                  {assigning === sale.saleId ? (
-                    <ArrowPathIcon className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <>
-                      <UserGroupIcon className="w-5 h-5" />
-                      {sale.tableNumber || sale.waiterName ? "Editar" : "Atribuir"}
-                    </>
-                  )}
-                </button>
-
-                <button
-                  disabled={restoringId === sale.saleId}
-                  onClick={() => handleRestore(sale.saleId)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-50 hover:bg-blue-700 transition"
-                >
-                  {restoringId === sale.saleId ? (
-                    <>
-                      <ArrowPathIcon className="w-5 h-5 animate-spin" />
-                      Restaurando...
-                    </>
-                  ) : (
-                    <>
-                      <ArrowUturnLeftIcon className="w-5 h-5" />
-                      Recuperar
-                    </>
-                  )}
-                </button>
+              <div className="hidden md:block">
+                <div className="bg-white/10 backdrop-blur-sm rounded-full px-4 py-2">
+                  <span className="text-white text-sm font-medium">
+                    Total: {data.length} vendas
+                  </span>
+                </div>
               </div>
             </div>
           </div>
-        ))}
+          <div 
+            className="absolute bottom-0 left-0 right-0 h-1"
+            style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }}
+          ></div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-lg backdrop-blur-sm animate-slideIn">
+            <div className="flex items-center gap-3">
+              <div className="p-1 bg-red-100 rounded-full">
+                <ExclamationTriangleIcon className="w-5 h-5 text-red-600" />
+              </div>
+              <p className="text-red-700 font-medium">{error}</p>
+            </div>
+          </div>
+        )}
+
+        {data.length === 0 && (
+          <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+            <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+              <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full">
+                <InboxIcon className="w-12 h-12 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700">Nenhuma venda arquivada</h3>
+              <p className="text-gray-500 text-sm">
+                As vendas arquivadas aparecerão aqui para você gerenciar e recuperar quando necessário.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Grid de cards modernos */}
+        <div className="grid grid-cols-1 gap-6">
+          {data.map((sale: ArchivedSale, index: number) => (
+            <div
+              key={sale.saleId}
+              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              {/* Barra de gradiente no topo */}
+              <div 
+                className="absolute top-0 left-0 right-0 h-1"
+                style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }}
+              ></div>
+              
+              <div className="p-6">
+                <div className="flex justify-between items-start flex-wrap gap-4">
+                  {/* Informações principais */}
+                  <div className="space-y-4 flex-1">
+                    {/* Header do card */}
+                    <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
+                      <div 
+                        className="p-2 rounded-xl shadow-md"
+                        style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                      >
+                        <ReceiptPercentIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-mono text-sm font-semibold text-gray-700">
+                          #{sale.saleId.slice(0, 8)}
+                        </p>
+                        <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                          <ClockIcon className="w-3 h-3" />
+                          <span>Arquivada em {new Date(sale.saleDate).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Grid de informações financeiras */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-green-100">
+                        <div className="flex items-center gap-2 text-green-600 mb-1">
+                          <BanknotesIcon className="w-4 h-4" />
+                          <span className="text-xs font-medium">SUBTOTAL</span>
+                        </div>
+                        <p className="text-lg font-bold text-green-700">
+                          {sale.subtotal.toLocaleString('pt-BR')} MZN
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-3 border border-orange-100">
+                        <div className="flex items-center gap-2 text-orange-600 mb-1">
+                          <TagIcon className="w-4 h-4" />
+                          <span className="text-xs font-medium">DESCONTO</span>
+                        </div>
+                        <p className="text-lg font-bold text-orange-700">
+                          {sale.discount.toLocaleString('pt-BR')} MZN
+                        </p>
+                      </div>
+
+                      <div 
+                        className="rounded-xl p-3 border"
+                        style={{ 
+                          background: `linear-gradient(135deg, ${primaryColor}10, ${secondaryColor}10)`,
+                          borderColor: `${primaryColor}20`
+                        }}
+                      >
+                        <div className="flex items-center gap-2 mb-1" style={{ color: primaryColor }}>
+                          <CurrencyDollarIcon className="w-4 h-4" />
+                          <span className="text-xs font-medium">TOTAL</span>
+                        </div>
+                        <p className="text-lg font-bold" style={{ color: primaryColor }}>
+                          {sale.total.toLocaleString('pt-BR')} MZN
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Informações de Mesa e Garçom com design moderno */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 hover:border-opacity-50 transition-colors" style={{ hover: { borderColor: primaryColor } }}>
+                        <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
+                          <TableCellsIcon className="w-3 h-3" />
+                          INFORMAÇÕES DA MESA
+                        </p>
+                        {sale.tableNumber ? (
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold flex items-center gap-2" style={{ color: primaryColor }}>
+                              <CheckCircleIcon className="w-4 h-4" />
+                              Mesa {sale.tableNumber}
+                            </p>
+                            {sale.tableLocation && (
+                              <p className="text-xs text-gray-500 flex items-center gap-1">
+                                <MapPinIcon className="w-3 h-3" />
+                                {sale.tableLocation}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-400 italic">Não atribuída</p>
+                        )}
+                      </div>
+
+                      <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 hover:border-opacity-50 transition-colors" style={{ hover: { borderColor: secondaryColor } }}>
+                        <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
+                          <UserGroupIcon className="w-3 h-3" />
+                          INFORMAÇÕES DO GARÇOM
+                        </p>
+                        {sale.waiterName ? (
+                          <div className="space-y-1">
+                            <p className="text-sm font-semibold flex items-center gap-2" style={{ color: secondaryColor }}>
+                              <CheckCircleIcon className="w-4 h-4" />
+                              {sale.waiterName}
+                            </p>
+                            {sale.waiterPhone && (
+                              <p className="text-xs text-gray-500 flex items-center gap-1">
+                                <PhoneIcon className="w-3 h-3" />
+                                {sale.waiterPhone}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-400 italic">Não atribuído</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Botões de ação com design moderno */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handleOpenAssign(sale)}
+                      disabled={assigning === sale.saleId}
+                      className="group/btn relative px-5 py-2.5 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
+                      style={{ background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})` }}
+                    >
+                      <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}></div>
+                      <span className="relative flex items-center gap-2 text-sm">
+                        {assigning === sale.saleId ? (
+                          <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <UserGroupIcon className="w-4 h-4" />
+                        )}
+                        {sale.tableNumber || sale.waiterName ? "Editar" : "Atribuir"}
+                      </span>
+                    </button>
+
+                    <button
+                      disabled={restoringId === sale.saleId}
+                      onClick={() => handleRestore(sale.saleId)}
+                      className="group/btn relative px-5 py-2.5 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
+                      style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                    >
+                      <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity" style={{ background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})` }}></div>
+                      <span className="relative flex items-center gap-2 text-sm">
+                        {restoringId === sale.saleId ? (
+                          <>
+                            <ArrowPathIcon className="w-4 h-4 animate-spin" />
+                            Restaurando...
+                          </>
+                        ) : (
+                          <>
+                            <ArrowUturnLeftIcon className="w-4 h-4" />
+                            Recuperar
+                          </>
+                        )}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Modal de Atribuição com valores atuais */}
+      {/* Modal de Atribuição */}
       <AssignModal
         open={assignModalOpen}
         onClose={() => {
@@ -238,7 +355,41 @@ export default function ArchivedSalesPage() {
         saleNumber={selectedSale?.saleId?.slice(0, 8)}
         initialTableId={selectedTableId}
         initialWaiterId={selectedWaiterId}
+        primaryColor={primaryColor}
+        secondaryColor={secondaryColor}
       />
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-slideIn {
+          animation: slideIn 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }

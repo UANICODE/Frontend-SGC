@@ -5,15 +5,15 @@ import { useState, useMemo } from "react";
 import { Search, ListChecks, Package } from "lucide-react"; // ícones
 
 import { ProductStockItemResponse } from "@/types/admin/product-stock";
-import { ProductStockTable } from "@/components/admin/tables/ ProductStockTable";
+import { ProductStockTable } from "@/components/admin/tables/ProductStockTable";
 import { UpdateStockModal } from "@/components/admin/modals/UpdateStockModal";
-import { useProductStocks } from "@/hooks/admin /product/stock/ useProductStocks";
+import { useProductStocks } from "@/hooks/admin/product/stock/useProductStocks";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
-import { useStockMovements } from "@/hooks/admin /product/stock/useStockMovements";
+import { useStockMovements } from "@/hooks/admin/product/stock/useStockMovements";
 import { StockMovementsModal } from "@/components/admin/modals/StockMovementsModal";
-import { useUserEstablishments } from "@/hooks/admin /useUserEstablishments";
+import { useUserEstablishments } from "@/hooks/admin/useUserEstablishments";
 import { TransferStockModal } from "@/components/admin/modals/TransferStockModal";
 
 

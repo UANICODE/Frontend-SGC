@@ -7,7 +7,7 @@ import { CreateProductModal } from "@/components/admin/modals/CreateProductModal
 import { ProductFilters } from "@/components/admin/ProductFilters";
 import { ProductsTable } from "@/components/admin/tables/ProductsTable";
 import { ProductItemResponse } from "@/types/admin/product";
-import { useProducts } from "@/hooks/admin /product/useProducts";
+import { useProducts } from "@/hooks/admin/product/useProducts";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";

@@ -5,7 +5,7 @@ import {
   ListIngredientsResponse,
 } from "@/types/admin/ingredients";
 import { useState } from "react";
-import { DeleteIngredientModal } from "../modals/ DeleteIngredientModal";
+import { DeleteIngredientModal } from "../modals/DeleteIngredientModal";
 
 
 interface Props {

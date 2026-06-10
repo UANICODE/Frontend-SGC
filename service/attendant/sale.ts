@@ -119,6 +119,25 @@ export async function archiveSale(saleId: string) {
   }
 }
 
+
+// service/attendant/sale.ts - Adicione esta função
+
+export async function generateKitchenReceipt(
+  saleId: string,
+  establishmentId: string
+): Promise<Receipt> {
+  try {
+    const res = await api.get(
+      `/api/attendant/sales/${saleId}/kitchen-receipt?establishmentId=${establishmentId}`
+    );
+    return res.data;
+  } catch (e) {
+    handleHttpError(e);
+  }
+}
+
+
+
 // service/attendant/sale.ts - UNIFICADO
 
 // service/attendant/sale.ts

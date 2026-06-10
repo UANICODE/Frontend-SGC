@@ -1,4 +1,4 @@
-// app/attendant/dashboard/[establishmentId]/sales/page.tsx
+
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
@@ -19,6 +19,7 @@ import { PlusIcon, CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outli
 import { Minus, Plus, ShoppingCart, Scale, PrinterIcon } from "lucide-react";
 import { WeightProductModal } from "@/components/attendant/modals/WeightProductModal";
 import { finalizeSale } from "@/service/attendant/sale";
+import { KitchenReceiptPreview } from "@/components/attendant/KitchenReceiptPreview";
 
 export default function SalesPage() {
   useRoleGuard([UserRole.ATENDENTE]);
@@ -44,6 +45,7 @@ export default function SalesPage() {
     handleQuantity,
     handleArchive,
     handleFinalize,
+    handleGenerateKitchenReceipt, 
     handleGenerateReceipt,
   } = useSale(establishmentId);
 
@@ -65,6 +67,9 @@ export default function SalesPage() {
   const [weightModalOpen, setWeightModalOpen] = useState(false);
   const [selectedWeightProduct, setSelectedWeightProduct] = useState<ProductItem | null>(null);
   const [editingWeightItem, setEditingWeightItem] = useState<{ itemId: string; weight: number } | null>(null);
+
+  const [kitchenReceipt, setKitchenReceipt] = useState<Receipt | null>(null);
+  const [printingKitchen, setPrintingKitchen] = useState(false);
 
   // Função para atualizar valor local
   const updateLocalQuantity = useCallback((itemId: string, value: string) => {
@@ -116,6 +121,35 @@ export default function SalesPage() {
     }
     handleAdd(product.id);
   };
+
+
+  async function handlePrintKitchenReceipt() {
+  if (!sale && saleId) {
+    await refreshSale(saleId);
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+  
+  if (!sale) {
+    toast.showToast("Nenhuma venda ativa.", "error");
+    return;
+  }
+  
+  if (sale.items.length === 0) {
+    toast.showToast("Carrinho vazio.", "error");
+    return;
+  }
+  
+  try {
+    setPrintingKitchen(true);
+    const receiptData = await handleGenerateKitchenReceipt();
+    setKitchenReceipt(receiptData);
+  } catch (e: any) {
+    toast.showToast(e.message || "Erro ao gerar recibo da cozinha", "error");
+  } finally {
+    setPrintingKitchen(false);
+  }
+}
+
 
   async function handlePrintReceipt() {
     if (!sale && saleId) {
@@ -476,6 +510,18 @@ export default function SalesPage() {
             >
               {printingReceipt ? "Gerando..." : <><PrinterIcon className="w-5 h-5" /> Imprimir Recibo</>}
             </button>
+            <button
+              onClick={handlePrintKitchenReceipt}
+              disabled={sale?.items.length === 0 || printingKitchen}
+              className={`w-full py-2 rounded-lg flex items-center justify-center gap-2 transition ${
+                sale?.items.length === 0 || printingKitchen
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-orange-500 hover:bg-orange-600 text-white"
+              }`}
+            >
+              {printingKitchen ? "Gerando..." : <><PrinterIcon className="w-5 h-5" /> 🍳 Cozinha</>}
+            </button>
+
 
             <button
               onClick={handleArchiveAndRedirect}
@@ -529,6 +575,14 @@ export default function SalesPage() {
           onPrint={() => window.print()}
         />
       )}
+
+      {kitchenReceipt && (
+      <KitchenReceiptPreview
+        receipt={kitchenReceipt}
+        onClose={() => setKitchenReceipt(null)}
+        onPrint={() => window.print()}
+      />
+    )}
     </div>
   );
 }

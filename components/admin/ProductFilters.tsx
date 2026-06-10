@@ -1,6 +1,6 @@
 "use client";
 
-import { useProductDependencies } from "@/hooks/admin /product/useProductDependencies";
+import { useProductDependencies } from "@/hooks/admin/product/useProductDependencies";
 import { ListProductsRequest } from "@/types/admin/product";
 
 

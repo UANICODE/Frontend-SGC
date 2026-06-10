@@ -1,28 +1,27 @@
+// app/attendant/dashboard/[establishmentId]/page.tsx (atualizado)
 "use client";
 
 import { CashRegisterCard } from "@/components/attendant/cards/CashRegisterCard";
 import { CashClosingReceiptPreview } from "@/components/attendant/CashClosingReceiptPreview";
 import { CashRegisterFilters } from "@/components/attendant/CashRegisterFilters";
+import { CashRegisterSalesModal } from "@/components/attendant/modals/CashRegisterSalesModal";
 import { PageLoader } from "@/components/ui/PageLoader";
-import { useEstablishment } from "@/hooks/admin /useEstablishment";
-
+import { useEstablishment } from "@/hooks/admin/useEstablishment";
 import { useCashRegisters } from "@/hooks/attendant/useCashRegisters";
 import { useOpenCashRegister } from "@/hooks/attendant/useOpenCashRegister";
-
+import { useCashRegisterSales } from "@/hooks/attendant/useCashRegisterSales";
 import { closeCashRegister } from "@/service/attendant/closeCash";
 import { createSale } from "@/service/attendant/sale";
-
 import { useParams, useRouter } from "next/navigation";
 import { useState, useMemo } from "react";
 import { CashClosingReceipt } from "@/types/attendant/CashRegister";
 import { useToast } from "@/ context/ToastContext";
-
 import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
 export default function AttendantHome() {
-    useRoleGuard([UserRole.ATENDENTE]);
+  useRoleGuard([UserRole.ATENDENTE]);
 
   const { establishmentId } = useParams() as any;
   const router = useRouter();
@@ -31,6 +30,11 @@ export default function AttendantHome() {
   const toast = useToast();
   const [closingReceipt, setClosingReceipt] = useState<CashClosingReceipt | null>(null);
   const [closingId, setClosingId] = useState<string | null>(null);
+  
+  // Estado para o modal de vendas
+  const [selectedCashForSales, setSelectedCashForSales] = useState<string | null>(null);
+  const [selectedCashInfo, setSelectedCashInfo] = useState<any>(null);
+  const { data: sales, fetch: fetchSales, loading: loadingSales } = useCashRegisterSales();
 
   const { execute: executeOpenCash, loading: opening } = useOpenCashRegister();
 
@@ -46,7 +50,6 @@ export default function AttendantHome() {
   const [page, setPage] = useState(1);
   const pageSize = 6;
 
-  // Filtra duplicatas antes de paginar
   const uniqueCashRegisters = useMemo(() => {
     return Array.from(new Map(data.map(item => [item.id, item])).values());
   }, [data]);
@@ -94,6 +97,17 @@ export default function AttendantHome() {
     } finally {
       setSellingCashId(null);
     }
+  }
+
+  async function handleViewSales(cashId: string) {
+    const cash = uniqueCashRegisters.find(c => c.id === cashId);
+    setSelectedCashInfo({
+      openedAt: cash?.openedAt,
+      closedAt: cash?.closedAt,
+      totalSales: cash?.totalSalesCalculated,
+    });
+    setSelectedCashForSales(cashId);
+    await fetchSales(establishmentId, cashId);
   }
 
   if (loading || !establishment) return <PageLoader />;
@@ -151,6 +165,7 @@ export default function AttendantHome() {
               onClose={handleCloseCash}
               closing={closingId === cash.id}
               sellingCashId={sellingCashId}
+              onViewSales={handleViewSales}
             />
           ))}
         </div>
@@ -176,6 +191,22 @@ export default function AttendantHome() {
           onClose={() => setClosingReceipt(null)}
         />
       )}
+
+      {/* Modal de Vendas do Caixa */}
+      <CashRegisterSalesModal
+        open={!!selectedCashForSales}
+        onClose={() => {
+          setSelectedCashForSales(null);
+          setSelectedCashInfo(null);
+        }}
+        sales={sales}
+        loading={loadingSales}
+        primaryColor={establishment.primaryColor}
+        secondaryColor={establishment.secondaryColor}
+        cashRegisterInfo={selectedCashInfo}
+        establishmentLogo={establishment.logoUrl}  // ✅ Adicionar
+       establishmentName={establishment.tradeName} 
+      />
     </div>
   );
 }

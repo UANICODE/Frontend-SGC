@@ -5,7 +5,7 @@ import { CategoriesTable } from "@/components/admin/tables/CategoriesTable";
 import { CategoryItemResponse } from "@/types/admin/categories";
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useCategories } from "@/hooks/admin /product/categories/useCategories";
+import { useCategories } from "@/hooks/admin/product/categories/useCategories";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";

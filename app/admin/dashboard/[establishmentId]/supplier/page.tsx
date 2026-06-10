@@ -4,7 +4,7 @@ import { useToast } from "@/ context/ToastContext";
 import { DeleteSupplierModal } from "@/components/admin/modals/DeleteSupplierModal";
 import { SupplierFormModal } from "@/components/admin/modals/SupplierFormModal";
 import { SupplierTable } from "@/components/admin/tables/SupplierTable";
-import { useSuppliers } from "@/hooks/admin /supplier/useSuppliers";
+import { useSuppliers } from "@/hooks/admin/supplier/useSuppliers";
 import { changeSupplierStatus } from "@/service/admin/supplier";
 import { SupplierItemResponse } from "@/types/admin/supplier";
 import { useParams } from "next/navigation";
