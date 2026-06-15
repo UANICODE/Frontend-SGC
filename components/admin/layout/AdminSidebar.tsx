@@ -28,7 +28,7 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
   const establishmentId = params?.establishmentId;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [hovered, setHovered] = useState(false); // controla hover desktop
+  const [hovered, setHovered] = useState(false);
 
   const { logout } = useAuth();
   const { showToast } = useToast();
@@ -36,7 +36,31 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
   if (!establishmentId) return null;
 
   const basePath = `/admin/dashboard/${establishmentId}`;
-  const isActive = (path: string) => pathname.startsWith(path);
+  
+  // Função corrigida - verifica correspondência EXATA
+  const isActive = (href: string) => {
+    if (href === basePath) {
+      // Dashboard: ativo apenas se estiver exatamente no dashboard principal
+      return pathname === basePath;
+    }
+    // Para outros links: verifica se o pathname é exatamente igual ao href
+    // ou se está em uma sub-rota específica (sem marcar o pai)
+    // Exemplo: /product/categories não deve marcar /product
+    const pathSegments = pathname.split('/').filter(Boolean);
+    const hrefSegments = href.split('/').filter(Boolean);
+    
+    // Compara exatamente os segmentos
+    if (pathSegments.length !== hrefSegments.length) {
+      return false;
+    }
+    
+    for (let i = 0; i < pathSegments.length; i++) {
+      if (pathSegments[i] !== hrefSegments[i]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   const links = [
     { name: "Dashboard", href: `${basePath}`, icon: <LayoutDashboard size={18} /> },
@@ -66,13 +90,22 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
     <div className="flex flex-col h-full">
       {/* Topo com logo e nome */}
       <div className="flex flex-col items-center mb-4">
-        {logo && (
-          <img
-            src={logo}
-            alt={name}
-            className={`h-16 w-16 rounded-full object-cover mb-2 shadow-md transition-all duration-300`}
-          />
-        )}
+        <div className="relative">
+          {logo && (
+            <img
+              src={logo}
+              alt={name}
+              className="h-16 w-16 rounded-full object-cover mb-2 shadow-md transition-all duration-300"
+            />
+          )}
+          {/* Bolinha de Online */}
+          <div className="absolute -bottom-1 -right-1">
+            <div className="relative">
+              <div className="w-3.5 h-3.5 bg-green-500 rounded-full animate-pulse-ring"></div>
+              <div className="absolute inset-0 w-3.5 h-3.5 bg-green-500 rounded-full"></div>
+            </div>
+          </div>
+        </div>
         {name && (
           <span
             className={`font-bold text-lg text-primary text-center transition-all duration-300 ${
@@ -86,25 +119,32 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
 
       {/* Links com scroll */}
       <nav className="flex-1 flex flex-col gap-2 text-sm overflow-y-auto">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            className={`
-              flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-300
-              ${isActive(link.href) ? "bg-primary/10 font-bold text-primary" : "text-gray-700 hover:bg-gray-100"}
-            `}
-          >
-            {link.icon}
-            <span
-              className={`transition-all duration-300 whitespace-pre ${
-                alwaysShowText || hovered ? "opacity-100 max-w-xs" : "opacity-0 max-w-0 overflow-hidden lg:max-w-xs"
-              }`}
+        {links.map((link) => {
+          const active = isActive(link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`
+                flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-300 relative
+                ${active ? "bg-primary/10 font-bold text-primary" : "text-gray-700 hover:bg-gray-100"}
+              `}
             >
-              {link.name}
-            </span>
-          </Link>
-        ))}
+              {/* Destaque lateral - APENAS para o item selecionado */}
+              {active && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
+              )}
+              {link.icon}
+              <span
+                className={`transition-all duration-300 whitespace-pre ${
+                  alwaysShowText || hovered ? "opacity-100 max-w-xs" : "opacity-0 max-w-0 overflow-hidden lg:max-w-xs"
+                }`}
+              >
+                {link.name}
+              </span>
+            </Link>
+          );
+        })}
 
         {/* Logout */}
         <button
@@ -163,6 +203,26 @@ export function AdminSidebar({ logo, name }: { logo?: string; name?: string }) {
           </aside>
         </>
       )}
+
+      <style jsx>{`
+        @keyframes pulse-ring {
+          0% {
+            transform: scale(0.8);
+            opacity: 1;
+          }
+          70% {
+            transform: scale(1.5);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(0.8);
+            opacity: 0;
+          }
+        }
+        .animate-pulse-ring {
+          animation: pulse-ring 1.5s ease-out infinite;
+        }
+      `}</style>
     </>
   );
 }

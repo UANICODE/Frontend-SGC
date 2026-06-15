@@ -18,6 +18,28 @@ export interface AddProductStockResponse {
   currentQuantity: number;
 }
 
+
+
+
+/* ============================================================
+   REMOVE STOCK
+   ============================================================ */
+
+export interface RemoveProductStockRequest {
+  establishmentId: string;
+  productId: string;
+  quantityToRemove: number;
+  reason?: string;
+}
+
+export interface RemoveProductStockResponse {
+  productId: string;
+  productName: string;
+  previousQuantity: number;
+  removedQuantity: number;
+  currentQuantity: number;
+  reason: string;
+}
 /* ============================================================
    UPDATE STOCK
    ============================================================ */

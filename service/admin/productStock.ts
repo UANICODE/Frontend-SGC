@@ -7,6 +7,8 @@ import {
   UpdateProductStockResponse,
   ListProductStocksRequest,
   ListProductStocksResponse,
+  RemoveProductStockResponse,
+  RemoveProductStockRequest,
 } from "@/types/admin/product-stock";
 
 /* ================= LIST ================= */
@@ -34,6 +36,23 @@ export async function addProductStock(
   try {
     const { data } = await api.post<AddProductStockResponse>(
       "/api/admin/product-stock/add",
+      payload
+    );
+    return data;
+  } catch (error) {
+    handleHttpError(error);
+  }
+}
+
+
+/* ================= REMOVE STOCK ================= */
+
+export async function removeProductStock(
+  payload: RemoveProductStockRequest
+): Promise<RemoveProductStockResponse> {
+  try {
+    const { data } = await api.post<RemoveProductStockResponse>(
+      "/api/admin/product-stock/remove",
       payload
     );
     return data;

@@ -2,22 +2,22 @@
 
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+import { motion } from "framer-motion";
 
 import { CreateUserModal } from "@/components/admin/modals/CreateUserModal";
 import { ResetPasswordModal } from "@/components/admin/modals/ResetPasswordModal";
 import { UserTable } from "@/components/admin/tables/UserTable";
 import { UserFilters } from "@/components/admin/UserFilters";
 
-
 import { ListUsersByEstablishmentResponse } from "@/types/admin/user";
 import { useUsers } from "@/hooks/admin/users/useUsers";
 import { useToast } from "@/ context/ToastContext";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
-
+import { Users, Plus, Sparkles } from "lucide-react";
 
 export default function UsersPage() {
-    useRoleGuard([UserRole.ADMIN]);
+  useRoleGuard([UserRole.ADMIN]);
   const params = useParams<{ establishmentId: string }>();
   const establishmentId = params.establishmentId;
 
@@ -29,38 +29,22 @@ export default function UsersPage() {
     ativo: "",
   });
 
-  const [selectedReset, setSelectedReset] =
-    useState<ListUsersByEstablishmentResponse | null>(null);
-
+  const [selectedReset, setSelectedReset] = useState<ListUsersByEstablishmentResponse | null>(null);
   const [showCreate, setShowCreate] = useState(false);
 
   const filteredUsers = useMemo(() => {
-    const usersWithoutSuperAdmin = data.filter(
-      (u) => u.role !== "SUPERADMIN"
-    );
-
+    const usersWithoutSuperAdmin = data.filter((u) => u.role !== "SUPERADMIN");
     return usersWithoutSuperAdmin.filter((user) => {
-      const nomeMatch = user.nome
-        .toLowerCase()
-        .includes(filters.nome.toLowerCase());
-
-      const emailMatch = user.email
-        .toLowerCase()
-        .includes(filters.email.toLowerCase());
-
-      const statusMatch =
-        filters.ativo === ""
-          ? true
-          : user.ativo === (filters.ativo === "true");
-
+      const nomeMatch = user.nome.toLowerCase().includes(filters.nome.toLowerCase());
+      const emailMatch = user.email.toLowerCase().includes(filters.email.toLowerCase());
+      const statusMatch = filters.ativo === "" ? true : user.ativo === (filters.ativo === "true");
       return nomeMatch && emailMatch && statusMatch;
     });
   }, [data, filters]);
 
   return (
-    <div className="space-y-8 animate-fadeIn">
-
-      <div className="flex justify-between items-center">
+    <div className="space-y-8">
+ <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-primary">
           Gestão de Usuários
         </h1>
@@ -72,15 +56,17 @@ export default function UsersPage() {
           Novo Usuário
         </button>
       </div>
-
       <UserFilters onFilter={setFilters} />
 
       {loading ? (
-        <div className="flex flex-col items-center py-12">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-500 mt-4">
-            Carregando usuários...
-          </p>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-2xl shadow-lg">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Users className="w-6 h-6 text-primary/60 animate-pulse" />
+            </div>
+          </div>
+          <p className="mt-4 text-gray-500 font-medium">Carregando usuários...</p>
         </div>
       ) : (
         <UserTable
@@ -95,10 +81,10 @@ export default function UsersPage() {
         <CreateUserModal
           establishmentId={establishmentId}
           onClose={() => setShowCreate(false)}
-         onSuccess={() => {
-        refresh();
-        showToast("Usuário criado com sucesso!", "success");
-         }}
+          onSuccess={() => {
+            refresh();
+            showToast("Usuário criado com sucesso!", "success");
+          }}
         />
       )}
 
@@ -108,9 +94,9 @@ export default function UsersPage() {
           user={selectedReset}
           onClose={() => setSelectedReset(null)}
           onSuccess={() => {
-          refresh();
-          showToast("Senha redefinida com sucesso!", "success");
-        }}
+            refresh();
+            showToast("Senha redefinida com sucesso!", "success");
+          }}
         />
       )}
     </div>

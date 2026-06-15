@@ -9,7 +9,7 @@ interface DashboardFooterProps {
 }
 
 export function DashboardFooter({
-  version = "v1.0",
+  version = "v2.0.0",
   showGitHub = true,
   className = "",
 }: DashboardFooterProps) {
