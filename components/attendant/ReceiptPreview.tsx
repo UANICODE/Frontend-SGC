@@ -73,30 +73,27 @@ export function ReceiptPreview({ receipt, onPrint, onClose }: Props) {
             {receipt.items.map((item, i) => (
               <div key={i} className="mb-0.5">
                 <div>{item.productName}</div>
-                <div className="flex justify-between">
-                  <span>{item.quantity} x {item.unitPrice}</span>
-                  <span>{item.subtotal} MT</span>
-                </div>
+              <div>
+              <span>{item.quantity} x {item.unitPrice} = {item.subtotal} MT</span>
+            </div>
               </div>
             ))}
 
             <hr className="my-1" />
 
             {/* TOTAIS */}
-            <div className="flex justify-between">
-              <span>Subtotal:</span>
-              <span>{receipt.subtotal} MT</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Desconto:</span>
-              <span>{receipt.discount} MT</span>
-            </div>
+     {/* TOTAIS */}
+        <div>
+          <span>Subtotal: {receipt.subtotal} MT</span>
+        </div>
 
-            <div className="flex justify-between text-base">
-              <span>TOTAL:</span>
-              <span>{receipt.total} MT</span>
-            </div>
+        <div>
+          <span>Desconto: {receipt.discount} MT</span>
+        </div>
 
+        <div className="text-base">
+          <span>TOTAL: {receipt.total} MT</span>
+        </div>
             <div>Metodos: {receipt.paymentMethod}</div>
             <div>{new Date(receipt.date).toLocaleString()}</div>
 

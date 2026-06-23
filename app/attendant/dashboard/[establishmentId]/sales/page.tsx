@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
@@ -16,7 +15,7 @@ import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 
 import { PlusIcon, CheckCircleIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { Minus, Plus, ShoppingCart, Scale, PrinterIcon } from "lucide-react";
+import { Minus, Plus, ShoppingCart, Scale, PrinterIcon, ChevronDown, ChevronRight } from "lucide-react";
 import { WeightProductModal } from "@/components/attendant/modals/WeightProductModal";
 import { finalizeSale } from "@/service/attendant/sale";
 import { KitchenReceiptPreview } from "@/components/attendant/KitchenReceiptPreview";
@@ -63,6 +62,9 @@ export default function SalesPage() {
   // 🔥 Estado para armazenar valores locais dos inputs (fora do map)
   const [localQuantities, setLocalQuantities] = useState<Record<string, string>>({});
 
+  // 🔥 Estado para categorias expandidas (todas expandidas por padrão)
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
+
   // Estados para modal de produto por peso
   const [weightModalOpen, setWeightModalOpen] = useState(false);
   const [selectedWeightProduct, setSelectedWeightProduct] = useState<ProductItem | null>(null);
@@ -92,6 +94,15 @@ export default function SalesPage() {
     try {
       const list = await listProducts({ establishmentId });
       setAllProducts(list || []);
+      
+      // Inicializar todas as categorias como expandidas
+      const categories: Record<string, boolean> = {};
+      list?.forEach((p: ProductItem) => {
+        if (p.category && !categories[p.category]) {
+          categories[p.category] = true;
+        }
+      });
+      setExpandedCategories(categories);
     } catch (e) {
       toast.showToast("Erro ao carregar produtos", "error");
     } finally {
@@ -103,13 +114,47 @@ export default function SalesPage() {
     loadProducts();
   }, [loadProducts]);
 
-  // ================= FILTRO FRONTEND =================
-  const filteredProducts = useMemo(() => {
-    if (!searchName) return allProducts;
-    return allProducts.filter((p) =>
-      p.name.toLowerCase().includes(searchName.toLowerCase())
-    );
+  // ================= PRODUTOS AGRUPADOS POR CATEGORIA =================
+  const productsByCategory = useMemo(() => {
+    const grouped: Record<string, ProductItem[]> = {};
+    
+    // Filtrar produtos primeiro
+    const filtered = searchName 
+      ? allProducts.filter((p) =>
+          p.name.toLowerCase().includes(searchName.toLowerCase())
+        )
+      : allProducts;
+    
+    // Agrupar por categoria
+    filtered.forEach((p) => {
+      const category = p.category || "Sem Categoria";
+      if (!grouped[category]) {
+        grouped[category] = [];
+      }
+      grouped[category].push(p);
+    });
+    
+    // Ordenar categorias
+    const sortedKeys = Object.keys(grouped).sort((a, b) => {
+      if (a === "Sem Categoria") return 1;
+      if (b === "Sem Categoria") return -1;
+      return a.localeCompare(b);
+    });
+    
+    const sortedGrouped: Record<string, ProductItem[]> = {};
+    sortedKeys.forEach((key) => {
+      sortedGrouped[key] = grouped[key];
+    });
+    
+    return sortedGrouped;
   }, [allProducts, searchName]);
+
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
 
   // ================= HANDLERS =================
   const handleProductClick = (product: ProductItem) => {
@@ -122,34 +167,32 @@ export default function SalesPage() {
     handleAdd(product.id);
   };
 
-
   async function handlePrintKitchenReceipt() {
-  if (!sale && saleId) {
-    await refreshSale(saleId);
-    await new Promise(resolve => setTimeout(resolve, 500));
+    if (!sale && saleId) {
+      await refreshSale(saleId);
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    if (!sale) {
+      toast.showToast("Nenhuma venda ativa.", "error");
+      return;
+    }
+    
+    if (sale.items.length === 0) {
+      toast.showToast("Carrinho vazio.", "error");
+      return;
+    }
+    
+    try {
+      setPrintingKitchen(true);
+      const receiptData = await handleGenerateKitchenReceipt();
+      setKitchenReceipt(receiptData);
+    } catch (e: any) {
+      toast.showToast(e.message || "Erro ao gerar recibo da cozinha", "error");
+    } finally {
+      setPrintingKitchen(false);
+    }
   }
-  
-  if (!sale) {
-    toast.showToast("Nenhuma venda ativa.", "error");
-    return;
-  }
-  
-  if (sale.items.length === 0) {
-    toast.showToast("Carrinho vazio.", "error");
-    return;
-  }
-  
-  try {
-    setPrintingKitchen(true);
-    const receiptData = await handleGenerateKitchenReceipt();
-    setKitchenReceipt(receiptData);
-  } catch (e: any) {
-    toast.showToast(e.message || "Erro ao gerar recibo da cozinha", "error");
-  } finally {
-    setPrintingKitchen(false);
-  }
-}
-
 
   async function handlePrintReceipt() {
     if (!sale && saleId) {
@@ -266,94 +309,142 @@ export default function SalesPage() {
     );
   }
 
+  const totalCategories = Object.keys(productsByCategory).length;
+
   return (
     <div className="h-screen flex flex-col lg:flex-row gap-4 p-3 md:p-4 overflow-hidden">
       {/* ================= PRODUTOS ================= */}
       <div className="flex-1 flex flex-col min-h-0">
-        <input
-          placeholder="Buscar produto..."
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
-          className="w-full p-3 border rounded-xl bg-white lg:sticky lg:top-0 z-10 focus:outline-none focus:ring-2 focus:ring-primary"
-        />
+        <div className="flex items-center gap-3 sticky top-0 z-10 bg-gray-50 pt-1">
+          <input
+            placeholder="Buscar produto..."
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="flex-1 p-3 border rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+          {searchName && (
+            <span className="text-xs text-gray-400 whitespace-nowrap">
+              {allProducts.filter(p => p.name.toLowerCase().includes(searchName.toLowerCase())).length} resultados
+            </span>
+          )}
+        </div>
 
         {productsLoading && (
           <p className="text-sm text-gray-400 mt-2">Carregando produtos...</p>
         )}
 
         <div className="flex-1 overflow-y-auto min-h-0 pr-1 mt-2">
-          <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {filteredProducts.map((p, index) => (
-              <div 
-                key={`prod-${p.id}-${index}`}
-                className="bg-white rounded-2xl shadow flex flex-col overflow-hidden hover:shadow-lg transition cursor-pointer"
-                onClick={() => handleProductClick(p)}
-              >
-                <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
-                  {p.catalogo ? (
-                    <img
-                      src={p.catalogo}
-                      alt={p.name}
-                      className="w-full h-full object-contain p-4"
-                    />
-                  ) : (
-                    <div className="text-gray-400 text-sm">Sem imagem</div>
-                  )}
-                  
-                  {p.isWeightBased && (
-                    <span className="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                      <Scale size={12} />
-                      Por peso
-                    </span>
-                  )}
-                  {p.isFixedPortion && (
-                    <span className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
-                      Porção fixa
-                    </span>
-                  )}
-                </div>
-
-                <div className="p-3 md:p-4 flex flex-col justify-between flex-1">
-                  <div>
-                    <h3 className="font-semibold text-sm md:text-base">{p.name}</h3>
-                    <p className="text-xs text-gray-500">{p.category}</p>
-                    
-                    {p.isWeightBased ? (
-                      <p className="text-sm font-medium text-purple-600">
-                        {p.pricePerGram?.toFixed(2)} MZN/g
-                      </p>
+          {Object.entries(productsByCategory).map(([category, products]) => {
+            const isExpanded = expandedCategories[category] !== false;
+            const productCount = products.length;
+            
+            return (
+              <div key={category} className="mb-4">
+                {/* Cabeçalho da Categoria */}
+                <button
+                  onClick={() => toggleCategory(category)}
+                  className="w-full flex items-center justify-between p-3 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors mb-2"
+                >
+                  <div className="flex items-center gap-2">
+                    {isExpanded ? (
+                      <ChevronDown className="w-5 h-5 text-gray-600" />
                     ) : (
-                      <p className="text-sm font-medium">MZN {p.price?.toFixed(2)}</p>
+                      <ChevronRight className="w-5 h-5 text-gray-600" />
                     )}
-                    
-                    <p className="text-xs text-gray-400">Estoque: {p.stock}</p>
+                    <span className="font-semibold text-gray-800">{category}</span>
+                    <span className="text-xs text-gray-400 bg-white px-2 py-0.5 rounded-full">
+                      {productCount}
+                    </span>
                   </div>
+                  <span className="text-xs text-gray-400">
+                    {isExpanded ? "Recolher" : "Expandir"}
+                  </span>
+                </button>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProductClick(p);
-                    }}
-                    disabled={addingProductIds.includes(p.id)}
-                    className={`mt-3 w-full py-2 rounded-lg text-white flex justify-center items-center gap-2 ${
-                      addingProductIds.includes(p.id)
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-black hover:brightness-90"
-                    }`}
-                  >
-                    {addingProductIds.includes(p.id) ? (
-                      "Adicionando..."
-                    ) : (
-                      <>
-                        <PlusIcon className="w-5 h-5" />
-                        Adicionar
-                      </>
-                    )}
-                  </button>
-                </div>
+                {/* Grid de Produtos da Categoria */}
+                {isExpanded && (
+                  <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {products.map((p, index) => (
+                      <div 
+                        key={`prod-${p.id}-${index}`}
+                        className="bg-white rounded-2xl shadow flex flex-col overflow-hidden hover:shadow-lg transition cursor-pointer"
+                        onClick={() => handleProductClick(p)}
+                      >
+                        <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center border-b border-gray-200">
+                          {p.catalogo ? (
+                            <img
+                              src={p.catalogo}
+                              alt={p.name}
+                              className="w-full h-full object-contain p-4"
+                            />
+                          ) : (
+                            <div className="text-gray-400 text-sm">Sem imagem</div>
+                          )}
+                          
+                          {p.isWeightBased && (
+                            <span className="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                              <Scale size={12} />
+                              Por peso
+                            </span>
+                          )}
+                          {p.isFixedPortion && (
+                            <span className="absolute top-2 right-2 bg-orange-500 text-white text-xs px-2 py-1 rounded-full">
+                              Porção fixa
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="p-3 md:p-4 flex flex-col justify-between flex-1">
+                          <div>
+                            <h3 className="font-semibold text-sm md:text-base">{p.name}</h3>
+                            <p className="text-xs text-gray-500">{p.category}</p>
+                            
+                            {p.isWeightBased ? (
+                              <p className="text-sm font-medium text-purple-600">
+                                {p.pricePerGram?.toFixed(2)} MZN/g
+                              </p>
+                            ) : (
+                              <p className="text-sm font-medium">MZN {p.price?.toFixed(2)}</p>
+                            )}
+                            
+                            <p className="text-xs text-gray-400">Estoque: {p.stock}</p>
+                          </div>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleProductClick(p);
+                            }}
+                            disabled={addingProductIds.includes(p.id)}
+                            className={`mt-3 w-full py-2 rounded-lg text-white flex justify-center items-center gap-2 ${
+                              addingProductIds.includes(p.id)
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-black hover:brightness-90"
+                            }`}
+                          >
+                            {addingProductIds.includes(p.id) ? (
+                              "Adicionando..."
+                            ) : (
+                              <>
+                                <PlusIcon className="w-5 h-5" />
+                                Adicionar
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
-          </div>
+            );
+          })}
+
+          {allProducts.length === 0 && !productsLoading && (
+            <div className="text-center text-gray-400 py-8">
+              Nenhum produto encontrado
+            </div>
+          )}
         </div>
       </div>
 
@@ -363,6 +454,11 @@ export default function SalesPage() {
           <h2 className="text-lg md:text-xl font-bold mb-3 flex items-center gap-2">
             <ShoppingCart size={18} />
             Venda Atual
+            {sale?.items && sale.items.length > 0 && (
+              <span className="text-xs bg-gray-100 px-2 py-0.5 rounded-full">
+                {sale.items.length} itens
+              </span>
+            )}
           </h2>
 
           <div className="flex-1 overflow-y-auto min-h-0 space-y-3">
@@ -522,7 +618,6 @@ export default function SalesPage() {
               {printingKitchen ? "Gerando..." : <><PrinterIcon className="w-5 h-5" /> 🍳 Cozinha</>}
             </button>
 
-
             <button
               onClick={handleArchiveAndRedirect}
               className="w-full bg-yellow-500 text-white py-2 rounded-lg hover:bg-yellow-600 transition"
@@ -577,12 +672,12 @@ export default function SalesPage() {
       )}
 
       {kitchenReceipt && (
-      <KitchenReceiptPreview
-        receipt={kitchenReceipt}
-        onClose={() => setKitchenReceipt(null)}
-        onPrint={() => window.print()}
-      />
-    )}
+        <KitchenReceiptPreview
+          receipt={kitchenReceipt}
+          onClose={() => setKitchenReceipt(null)}
+          onPrint={() => window.print()}
+        />
+      )}
     </div>
   );
 }

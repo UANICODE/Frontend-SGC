@@ -3,6 +3,7 @@ export type UserRole = "SUPERADMIN" | "ADMIN" | "ATENDENTE";
 export interface AuthUser {
   uid: string;
   email: string;
+  nome: string; 
   roles: UserRole[];
 }
 

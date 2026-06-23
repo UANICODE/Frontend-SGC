@@ -49,25 +49,21 @@ export function CashClosingReceiptPreview({
           <hr className="border-black my-1" />
 
           <div className="space-y-1">
-            <div className="flex justify-between">
-              <span>Total Vendas</span>
-              <span>{receipt.totalSales} MZN</span>
-            </div>
+           <div>
+          <span>Total Vendas: {receipt.totalSales} MZN</span>
+        </div>
 
-            <div className="flex justify-between">
-              <span>Total Cancelado</span>
-              <span>{receipt.totalCancelled} MZN</span>
-            </div>
+        <div>
+          <span>Total Cancelado: {receipt.totalCancelled} MZN</span>
+        </div>
 
-            <div className="flex justify-between font-bold">
-              <span>Total Líquido</span>
-              <span>{receipt.netTotal} MZN</span>
-            </div>
+        <div className="font-bold">
+          <span>Total Líquido: {receipt.netTotal} MZN</span>
+        </div>
 
-            <div className="flex justify-between">
-              <span>Transações</span>
-              <span>{receipt.totalTransactions}</span>
-            </div>
+        <div>
+          <span>Transações: {receipt.totalTransactions}</span>
+        </div>
           </div>
 
           <hr className="border-black my-1" />

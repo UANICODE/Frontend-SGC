@@ -9,7 +9,7 @@ interface DashboardFooterProps {
 }
 
 export function DashboardFooter({
-  version = "v2.0.0",
+ 
   showGitHub = true,
   className = "",
 }: DashboardFooterProps) {
@@ -19,7 +19,7 @@ export function DashboardFooter({
     >
       {/* Left side */}
       <div className="flex items-center gap-2 text-gray-800 text-sm font-medium">
-        <Info size={18} /> <span>SGC {version}</span>
+        <Info size={18} /> <span>SGC v2.0.0</span>
       </div>
 
       {/* Right side */}
