@@ -24,6 +24,16 @@ export class BlockService {
     }
   }
 
+
+  async unblockEstablishment(establishmentId: string): Promise<void> {
+    try {
+      await api.post(`${this.baseUrl}/superadmin/establishments/block/${establishmentId}/unblock`);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || "Erro ao desbloquear estabelecimento");
+    }
+  }
+
+  
   // Verificar status do bloqueio
   async getBlockStatus(establishmentId: string): Promise<BlockStatusResponse> {
     try {

@@ -34,7 +34,7 @@ export default function LoginPage() {
   const redirectByRole = (role: string) => {
     switch (role) {
       case "SUPERADMIN":
-        router.push("/superadmin/establishments");
+        router.push("/superadmin/dashboard");
         break;
       case "ADMIN":
         router.push("/admin/establishments");

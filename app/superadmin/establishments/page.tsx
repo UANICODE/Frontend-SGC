@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { EstablishmentCard } from "@/components/superadmin/cards/EstablishmentCard";
 import { useListEstablishments } from "@/hooks/superadmin/useListEstablishments";
 import { CreateEstablishmentModal } from "@/components/superadmin/modal/CreateEstablishmentModal";
 import { Plus } from "lucide-react";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
+import { EstablishmentCard } from "@/components/superadmin/cards/EstablishmentCard";
 
 export default function ListEstablishmentsPage() {
     useRoleGuard([UserRole.SUPERADMIN]);

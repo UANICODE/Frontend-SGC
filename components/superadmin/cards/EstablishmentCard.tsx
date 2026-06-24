@@ -2,9 +2,10 @@
 "use client";
 
 import { EstablishmentBlockModal } from "@/components/payments/EstablishmentBlockModal";
+import { UnblockEstablishmentModal } from "@/components/superadmin/modal/UnblockEstablishmentModal";
 import { useBlockStatus } from "@/hooks/payments/useBlockStatus";
 import { ListEstablishmentsResponse } from "@/types/superadmin/establishment";
-import { Mail, Phone, CheckCircle, XCircle, Lock, AlertTriangle } from "lucide-react";
+import { Mail, Phone, CheckCircle, XCircle, Lock, AlertTriangle, Unlock } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Props {
@@ -14,7 +15,8 @@ interface Props {
 
 export function EstablishmentCard({ establishment, onBlockStatusChange }: Props) {
   const [blockModalOpen, setBlockModalOpen] = useState(false);
-  const { hasBlock, isWarning, isBlocked, refetch } = useBlockStatus(establishment.id);
+  const [unblockModalOpen, setUnblockModalOpen] = useState(false);
+  const { hasBlock, isWarning, isBlocked, canUnblock, refetch, status } = useBlockStatus(establishment.id);
 
   useEffect(() => {
     refetch();
@@ -25,7 +27,18 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
     onBlockStatusChange?.();
   };
 
-  // 🔥 Determina o estado do botão
+  // Log para debug
+  console.log("🔍 EstablishmentCard - Status:", { 
+    id: establishment.id,
+    name: establishment.tradeName,
+    isBlocked, 
+    canUnblock, 
+    isWarning, 
+    hasBlock,
+    status 
+  });
+
+  // 🔥 Determina o estado do botão principal
   const getButtonState = () => {
     if (isBlocked) {
       return {
@@ -35,7 +48,7 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
         textColor: "text-gray-400",
         hoverColor: "",
         disabled: true,
-        tooltip: "Estabelecimento bloqueado. Clique em 'Desativar' no modal."
+        tooltip: "Estabelecimento bloqueado. Clique em 'Desbloquear' abaixo."
       };
     }
     
@@ -78,7 +91,7 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
                 : 'bg-yellow-100 text-yellow-600'
             } text-xs px-2 py-1 rounded-full flex items-center gap-1 font-medium`}>
               {isBlocked ? <Lock size={12} /> : <AlertTriangle size={12} />}
-              {isBlocked ? 'Bloqueado' : 'Aviso Ativo'}
+              {isBlocked ? '🔴 Bloqueado' : '⚠️ Aviso'}
             </span>
           </div>
         )}
@@ -121,7 +134,7 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
           </p>
         </div>
 
-        {/* 🔥 Botão de bloqueio/aviso com tooltip */}
+        {/* 🔥 Botão principal */}
         <div className="relative group">
           <button
             onClick={() => !buttonState.disabled && setBlockModalOpen(true)}
@@ -146,20 +159,47 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
           )}
         </div>
 
-        {/* 🔥 Texto informativo quando há aviso ativo */}
+        {/* 🆕 Botão de Desbloquear - aparece APENAS quando bloqueado E pode desbloquear */}
+        {isBlocked && canUnblock && (
+          <button
+            onClick={() => setUnblockModalOpen(true)}
+            className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:shadow-lg text-white font-medium py-2 px-4 rounded-lg transition flex items-center justify-center gap-2 text-sm hover:scale-[1.02]"
+          >
+            <Unlock size={16} />
+            🔓 Desbloquear Estabelecimento
+          </button>
+        )}
+
+        {/* Mensagem quando está bloqueado mas não pode desbloquear */}
+        {isBlocked && !canUnblock && (
+          <p className="text-xs text-gray-500 text-center mt-1">
+            ⏳ Bloqueado. Aguarde o período de bloqueio terminar.
+          </p>
+        )}
+
+        {/* Texto informativo quando há aviso ativo */}
         {isWarning && (
           <p className="text-xs text-yellow-600 text-center mt-1">
-            ⚠️ Aviso ativo. Clique em "Gerenciar" para desativar.
+            ⚠️ Aviso: {status?.remainingMinutes || 0} minutos restantes
           </p>
         )}
       </div>
 
-      {/* Modal sempre abre (o botão controla quando pode abrir) */}
+      {/* Modals */}
       <EstablishmentBlockModal
         establishmentId={establishment.id}
         establishmentName={establishment.tradeName}
         open={blockModalOpen}
         onClose={() => setBlockModalOpen(false)}
+        onSuccess={handleSuccess}
+      />
+
+      {/* Modal de Desbloqueio */}
+      <UnblockEstablishmentModal
+        establishmentId={establishment.id}
+        establishmentName={establishment.tradeName}
+        open={unblockModalOpen}
+        onClose={() => setUnblockModalOpen(false)}
         onSuccess={handleSuccess}
       />
     </>

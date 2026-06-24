@@ -1,7 +1,9 @@
+// src/hooks/payments/useBlockStatus.ts
+"use client";
+
+import { useState, useEffect } from 'react';
 import { blockService } from '@/service/payments/blockService';
 import { BlockStatusResponse } from '@/types/payments/payments';
-import { useState, useEffect } from 'react';
-
 
 interface UseBlockStatusReturn {
   status: BlockStatusResponse | null;
@@ -11,6 +13,7 @@ interface UseBlockStatusReturn {
   hasBlock: boolean;
   isWarning: boolean;
   isBlocked: boolean;
+  canUnblock: boolean;
 }
 
 export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
@@ -19,14 +22,29 @@ export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
   const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = async () => {
-    if (!establishmentId) return;
+    if (!establishmentId) {
+      console.log("❌ Sem establishmentId");
+      return;
+    }
     
+    console.log("🔍 Buscando status para:", establishmentId);
     setLoading(true);
+    
     try {
+      // ✅ Usando blockService que já existe
       const data = await blockService.getBlockStatus(establishmentId);
-      setStatus(data);
+      console.log("✅ Status recebido:", data);
+      
+      // Adiciona canUnblock baseado no blocked
+      const statusWithCanUnblock = {
+        ...data,
+        canUnblock: data.blocked || false
+      };
+      
+      setStatus(statusWithCanUnblock);
       setError(null);
     } catch (err: any) {
+      console.error("❌ Erro ao buscar status:", err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -36,8 +54,8 @@ export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
   useEffect(() => {
     fetchStatus();
     
-    // Atualizar a cada minuto
-    const interval = setInterval(fetchStatus, 60000);
+    // Atualizar a cada 30 segundos
+    const interval = setInterval(fetchStatus, 30000);
     
     return () => clearInterval(interval);
   }, [establishmentId]);
@@ -49,6 +67,7 @@ export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
     refetch: fetchStatus,
     hasBlock: status?.warning || status?.blocked || false,
     isWarning: status?.warning || false,
-    isBlocked: status?.blocked || false
+    isBlocked: status?.blocked || false,
+    canUnblock: status?.blocked || false,
   };
 }

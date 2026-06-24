@@ -12,4 +12,5 @@ export interface BlockStatusResponse {
   blockEffectiveTime: string | null;
   reason: string | null;
   remainingMinutes: number | null;
+    canUnblock?: boolean;
 }
