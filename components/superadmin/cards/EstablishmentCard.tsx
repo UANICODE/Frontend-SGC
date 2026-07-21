@@ -4,16 +4,28 @@
 import { EstablishmentBlockModal } from "@/components/payments/EstablishmentBlockModal";
 import { UnblockEstablishmentModal } from "@/components/superadmin/modal/UnblockEstablishmentModal";
 import { useBlockStatus } from "@/hooks/payments/useBlockStatus";
-import { ListEstablishmentsResponse } from "@/types/superadmin/establishment";
-import { Mail, Phone, CheckCircle, XCircle, Lock, AlertTriangle, Unlock } from "lucide-react";
+import { EstablishmentListItemResponse } from "@/types/superadmin/establishments/listEstablishments";
+import { Mail, Phone, CheckCircle, XCircle, Lock, AlertTriangle, Unlock, Pencil, WalletCards } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface Props {
-  establishment: ListEstablishmentsResponse;
+  establishment: EstablishmentListItemResponse;
   onBlockStatusChange?: () => void;
-}
 
-export function EstablishmentCard({ establishment, onBlockStatusChange }: Props) {
+  onEdit: (
+    establishment: EstablishmentListItemResponse
+  ) => void;
+
+  onViewCashRegisters: (
+    establishment: EstablishmentListItemResponse
+  ) => void;
+}
+export function EstablishmentCard({
+  establishment,
+  onBlockStatusChange,
+  onEdit,
+  onViewCashRegisters,
+}: Props) {
   const [blockModalOpen, setBlockModalOpen] = useState(false);
   const [unblockModalOpen, setUnblockModalOpen] = useState(false);
   const { hasBlock, isWarning, isBlocked, canUnblock, refetch, status } = useBlockStatus(establishment.id);
@@ -134,8 +146,27 @@ export function EstablishmentCard({ establishment, onBlockStatusChange }: Props)
           </p>
         </div>
 
+
         {/* 🔥 Botão principal */}
         <div className="relative group">
+          <button
+          type="button"
+          onClick={() => onEdit(establishment)}
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700 hover:bg-blue-100"
+        >
+          <Pencil size={16} />
+          Editar estabelecimento
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            onViewCashRegisters(establishment)
+          }
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 hover:bg-cyan-100"
+        >
+          <WalletCards size={16} />
+          Ver caixas
+        </button>
           <button
             onClick={() => !buttonState.disabled && setBlockModalOpen(true)}
             disabled={buttonState.disabled}

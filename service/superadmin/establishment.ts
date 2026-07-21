@@ -1,5 +1,5 @@
 import api from "@/service/api";
-import { CreateEstablishmentRequest, CreateEstablishmentResponse, ListEstablishmentsResponse } from "@/types/superadmin/establishment";
+import { CreateEstablishmentRequest, CreateEstablishmentResponse, ListEstablishmentsResponse } from "@/types/superadmin/establishments/listEstablishments";
 
 export const establishmentService = {
   async list(): Promise<ListEstablishmentsResponse[]> {
