@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CreateEstablishmentRequest } from "@/types/superadmin/establishments/listEstablishments";
 import { establishmentService } from "@/service/superadmin/establishment";
+import { CreateEstablishmentRequest } from "@/types/superadmin/establishments/createEstablishments";
 
 export function useCreateEstablishment(onSuccess?: () => void) {
   const [loading, setLoading] = useState(false);

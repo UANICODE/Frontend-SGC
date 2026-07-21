@@ -37,3 +37,4 @@ export interface ListEstablishmentsResponse {
   last: boolean;
   numberOfElements: number;
 }
+
