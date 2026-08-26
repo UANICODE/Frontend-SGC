@@ -29,6 +29,7 @@ import { EstablishmentsPagination } from "@/components/superadmin/establishments
 import { EstablishmentListItemResponse } from "@/types/superadmin/establishments/listEstablishments";
 import { EditEstablishmentModal } from "@/components/superadmin/modal/EditEstablishmentModal";
 import { GlobalCashRegistersModal } from "@/components/superadmin/modal/GlobalCashRegistersModal";
+import { ManageAdministratorsModal } from "@/components/superadmin/modal/ManageAdministratorsModal";
 
 const PAGE_SIZE = 12;
 
@@ -48,6 +49,14 @@ export default function ListEstablishmentsPage() {
     loading,
     execute: loadEstablishments,
   } = useListEstablishments();
+
+  const [
+  administratorEstablishment,
+  setAdministratorEstablishment,
+] =
+  useState<EstablishmentListItemResponse | null>(
+    null
+  );
 
   const {
     data: businessTypes,
@@ -307,16 +316,19 @@ export default function ListEstablishmentsPage() {
             {establishments.map(
               (establishment) => (
               <EstablishmentCard
-              key={establishment.id}
-              establishment={establishment}
-              onBlockStatusChange={
-                fetchEstablishments
-              }
-              onEdit={setEditingEstablishment}
-              onViewCashRegisters={
-                openEstablishmentCashRegisters
-              }
-            />
+                key={establishment.id}
+                establishment={establishment}
+                onBlockStatusChange={
+                  fetchEstablishments
+                }
+                onEdit={setEditingEstablishment}
+                onViewCashRegisters={
+                  openEstablishmentCashRegisters
+                }
+                onManageAdministrators={
+                  setAdministratorEstablishment
+                }
+              />
               )
             )}
           </div>
@@ -371,6 +383,18 @@ export default function ListEstablishmentsPage() {
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         onCreated={refreshAfterCreation}
+      />
+      <ManageAdministratorsModal
+        establishmentId={
+          administratorEstablishment?.id || null
+        }
+        establishmentName={
+          administratorEstablishment?.tradeName ||
+          null
+        }
+        onClose={() =>
+          setAdministratorEstablishment(null)
+        }
       />
     </div>
   );

@@ -69,31 +69,42 @@ export function ReceiptPreview({ receipt, onPrint, onClose }: Props) {
               <div>{receipt.establishmentPhone}</div>
             </div>
 
-            {/* ITENS */}
-            {receipt.items.map((item, i) => (
-              <div key={i} className="mb-0.5">
-                <div>{item.productName}</div>
-              <div>
-              <span>{item.quantity} x {item.unitPrice} = {item.subtotal} MT</span>
-            </div>
-              </div>
-            ))}
+                  {/* ITENS */}
+                  {receipt.items.map((item, i) => (
+                    <div key={i} className="mb-0.5">
+                      <div>{item.productName}</div>
 
-            <hr className="my-1" />
+                      <div className="flex justify-between items-center">
+                        <span>
+                          {item.quantity} x {item.unitPrice}
+                        </span>
 
-            {/* TOTAIS */}
-     {/* TOTAIS */}
-        <div>
-          <span>Subtotal: {receipt.subtotal} MT</span>
-        </div>
+                        <span>
+                          {item.subtotal} MT
+                        </span>
+                      </div>
+                    </div>
+                  ))}
 
-        <div>
-          <span>Desconto: {receipt.discount} MT</span>
-        </div>
+                  <hr className="my-1" />
 
-        <div className="text-base">
-          <span>TOTAL: {receipt.total} MT</span>
-        </div>
+                  {/* TOTAIS */}
+                  <div className="flex justify-between items-center">
+                    <span>Subtotal:</span>
+                    <span>{receipt.subtotal} MT</span>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <span>Desconto:</span>
+                    <span>{receipt.discount} MT</span>
+                  </div>
+
+                  <div className="flex justify-between items-center text-base">
+                    <span>TOTAL:</span>
+                    <span>{receipt.total} MT</span>
+                  </div>
+                y
+
             <div>Metodos: {receipt.paymentMethod}</div>
             <div>{new Date(receipt.date).toLocaleString()}</div>
 

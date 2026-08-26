@@ -1,3 +1,4 @@
+
 "use client";
 
 import { CashRegisterCard } from "@/components/attendant/cards/CashRegisterCard";
@@ -5,25 +6,32 @@ import { CashClosingReceiptPreview } from "@/components/attendant/CashClosingRec
 import { CashRegisterFilters } from "@/components/attendant/CashRegisterFilters";
 import { CashRegisterSalesModal } from "@/components/attendant/modals/CashRegisterSalesModal";
 import { PageLoader } from "@/components/ui/PageLoader";
+
 import { useEstablishment } from "@/hooks/admin/useEstablishment";
 import { useCashRegisters } from "@/hooks/attendant/useCashRegisters";
 import { useOpenCashRegister } from "@/hooks/attendant/useOpenCashRegister";
 import { useCashRegisterSales } from "@/hooks/attendant/useCashRegisterSales";
+
 import { closeCashRegister } from "@/service/attendant/closeCash";
 import { createSale } from "@/service/attendant/sale";
+
 import { useParams, useRouter } from "next/navigation";
-import { useState, useMemo } from "react";
+
+import { useState, useMemo, useEffect } from "react";
+
 import { CashClosingReceipt } from "@/types/attendant/CashRegister";
+
 import { useToast } from "@/ context/ToastContext";
-import { 
-  ArrowPathIcon, 
-  PlusIcon, 
+
+import {
+  ArrowPathIcon,
+  PlusIcon,
   SparklesIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   BanknotesIcon,
-  UserIcon
 } from "@heroicons/react/24/outline";
+
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
 import { useAuth } from "@/hooks/auth/useAuth";
@@ -33,184 +41,455 @@ export default function AttendantHome() {
 
   const { establishmentId } = useParams() as any;
   const router = useRouter();
-  const { user } = useAuth(); // ✅ Obter dados do usuário logado
-  const [sellingCashId, setSellingCashId] = useState<string | null>(null);
-  const { data: establishment } = useEstablishment(establishmentId);
-  const toast = useToast();
-  const [closingReceipt, setClosingReceipt] = useState<CashClosingReceipt | null>(null);
-  const [closingId, setClosingId] = useState<string | null>(null);
-  
-  const [selectedCashForSales, setSelectedCashForSales] = useState<string | null>(null);
-  const [selectedCashInfo, setSelectedCashInfo] = useState<any>(null);
-  const { data: sales, fetch: fetchSales, loading: loadingSales } = useCashRegisterSales();
 
-  const { execute: executeOpenCash, loading: opening } = useOpenCashRegister();
+  const { user } = useAuth();
+
+  const [sellingCashId, setSellingCashId] = useState<string | null>(null);
+
+  const { data: establishment } = useEstablishment(establishmentId);
+
+  const toast = useToast();
+
+  const [closingReceipt, setClosingReceipt] =
+    useState<CashClosingReceipt | null>(null);
+
+  const [closingId, setClosingId] = useState<string | null>(null);
+
+  const [selectedCashForSales, setSelectedCashForSales] =
+    useState<string | null>(null);
+
+  const [selectedCashInfo, setSelectedCashInfo] = useState<any>(null);
+
+  const {
+    data: sales,
+    fetch: fetchSales,
+    loading: loadingSales,
+  } = useCashRegisterSales();
+
+  const {
+    execute: executeOpenCash,
+    loading: opening,
+  } = useOpenCashRegister();
 
   const [today, setToday] = useState(false);
-  const [status, setStatus] = useState<"ABERTO" | "FECHADO" | null>(null);
 
-  const { data, loading, error, openCash, refresh } = useCashRegisters({
+  const [status, setStatus] = useState<
+    "ABERTO" | "FECHADO" | null
+  >(null);
+
+  const {
+    data,
+    loading,
+    error,
+    openCash,
+    refresh,
+  } = useCashRegisters({
     establishmentId,
     today,
     status,
   });
 
   const [page, setPage] = useState(1);
+
   const pageSize = 6;
 
+  // ==========================================
+  // CAIXAS ÚNICOS
+  // ==========================================
+
   const uniqueCashRegisters = useMemo(() => {
-    return Array.from(new Map(data.map(item => [item.id, item])).values());
+    return Array.from(
+      new Map(data.map((item) => [item.id, item])).values()
+    );
   }, [data]);
 
+  // ==========================================
+  // PAGINAÇÃO
+  // ==========================================
+
   const paginated = useMemo(() => {
-    return uniqueCashRegisters.slice((page - 1) * pageSize, page * pageSize);
+    return uniqueCashRegisters.slice(
+      (page - 1) * pageSize,
+      page * pageSize
+    );
   }, [uniqueCashRegisters, page]);
 
-  const totalPages = Math.ceil(uniqueCashRegisters.length / pageSize);
+  const totalPages = Math.ceil(
+    uniqueCashRegisters.length / pageSize
+  );
+
+  // ==========================================
+  // ANIMAÇÃO DE TEXTO
+  // ==========================================
+
+  const attendantName = user?.nome || "Atendente";
+
+  
+const welcomeMessages = useMemo(
+  () => [
+    `Olá, ${attendantName} 👋`,
+    "Hoje é um ótimo dia para vender! ",
+    "Cada cliente é uma nova oportunidade. ",
+    "Seu esforço de hoje faz a diferença! ",
+    "Foco no cliente, foco no resultado! ",
+    "Atenda bem, venda mais!",
+    "Vamos bater nossas metas hoje!",
+    "Uma grande venda pode começar com um simples olá!",
+    "Confie no seu trabalho e dê o seu melhor!",
+    "Vamos fazer acontecer!",
+    "Que hoje seja um dia de grandes resultados!",
+  ],
+  [attendantName]
+);
+
+
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [messageIndex, setMessageIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const message = welcomeMessages[messageIndex];
+
+    if (!message) return;
+
+    const isFinishedTyping = currentMessage === message;
+    const isFinishedDeleting = currentMessage === "";
+
+    let delay = isDeleting ? 40 : 80;
+
+    if (!isDeleting && isFinishedTyping) {
+      delay = 1800;
+    }
+
+    if (isDeleting && isFinishedDeleting) {
+      delay = 400;
+    }
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        // Escrevendo
+        setCurrentMessage(
+          message.substring(0, currentMessage.length + 1)
+        );
+
+        // Terminou de escrever
+        if (currentMessage.length + 1 === message.length) {
+          setIsDeleting(true);
+        }
+      } else {
+        // Apagando
+        setCurrentMessage(
+          message.substring(0, currentMessage.length - 1)
+        );
+
+        // Terminou de apagar
+        if (currentMessage.length === 0) {
+          setIsDeleting(false);
+
+          setMessageIndex(
+            (prev) => (prev + 1) % welcomeMessages.length
+          );
+        }
+      }
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [
+    currentMessage,
+    isDeleting,
+    messageIndex,
+    welcomeMessages,
+  ]);
+
+  // ==========================================
+  // CORES
+  // ==========================================
+
+  const primaryColor = establishment?.primaryColor || "#000000";
+  const secondaryColor =
+    establishment?.secondaryColor || "#333333";
+
+  // ==========================================
+  // ABRIR CAIXA
+  // ==========================================
 
   async function handleOpenCash() {
     try {
       await executeOpenCash(establishmentId);
-      toast.showToast("Caixa aberto com sucesso!", "success");
+
+      toast.showToast(
+        "Caixa aberto com sucesso!",
+        "success"
+      );
+
       await refresh();
     } catch (error: any) {
-      toast.showToast(error.message || "Erro ao abrir caixa", "error");
+      toast.showToast(
+        error.message || "Erro ao abrir caixa",
+        "error"
+      );
     }
   }
+
+  // ==========================================
+  // FECHAR CAIXA
+  // ==========================================
 
   async function handleCloseCash(cashId: string) {
     try {
       setClosingId(cashId);
+
       const receipt = await closeCashRegister(cashId);
+
       setClosingReceipt(receipt);
-      toast.showToast("Caixa fechado com sucesso!", "success");
+
+      toast.showToast(
+        "Caixa fechado com sucesso!",
+        "success"
+      );
+
       await refresh();
     } catch (error: any) {
-      toast.showToast(error.message || "Erro ao fechar caixa", "error");
+      toast.showToast(
+        error.message || "Erro ao fechar caixa",
+        "error"
+      );
     } finally {
       setClosingId(null);
     }
   }
 
+  // ==========================================
+  // INICIAR VENDA
+  // ==========================================
+
   async function handleSell(cashId: string) {
     try {
       setSellingCashId(cashId);
-      const sale = await createSale({ establishmentId, cashRegisterId: cashId });
-      toast.showToast("Venda iniciada!", "success");
+
+      const sale = await createSale({
+        establishmentId,
+        cashRegisterId: cashId,
+      });
+
+      toast.showToast(
+        "Venda iniciada!",
+        "success"
+      );
+
       router.push(
         `/attendant/dashboard/${establishmentId}/sales?saleId=${sale.saleId}&cashRegisterId=${cashId}`
       );
     } catch (error: any) {
-      toast.showToast(error.message || "Erro ao iniciar venda", "error");
+      toast.showToast(
+        error.message || "Erro ao iniciar venda",
+        "error"
+      );
     } finally {
       setSellingCashId(null);
     }
   }
 
+  // ==========================================
+  // VISUALIZAR VENDAS
+  // ==========================================
+
   async function handleViewSales(cashId: string) {
-    const cash = uniqueCashRegisters.find(c => c.id === cashId);
+    const cash = uniqueCashRegisters.find(
+      (c) => c.id === cashId
+    );
+
     setSelectedCashInfo({
       openedAt: cash?.openedAt,
       closedAt: cash?.closedAt,
       totalSales: cash?.totalSalesCalculated,
     });
+
     setSelectedCashForSales(cashId);
-    await fetchSales(establishmentId, cashId);
+
+    await fetchSales(
+      establishmentId,
+      cashId
+    );
   }
+
+  // ==========================================
+  // PAGINAÇÃO
+  // ==========================================
 
   const handlePageChange = (page: number) => {
     setPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
-  if (loading || !establishment) return <PageLoader />;
+  // ==========================================
+  // LOADING
+  // ==========================================
 
-  const primaryColor = establishment.primaryColor;
-  const secondaryColor = establishment.secondaryColor;
-  const attendantName = user?.nome
+  if (loading || !establishment) {
+    return <PageLoader />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
+
         {/* HEADER COM GRADIENTE */}
-        <div 
+
+        <div
           className="relative overflow-hidden rounded-2xl shadow-2xl"
-          style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+          style={{
+            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+          }}
         >
+
           <div className="absolute inset-0 bg-black opacity-10"></div>
+
           <div className="relative px-8 py-10">
+
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+
               <div className="space-y-2">
+
                 <div className="flex items-center gap-3">
+
                   <div className="p-2.5 bg-white/20 backdrop-blur-sm rounded-xl">
                     <BanknotesIcon className="w-7 h-7 text-white" />
                   </div>
+
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                  Bem-vindo de volta,{" "}
-                  <span className="bg-gradient-to-r from-yellow-200 via-white to-yellow-200 bg-clip-text text-transparent animate-shimmer">
-                    {attendantName}
-                  </span>
-                  <span className="inline-block ml-2 animate-wave">👋</span>
-                </h1>
+
+                    {/* TEXTO ANIMADO */}
+
+                    <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight min-h-[40px]">
+
+                      <span className="bg-gradient-to-r from-yellow-200 via-white to-yellow-200 bg-clip-text text-transparent animate-shimmer">
+                        {currentMessage}
+                      </span>
+
+                      <span className="inline-block ml-1 animate-pulse text-white/80">
+                        |
+                      </span>
+
+                    </h1>
+
                     <div className="flex items-center gap-3 mt-1">
+
                       <p className="text-white/80 text-sm flex items-center gap-2">
+
                         <SparklesIcon className="w-4 h-4" />
-                      Realize suas vendas em tempo real
+
+                        Realize suas vendas em tempo real
+
                       </p>
-                    
+
                     </div>
+
                   </div>
+
                 </div>
+
               </div>
 
               <button
                 onClick={refresh}
                 className="group relative overflow-hidden bg-white/20 backdrop-blur-sm text-white px-5 py-2.5 rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sm font-medium"
               >
+
                 <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+
                 <ArrowPathIcon className="w-5 h-5 relative z-10" />
-                <span className="relative z-10">Atualizar</span>
+
+                <span className="relative z-10">
+                  Atualizar
+                </span>
+
               </button>
+
             </div>
 
-            {/* Estatísticas rápidas */}
+            {/* ESTATÍSTICAS RÁPIDAS */}
+
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-4 border-t border-white/20">
+
               <div className="text-center sm:text-left">
-                <p className="text-white/60 text-xs uppercase tracking-wide">Total Caixas</p>
-                <p className="text-white text-xl font-bold">{uniqueCashRegisters.length}</p>
+                <p className="text-white/60 text-xs uppercase tracking-wide">
+                  Total Caixas
+                </p>
+
+                <p className="text-white text-xl font-bold">
+                  {uniqueCashRegisters.length}
+                </p>
               </div>
+
               <div className="text-center sm:text-left">
-                <p className="text-white/60 text-xs uppercase tracking-wide">Abertos</p>
+
+                <p className="text-white/60 text-xs uppercase tracking-wide">
+                  Abertos
+                </p>
+
                 <p className="text-green-300 text-xl font-bold">
-                  {uniqueCashRegisters.filter(c => c.status === "ABERTO").length}
+                  {
+                    uniqueCashRegisters.filter(
+                      (c) => c.status === "ABERTO"
+                    ).length
+                  }
                 </p>
+
               </div>
+
               <div className="text-center sm:text-left">
-                <p className="text-white/60 text-xs uppercase tracking-wide">Fechados</p>
+
+                <p className="text-white/60 text-xs uppercase tracking-wide">
+                  Fechados
+                </p>
+
                 <p className="text-amber-300 text-xl font-bold">
-                  {uniqueCashRegisters.filter(c => c.status === "FECHADO").length}
+                  {
+                    uniqueCashRegisters.filter(
+                      (c) => c.status === "FECHADO"
+                    ).length
+                  }
                 </p>
+
               </div>
+
               <div className="text-center sm:text-left">
-                <p className="text-white/60 text-xs uppercase tracking-wide">Status</p>
-                <p className="text-white text-xl font-bold flex items-center justify-center sm:justify-start gap-2">
-                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  {openCash ? "Ativo" : "Inativo"}
+
+                <p className="text-white/60 text-xs uppercase tracking-wide">
+                  Status
                 </p>
+
+                <p className="text-white text-xl font-bold flex items-center justify-center sm:justify-start gap-2">
+
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+
+                  {openCash ? "Ativo" : "Inativo"}
+
+                </p>
+
               </div>
+
             </div>
+
           </div>
+
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white/30 via-white/50 to-white/30"></div>
+
         </div>
 
         {/* FILTROS */}
+
         <CashRegisterFilters
           today={today}
           status={status}
           onTodayChange={() => {
-            setToday(prev => !prev);
+            setToday((prev) => !prev);
             setPage(1);
           }}
           onStatusChange={(value) => {
@@ -220,54 +499,94 @@ export default function AttendantHome() {
         />
 
         {/* BOTÃO ABRIR CAIXA */}
+
         {!openCash && (
+
           <button
             onClick={handleOpenCash}
             disabled={opening}
             className="group relative overflow-hidden px-8 py-4 rounded-xl text-white font-semibold shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3 w-full sm:w-auto"
-            style={{ 
-              background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` 
+            style={{
+              background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
             }}
           >
+
             <div className="absolute inset-0 bg-gradient-to-r from-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
             <PlusIcon className="w-6 h-6 relative z-10" />
+
             <span className="relative z-10">
-              {opening ? "Abrindo..." : "Abrir Novo Caixa"}
+              {opening
+                ? "Abrindo..."
+                : "Abrir Novo Caixa"}
             </span>
+
           </button>
+
         )}
 
         {/* ERRO */}
+
         {error && (
+
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-xl shadow-lg">
+
             <div className="flex items-center gap-3">
+
               <div className="p-1 bg-red-100 rounded-full">
+
                 <ArrowPathIcon className="w-5 h-5 text-red-600" />
+
               </div>
-              <p className="text-red-700 font-medium">{error}</p>
+
+              <p className="text-red-700 font-medium">
+                {error}
+              </p>
+
             </div>
+
           </div>
+
         )}
 
         {/* LISTA DE CAIXAS */}
+
         {paginated.length === 0 ? (
+
           <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
+
             <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+
               <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full">
+
                 <BanknotesIcon className="w-12 h-12 text-gray-400" />
+
               </div>
-              <h3 className="text-xl font-semibold text-gray-700">Nenhum caixa encontrado</h3>
+
+              <h3 className="text-xl font-semibold text-gray-700">
+                Nenhum caixa encontrado
+              </h3>
+
               <p className="text-gray-500 text-sm">
-                {today || status 
-                  ? "Tente ajustar os filtros aplicados" 
+
+                {today || status
+                  ? "Tente ajustar os filtros aplicados"
                   : "Clique em 'Abrir Novo Caixa' para começar"}
+
               </p>
+
             </div>
+
           </div>
+
         ) : (
+
           <>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {paginated.map((cash, idx) => (
+
                 <CashRegisterCard
                   key={`${cash.id}-${idx}`}
                   cash={cash}
@@ -279,12 +598,17 @@ export default function AttendantHome() {
                   sellingCashId={sellingCashId}
                   onViewSales={handleViewSales}
                 />
+
               ))}
+
             </div>
 
             {/* PAGINAÇÃO MODERNA */}
+
             {totalPages > 1 && (
+
               <div className="flex justify-center items-center gap-2 mt-8 pt-4 border-t border-gray-200">
+
                 <button
                   onClick={() => handlePageChange(page - 1)}
                   disabled={page === 1}
@@ -295,7 +619,9 @@ export default function AttendantHome() {
                   }`}
                   style={
                     page !== 1
-                      ? { backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }
+                      ? {
+                          backgroundImage: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        }
                       : undefined
                   }
                 >
@@ -303,48 +629,116 @@ export default function AttendantHome() {
                 </button>
 
                 <div className="flex gap-1">
-                  {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+
+                  {Array.from({
+                    length: Math.min(totalPages, 5),
+                  }, (_, i) => {
+
                     let pageNum;
+
                     if (totalPages <= 5) {
                       pageNum = i + 1;
+
                     } else if (page <= 3) {
                       pageNum = i + 1;
-                      if (i === 4) pageNum = totalPages;
+
+                      if (i === 4) {
+                        pageNum = totalPages;
+                      }
+
                     } else if (page >= totalPages - 2) {
+
                       pageNum = totalPages - 4 + i;
+
                     } else {
+
                       pageNum = page - 2 + i;
+
                     }
 
-                    if (pageNum === undefined) return null;
+                    if (pageNum === undefined) {
+                      return null;
+                    }
 
-                    if (i === 3 && totalPages > 5 && page <= 3) {
-                      return <span key="dots1" className="w-10 h-10 flex items-center justify-center text-gray-400">...</span>;
+                    if (
+                      i === 3 &&
+                      totalPages > 5 &&
+                      page <= 3
+                    ) {
+
+                      return (
+                        <span
+                          key="dots1"
+                          className="w-10 h-10 flex items-center justify-center text-gray-400"
+                        >
+                          ...
+                        </span>
+                      );
+
                     }
-                    if (i === 1 && totalPages > 5 && page >= totalPages - 2) {
-                      return <span key="dots2" className="w-10 h-10 flex items-center justify-center text-gray-400">...</span>;
+
+                    if (
+                      i === 1 &&
+                      totalPages > 5 &&
+                      page >= totalPages - 2
+                    ) {
+
+                      return (
+                        <span
+                          key="dots2"
+                          className="w-10 h-10 flex items-center justify-center text-gray-400"
+                        >
+                          ...
+                        </span>
+                      );
+
                     }
-                    if (i === 2 && totalPages > 5 && page > 3 && page < totalPages - 2) {
-                      return <span key="dots3" className="w-10 h-10 flex items-center justify-center text-gray-400">...</span>;
+
+                    if (
+                      i === 2 &&
+                      totalPages > 5 &&
+                      page > 3 &&
+                      page < totalPages - 2
+                    ) {
+
+                      return (
+                        <span
+                          key="dots3"
+                          className="w-10 h-10 flex items-center justify-center text-gray-400"
+                        >
+                          ...
+                        </span>
+                      );
+
                     }
 
                     return (
+
                       <button
                         key={pageNum}
-                        onClick={() => handlePageChange(pageNum)}
+                        onClick={() =>
+                          handlePageChange(pageNum)
+                        }
                         className={`w-10 h-10 rounded-xl font-medium transition-all duration-300 ${
                           page === pageNum
                             ? "text-white shadow-md scale-105"
                             : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
                         }`}
-                        style={page === pageNum ? {
-                          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`
-                        } : {}}
+                        style={
+                          page === pageNum
+                            ? {
+                                background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                              }
+                            : {}
+                        }
                       >
                         {pageNum}
                       </button>
+
                     );
+
                   })}
+
                 </div>
 
                 <button
@@ -358,27 +752,49 @@ export default function AttendantHome() {
                 >
                   <ChevronRightIcon className="w-5 h-5" />
                 </button>
+
               </div>
+
             )}
 
-            {/* Info de registros */}
+            {/* INFO DE REGISTROS */}
+
             {uniqueCashRegisters.length > 0 && (
+
               <div className="text-center text-sm text-gray-400">
-                Mostrando {((page - 1) * pageSize) + 1} a {Math.min(page * pageSize, uniqueCashRegisters.length)} de {uniqueCashRegisters.length} caixas
+
+                Mostrando{" "}
+                {(page - 1) * pageSize + 1} a{" "}
+                {Math.min(
+                  page * pageSize,
+                  uniqueCashRegisters.length
+                )}{" "}
+                de{" "}
+                {uniqueCashRegisters.length} caixas
+
               </div>
+
             )}
+
           </>
+
         )}
 
         {/* MODAL DE FECHAMENTO */}
+
         {closingReceipt && (
+
           <CashClosingReceiptPreview
             receipt={closingReceipt}
-            onClose={() => setClosingReceipt(null)}
+            onClose={() =>
+              setClosingReceipt(null)
+            }
           />
+
         )}
 
         {/* MODAL DE VENDAS */}
+
         <CashRegisterSalesModal
           open={!!selectedCashForSales}
           onClose={() => {
@@ -393,7 +809,9 @@ export default function AttendantHome() {
           establishmentLogo={establishment.logoUrl}
           establishmentName={establishment.tradeName}
         />
+
       </div>
+
     </div>
   );
 }
