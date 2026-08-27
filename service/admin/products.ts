@@ -96,17 +96,23 @@ export async function deleteProduct(
 }
 
 /* ================= DEPENDENCIES ================= */
+/* ================= DEPENDENCIES ================= */
 
 export async function listCategories(
   establishmentId: string
 ): Promise<CategoryResponse[]> {
   try {
+    console.log("🔍 [listCategories] Chamando API:", `/api/admin/categories/list?establishmentId=${establishmentId}`);
     const { data } = await api.get<CategoryResponse[]>(
       `/api/admin/categories/list?establishmentId=${establishmentId}`
     );
-    return data;
+    console.log("✅ [listCategories] Data:", data);
+    console.log("📊 [listCategories] Quantidade:", data?.length || 0);
+    return data || [];
   } catch (error) {
+    console.error("❌ [listCategories] Erro:", error);
     handleHttpError(error);
+    return [];
   }
 }
 
@@ -114,12 +120,17 @@ export async function listProductTypes(
   establishmentId: string
 ): Promise<ProductType[]> {
   try {
+    console.log("🔍 [listProductTypes] Chamando API:", `/api/admin/product-types/${establishmentId}`);
     const { data } = await api.get<ProductType[]>(
       `/api/admin/product-types/${establishmentId}`
     );
-    return data;
+    console.log("✅ [listProductTypes] Data:", data);
+    console.log("📊 [listProductTypes] Quantidade:", data?.length || 0);
+    return data || [];
   } catch (error) {
+    console.error("❌ [listProductTypes] Erro:", error);
     handleHttpError(error);
+    return [];
   }
 }
 
@@ -127,6 +138,7 @@ export async function listIngredients(
   establishmentId: string
 ): Promise<ListIngredientsResponse> {
   try {
+    console.log("🔍 [listIngredients] Chamando API para:", establishmentId);
     const { data } = await api.post<ListIngredientsResponse>(
       "/api/admin/ingredients/list",
       {
@@ -135,8 +147,12 @@ export async function listIngredients(
         size: 100,
       }
     );
-    return data;
+    console.log("✅ [listIngredients] Data:", data);
+    console.log("📊 [listIngredients] Quantidade:", data?.content?.length || 0);
+    return data || { content: [], page: 0, size: 0, totalElements: 0, totalPages: 0 };
   } catch (error) {
+    console.error("❌ [listIngredients] Erro:", error);
     handleHttpError(error);
+    return { content: [], page: 0, size: 0, totalElements: 0, totalPages: 0 };
   }
 }

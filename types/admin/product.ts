@@ -154,8 +154,11 @@ export interface ProductType {
 export interface IngredientItemResponse {
   id: string;
   name: string;
-  unit?: string;
-  statusId?: string;
+  unitName: string;       // ← Nome da unidade
+  unitSymbol: string;     // ← Símbolo da unidade
+  quantity: number;       // ← Quantidade atual
+  minimumLimit: number;   // ← Limite mínimo
+  status: string;         // ← Status do ingrediente
   createdAt?: string;
   updatedAt?: string;
 }
