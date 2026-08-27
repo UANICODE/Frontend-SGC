@@ -31,7 +31,7 @@ export function useProducts(establishmentId: string) {
 
       setData(response ?? null);
     } catch (err) {
-      console.error(err);
+    //  console.error(err);
       showToast("Erro ao carregar produtos.", "error");
     } finally {
       setLoading(false);

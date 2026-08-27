@@ -32,10 +32,10 @@ export function UnblockEstablishmentModal({
     setSuccess(false);
 
     try {
-      console.log("🔓 Tentando desbloquear:", establishmentId);
+      //console.log("🔓 Tentando desbloquear:", establishmentId);
       // ✅ Usando blockService em vez de unblockService
       await blockService.unblockEstablishment(establishmentId);
-      console.log("✅ Desbloqueio realizado com sucesso!");
+     // console.log("✅ Desbloqueio realizado com sucesso!");
       setSuccess(true);
       
       setTimeout(() => {
@@ -43,7 +43,7 @@ export function UnblockEstablishmentModal({
         onSuccess();
       }, 1500);
     } catch (err: any) {
-      console.error("❌ Erro:", err);
+    //  console.error("❌ Erro:", err);
       setError(err.message || "Erro ao desbloquear estabelecimento");
     } finally {
       setLoading(false);

@@ -67,7 +67,7 @@ export function ProductsTable({
       showToast("Produto excluído com sucesso!", "success");
       await refresh();
     } catch (err) {
-      console.error(err);
+  //    console.error(err);
       showToast("Erro ao excluir produto.", "error");
     } finally {
       setDeletingId(null);

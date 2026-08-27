@@ -40,7 +40,7 @@ export class BlockService {
       const response = await api.get(`${this.baseUrl}/public/establishments/${establishmentId}/block-status`);
       return response.data;
     } catch (error: any) {
-      console.error("Erro ao verificar bloqueio:", error);
+   //   console.error("Erro ao verificar bloqueio:", error);
       return {
         establishmentId,
         warning: false,

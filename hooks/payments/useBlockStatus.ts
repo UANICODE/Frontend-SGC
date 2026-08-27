@@ -23,17 +23,17 @@ export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
 
   const fetchStatus = async () => {
     if (!establishmentId) {
-      console.log("❌ Sem establishmentId");
+   //   console.log("❌ Sem establishmentId");
       return;
     }
     
-    console.log("🔍 Buscando status para:", establishmentId);
+ //   console.log("🔍 Buscando status para:", establishmentId);
     setLoading(true);
     
     try {
       // ✅ Usando blockService que já existe
       const data = await blockService.getBlockStatus(establishmentId);
-      console.log("✅ Status recebido:", data);
+   //   console.log("✅ Status recebido:", data);
       
       // Adiciona canUnblock baseado no blocked
       const statusWithCanUnblock = {
@@ -44,7 +44,7 @@ export function useBlockStatus(establishmentId: string): UseBlockStatusReturn {
       setStatus(statusWithCanUnblock);
       setError(null);
     } catch (err: any) {
-      console.error("❌ Erro ao buscar status:", err);
+   //   console.error("❌ Erro ao buscar status:", err);
       setError(err.message);
     } finally {
       setLoading(false);

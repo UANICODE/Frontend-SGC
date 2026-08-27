@@ -49,7 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // redireciona para login
       window.location.href = "/auth";
     } catch (error) {
-      console.error("Erro no logout", error);
+     // console.error("Erro no logout", error);
     }
   };
 

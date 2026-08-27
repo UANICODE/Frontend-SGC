@@ -94,7 +94,7 @@ export function CreateProductModal({
         setProductTypes(await listProductTypes(establishmentId));
         setIngredients((await listIngredients(establishmentId)).content);
       } catch (err) {
-        console.error(err);
+    //    console.error(err);
       }
     }
     fetchDependencies();

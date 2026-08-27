@@ -23,37 +23,37 @@ export function useProductDependencies(establishmentId: string) {
     async function load() {
       // Se não tiver establishmentId, não faz nada
       if (!establishmentId) {
-        console.warn("⚠️ [useProductDependencies] Sem establishmentId");
+     //   console.warn("⚠️ [useProductDependencies] Sem establishmentId");
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        console.log("🔍 [useProductDependencies] Carregando para:", establishmentId);
+    //    console.log("🔍 [useProductDependencies] Carregando para:", establishmentId);
 
         // Buscar cada um separadamente para debug
-        console.log("🔍 Buscando categorias...");
+        //console.log("🔍 Buscando categorias...");
         const cats = await listCategories(establishmentId);
-        console.log("✅ Categorias recebidas:", cats);
-        console.log("📊 Quantidade:", cats?.length || 0);
+        //console.log("✅ Categorias recebidas:", cats);
+       // console.log("📊 Quantidade:", cats?.length || 0);
         setCategories(cats || []);
 
-        console.log("🔍 Buscando product types...");
+       // console.log("🔍 Buscando product types...");
         const tps = await listProductTypes(establishmentId);
-        console.log("✅ Product Types recebidos:", tps);
-        console.log("📊 Quantidade:", tps?.length || 0);
+        //console.log("✅ Product Types recebidos:", tps);
+        //console.log("📊 Quantidade:", tps?.length || 0);
         setTypes(tps || []);
 
-        console.log("🔍 Buscando ingredientes...");
+       // console.log("🔍 Buscando ingredientes...");
         const ing = await listIngredients(establishmentId);
-        console.log("✅ Ingredientes recebidos:", ing);
-        console.log("📊 Quantidade:", ing?.content?.length || 0);
+        //console.log("✅ Ingredientes recebidos:", ing);
+      //  console.log("📊 Quantidade:", ing?.content?.length || 0);
         setIngredients(ing?.content || []);
 
-        console.log("✅ [useProductDependencies] Tudo carregado com sucesso!");
+       // console.log("✅ [useProductDependencies] Tudo carregado com sucesso!");
       } catch (error) {
-        console.error("❌ [useProductDependencies] Erro:", error);
+      //  console.error("❌ [useProductDependencies] Erro:", error);
         if (error instanceof Error) {
           showToast(error.message, "error");
         }
