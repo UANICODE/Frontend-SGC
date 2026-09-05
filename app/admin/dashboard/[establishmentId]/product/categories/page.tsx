@@ -55,6 +55,9 @@ export default function CategoriesPage() {
     showToast(selected ? "Categoria atualizada com sucesso!" : "Categoria criada com sucesso!", "success");
   };
 
+ const handleToggleStatus = (categoryId: string) => {
+  refresh();
+};
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -117,7 +120,7 @@ export default function CategoriesPage() {
       </div>
 
       {/* Tabela */}
-      <CategoriesTable
+    <CategoriesTable
         loading={loading}
         establishmentId={establishmentId}
         data={paginatedData}
@@ -127,8 +130,8 @@ export default function CategoriesPage() {
         totalPages={totalPages}
         totalItems={totalItems}
         onPageChange={handlePageChange}
+        onToggleStatus={handleToggleStatus}
       />
-
       {/* Modal */}
       {(openModal || selected) && (
         <CategoryModal
