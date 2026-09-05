@@ -1,15 +1,21 @@
+// components/admin/cards/CashRegisterCard.tsx
 "use client";
 
-import { Eye, Calendar, DollarSign } from "lucide-react";
+import { Eye, Calendar, DollarSign, Wallet, TrendingUp } from "lucide-react";
 import { OpenCashRegisterResponse } from "@/types/admin/cash-register";
 
 interface Props {
   cash: OpenCashRegisterResponse;
   onDetails: (cash: OpenCashRegisterResponse) => void;
+  onViewExpenses?: (cashId: string) => void; // 🆕
 }
 
-export function CashRegisterCard({ cash, onDetails }: Props) {
+export function CashRegisterCard({ cash, onDetails, onViewExpenses }: Props) {
   const isOpen = cash.status === "ABERTO";
+
+  const formatCurrency = (value: number) => {
+    return value.toFixed(2) + " MT";
+  };
 
   return (
     <div
@@ -37,31 +43,50 @@ export function CashRegisterCard({ cash, onDetails }: Props) {
       {/* Datas */}
       <div className="text-sm text-gray-500 space-y-1 mb-4">
         <div className="flex items-center gap-2">
-          <Calendar size={14} />Abertura:
+          <Calendar size={14} /> Abertura:
           <span>{new Date(cash.openedAt).toLocaleString()}</span>
         </div>
 
         {cash.closedAt && (
           <div className="flex items-center gap-2">
-            <Calendar size={14} /> Fecho
+            <Calendar size={14} /> Fecho:
             <span>{new Date(cash.closedAt).toLocaleString()}</span>
           </div>
         )}
       </div>
 
-      {/* Total */}
-      <div className="mb-4">
-        <p className="text-sm text-gray-500">Total vendido</p>
-        <div className="flex items-center gap-2 text-green-600 text-2xl font-bold">
-          <DollarSign size={20} />
-          {(cash.totalSold || 0).toLocaleString("pt-MZ", {
-            style: "currency",
-            currency: "MZN",
-          })}
+      {/* Totais */}
+      <div className="space-y-2 mb-4">
+        <div>
+          <p className="text-sm text-gray-500">Total vendido</p>
+          <div className="flex items-center gap-2 text-green-600 text-2xl font-bold">
+            <DollarSign size={20} />
+            {formatCurrency(cash.totalSold)}
+          </div>
+        </div>
+
+        {/* 🆕 Total Despesas */}
+        <div>
+          <p className="text-sm text-gray-500">Total Despesas</p>
+          <div className="flex items-center gap-2 text-orange-600 text-xl font-bold">
+            <Wallet size={18} />
+            {formatCurrency(cash.totalExpenses || 0)}
+          </div>
+        </div>
+
+        {/* 🆕 Saldo Remanescente */}
+        <div className="pt-2 border-t border-gray-100">
+          <p className="text-sm text-gray-500 font-medium">Saldo Remanescente</p>
+          <div className={`flex items-center gap-2 text-2xl font-bold ${
+            (cash.remainingBalance || 0) >= 0 ? "text-green-600" : "text-red-600"
+          }`}>
+            <TrendingUp size={20} />
+            {formatCurrency(cash.remainingBalance || 0)}
+          </div>
         </div>
       </div>
 
-      {/* Métodos */}
+      {/* Métodos de Pagamento */}
       <div className="space-y-2 border-t pt-3">
         {cash.totalsByPaymentMethod.map((m) => (
           <div
@@ -70,23 +95,31 @@ export function CashRegisterCard({ cash, onDetails }: Props) {
           >
             <span>{m.paymentMethod}</span>
             <span className="font-medium">
-              {(m.total || 0).toLocaleString("pt-MZ", {
-                style: "currency",
-                currency: "MZN",
-              })}
+              {formatCurrency(m.total || 0)}
             </span>
           </div>
         ))}
       </div>
 
-      {/* BOTÃO */}
-      <button
-        onClick={() => onDetails(cash)}
-        className="mt-5 flex items-center justify-center gap-2 w-full bg-primary text-white py-2 rounded-xl hover:bg-primary/90 transition"
-      >
-        <Eye size={16} />
-        Ver detalhes
-      </button>
+      {/* Botões */}
+      <div className="mt-5 flex gap-2">
+        <button
+          onClick={() => onDetails(cash)}
+          className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-2 rounded-xl hover:bg-primary/90 transition"
+        >
+          <Eye size={16} />
+          Ver Vendas
+        </button>
+
+        {/* 🆕 Botão Ver Despesas */}
+        <button
+          onClick={() => onViewExpenses?.(cash.cashRegisterId)}
+          className="flex-1 flex items-center justify-center gap-2 bg-orange-500 text-white py-2 rounded-xl hover:bg-orange-600 transition"
+        >
+          <Wallet size={16} />
+          Despesas
+        </button>
+      </div>
     </div>
   );
 }

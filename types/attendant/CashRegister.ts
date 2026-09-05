@@ -9,6 +9,9 @@ export interface CashRegister {
   status: CashRegisterStatus;
   totalSalesCalculated: number;
   totalCancelled: number;
+  remainingBalance: number;
+  totalExpenses: number;
+
 }
 
 

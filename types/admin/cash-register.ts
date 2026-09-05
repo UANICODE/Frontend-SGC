@@ -16,6 +16,8 @@ export interface OpenCashRegisterResponse {
   status: "ABERTO" | "FECHADO"; // novo
   totalSold: number;
   totalsByPaymentMethod: PaymentMethodTotalResponse[];
+    totalExpenses: number;
+  remainingBalance: number;
 }
 
 export interface CashRegisterSaleItem {

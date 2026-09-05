@@ -78,6 +78,7 @@ export function CreateProductModal({
     isWeightBased: product?.isWeightBased ?? false,
     pricePerGram: product?.pricePerGram ?? null,
     minWeight: product?.minWeight ?? null,
+      purchasePrice: product?.purchasePrice ?? 0, 
   });
 
   const [loading, setLoading] = useState(false);
@@ -150,6 +151,7 @@ export function CreateProductModal({
           controlsStock: form.controlsStock,
           allowNegativeStock: form.allowNegativeStock,
           active: form.active,
+           purchasePrice: form.purchasePrice ?? 0,
           ingredients: productType === "composite"
             ? form.ingredients?.map(i => ({
                 ingredientId: i.ingredientId,
@@ -162,6 +164,7 @@ export function CreateProductModal({
           isWeightBased: productType === "weight",
           pricePerGram: productType === "weight" ? form.pricePerGram : null,
           minWeight: productType === "weight" ? form.minWeight : null,
+
         };
         await updateProduct(payload);
         showToast("Produto atualizado com sucesso!", "success");
@@ -181,6 +184,7 @@ export function CreateProductModal({
             initialStockQuantity: form.initialStockQuantity,
             isFixedPortion: form.isFixedPortion ?? false,
             portionQuantity: form.isFixedPortion ? form.portionQuantity : null,
+             purchasePrice: form.purchasePrice ?? 0,
           };
           await createProduct(payload);
         } else if (productType === "composite") {
@@ -216,6 +220,7 @@ export function CreateProductModal({
             isWeightBased: true,
             pricePerGram: form.pricePerGram,
             minWeight: form.minWeight,
+             purchasePrice: form.purchasePrice ?? 0,
           };
           await createProduct(payload);
         }
@@ -445,6 +450,29 @@ export function CreateProductModal({
                 />
               </div>
             )}
+
+                      {/* 🔥 CAMPO PREÇO DE COMPRA - SEMPRE VISÍVEL */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-primary" />
+                Preço de Compra (MZN)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                placeholder="Preço que pagou ao fornecedor"
+                value={form.purchasePrice ?? ""}
+                onChange={e => setForm({ 
+                  ...form, 
+                  purchasePrice: e.target.value ? parseFloat(e.target.value) : 0 
+                })}
+              />
+              <p className="text-xs text-gray-400">
+                Este valor será usado para calcular o lucro real do produto
+              </p>
+            </div>
 
             {/* Peso mínimo para produto por peso */}
             {productType === "weight" && (

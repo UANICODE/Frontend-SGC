@@ -1,3 +1,4 @@
+// app/admin/dashboard/[establishmentId]/cash-registers/page.tsx
 "use client";
 
 import { useState, useMemo } from "react";
@@ -6,6 +7,7 @@ import { useOpenCashRegisters } from "@/hooks/admin/cash-register/useOpenCashReg
 import { useCashRegisterSales } from "@/hooks/admin/cash-register/useCashRegisterSales";
 import { CashRegisterCard } from "@/components/admin/cards/CashRegisterCard";
 import { CashRegisterSalesModal } from "@/components/admin/modals/CashRegisterSalesModal";
+import { CashRegisterExpensesModal } from "@/components/admin/modals/CashRegisterExpensesModal"; // 🆕
 import { useEstablishment } from "@/hooks/admin/useEstablishment";
 import { ChevronLeft, ChevronRight, Package } from "lucide-react";
 
@@ -19,6 +21,7 @@ export default function CashRegistersPage() {
 
   const [selectedCash, setSelectedCash] = useState<string | null>(null);
   const [selectedCashInfo, setSelectedCashInfo] = useState<any>(null);
+  const [selectedCashForExpenses, setSelectedCashForExpenses] = useState<string | null>(null); // 🆕
 
   const [tab, setTab] = useState<"open" | "closed">("open");
   const [search, setSearch] = useState("");
@@ -54,6 +57,11 @@ export default function CashRegistersPage() {
     await fetch(establishmentId, cash.cashRegisterId);
   };
 
+  // 🆕 Função para abrir modal de despesas
+  const handleViewExpenses = (cashId: string) => {
+    setSelectedCashForExpenses(cashId);
+  };
+
   const list = tab === "open" ? openRegisters : closedRegisters;
   const totalItems = list.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -67,7 +75,6 @@ export default function CashRegistersPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Resetar página quando mudar de tab ou filtros
   const handleTabChange = (newTab: "open" | "closed") => {
     setTab(newTab);
     setCurrentPage(1);
@@ -212,6 +219,7 @@ export default function CashRegistersPage() {
                     key={cash.cashRegisterId}
                     cash={cash}
                     onDetails={handleDetails}
+                    onViewExpenses={handleViewExpenses} // 🆕 PASSAR FUNÇÃO
                   />
                 ))}
               </div>
@@ -308,7 +316,7 @@ export default function CashRegistersPage() {
         </div>
       )}
 
-      {/* MODAL */}
+      {/* MODAL VENDAS */}
       <CashRegisterSalesModal
         open={!!selectedCash}
         onClose={() => {
@@ -322,6 +330,13 @@ export default function CashRegistersPage() {
         establishmentLogo={establishment?.logoUrl}
         establishmentName={establishment?.tradeName}
         cashRegisterInfo={selectedCashInfo}
+      />
+
+      {/* 🆕 MODAL DESPESAS */}
+      <CashRegisterExpensesModal
+        open={!!selectedCashForExpenses}
+        cashRegisterId={selectedCashForExpenses || ""}
+        onClose={() => setSelectedCashForExpenses(null)}
       />
     </div>
   );

@@ -19,7 +19,7 @@ export function DashboardFooter({
     >
       {/* Left side */}
       <div className="flex items-center gap-2 text-gray-800 text-sm font-medium">
-        <Info size={18} /> <span>SGC v2.0.0</span>
+        <Info size={18} /> <span>SGC v2.5.1</span>
       </div>
 
       {/* Right side */}

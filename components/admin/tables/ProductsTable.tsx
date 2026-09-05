@@ -129,7 +129,10 @@ export function ProductsTable({
                     <th className="p-4 text-left">Nome</th>
                     <th className="p-4 text-center">Tipo</th>
                     <th className="p-4 text-left">Categoria</th>
-                    <th className="p-4 text-center">Preço</th>
+                    <th className="p-4 text-center">Preço Venda</th>
+                     <th className="p-4 text-center">Preço Compra</th>
+                    <th className="p-4 text-center">Lucro Bruto</th>
+                    <th className="p-4 text-center">Margem %</th>
                     <th className="p-4 text-center">Estoque</th>
                     <th className="p-4 text-center">Ativo</th>
                     <th className="p-4 text-left">Ingredientes</th>
@@ -211,6 +214,43 @@ export function ProductsTable({
                               {p.price?.toFixed(2) || "0.00"} MT
                             </span>
                           </div>
+                        </td>
+                        {/* Preço Compra */}
+                      <td className="p-4 text-center">
+                        {p.purchasePrice !== undefined && p.purchasePrice !== null ? (
+                          <span className="font-medium text-gray-600">
+                            {p.purchasePrice.toFixed(2)} MT
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs">-</span>
+                        )}
+                      </td>
+                        <td className="p-4 text-center">
+                          {p.purchasePrice !== undefined && p.purchasePrice !== null ? (
+                            <span className={`font-bold ${
+                              (p.price - p.purchasePrice) > 0 ? 'text-green-600' : 
+                              (p.price - p.purchasePrice) === 0 ? 'text-gray-500' : 'text-red-600'
+                            }`}>
+                              {(p.price - p.purchasePrice).toFixed(2)} MT
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </td>
+
+                        <td className="p-4 text-center">
+                          {p.purchasePrice !== undefined && p.purchasePrice !== null && p.price > 0 ? (
+                            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                              ((p.price - p.purchasePrice) / p.price * 100) > 20 ? 'bg-green-100 text-green-700' :
+                              ((p.price - p.purchasePrice) / p.price * 100) > 10 ? 'bg-yellow-100 text-yellow-700' :
+                              ((p.price - p.purchasePrice) / p.price * 100) >= 0 ? 'bg-orange-100 text-orange-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {((p.price - p.purchasePrice) / p.price * 100).toFixed(1)}%
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
                         </td>
 
                         <td className="p-4 text-center">

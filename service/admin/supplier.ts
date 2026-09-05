@@ -8,6 +8,7 @@ import {
   ListSuppliersRequest,
   ListSuppliersResponse,
   ListSupplierStatusResponse,
+  SupplierItemResponse,
 } from "@/types/admin/supplier";
 
 export async function createSupplier(data: CreateSupplierRequest) {
@@ -67,4 +68,23 @@ export async function listSupplierStatus(): Promise<ListSupplierStatusResponse> 
   } catch (error) {
     handleHttpError(error);
   }
+}
+
+
+
+
+
+
+export async function listAllSuppliers(
+    establishmentId: string
+): Promise<SupplierItemResponse[]> {
+    try {
+        const { data } = await api.get<SupplierItemResponse[]>(
+            `/api/admin/suppliers/all?establishmentId=${establishmentId}`
+        );
+        return data || [];
+    } catch (error) {
+        handleHttpError(error);
+        return [];
+    }
 }

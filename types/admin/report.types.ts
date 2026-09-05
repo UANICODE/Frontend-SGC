@@ -1,9 +1,18 @@
 export interface InventoryProductItem {
   productId: string;
-  productName: string;
-  categoryName: string;
+  name: string;
+  category: string;
+  salePrice: number;              // 🔥 Preço de Venda
+  purchasePrice: number;
+  controlsStock: boolean;
   stockQuantity: number;
-  stockControlled: boolean;
+  imageUrl: string | null;
+  ingredients?: {
+    ingredientId: string;
+    ingredientName: string;
+    quantityUsedPerProduct: number;
+    ingredientStockQuantity: number;
+  }[];
 }
 
 export interface InventoryReportResponse {
@@ -24,19 +33,3 @@ export interface PaymentSummary {
   total: number;
 }
 
-export interface SalesReportResponse {
-  establishmentId: string;
-  establishmentName: string;
-  logoUrl: string;
-  address: string;
-  phone: string;
-  startDate: string;
-  endDate: string;
-  generatedAt: string;
-  totalSales: number;
-  totalCancelled: number;
-  netTotal: number;
-  totalTransactions: number;
-  averageTicket: number;
-  payments: PaymentSummary[];
-}

@@ -59,6 +59,7 @@ export interface CategoryItemResponse {
   isKitchen: boolean; 
   createdAt: string;
   updatedAt?: string;
+  active: boolean; 
 }
 
 export interface ListCategoriesRequest {

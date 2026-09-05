@@ -19,6 +19,8 @@ export interface ProductItemResponse {
   description?: string;
   imageurl?: string;
   price: number;
+   purchasePrice?: number; 
+  
   active: boolean;
   controlsStock: boolean;
   allowNegativeStock: boolean;
@@ -35,6 +37,7 @@ export interface ProductItemResponse {
   isWeightBased: boolean;
   pricePerGram?: number;
   minWeight?: number;
+ 
 }
 
 export interface ListProductsResponse {
@@ -63,6 +66,7 @@ export interface CreateProductRequest {
    isWeightBased?: boolean;
   pricePerGram?: number | null;
   minWeight?: number | null;
+   purchasePrice: number;
 }
 
 export interface CreateProductResponse {
@@ -120,7 +124,9 @@ export interface UpdateProductRequest {
    isWeightBased: boolean;
   pricePerGram?: number | null;
   minWeight?: number | null;
-  ingredients?: IngredientItem[] | null; // null ou vazio = produto simples
+    purchasePrice?: number | null; 
+    ingredients?: IngredientItem[] | null; // null ou vazio = produto simples
+
 }
 
 

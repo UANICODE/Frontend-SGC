@@ -58,6 +58,8 @@ export function CashRegisterSalesModal({
   const [logoImage, setLogoImage] = useState<string | null>(null);
   const [currentAttendantName, setCurrentAttendantName] = useState<string>("");
 
+
+
   useEffect(() => {
     if (sales.length > 0 && sales[0].attendantName) {
       setCurrentAttendantName(sales[0].attendantName);
@@ -92,7 +94,8 @@ export function CashRegisterSalesModal({
     });
   }, [sales, method, min, max, date]);
 
-  const methods = [...new Set(sales.map((s) => s.paymentMethod))];
+const methods = [...new Set(sales.map((s) => s.paymentMethod).filter(Boolean))];
+
   const hasFilters = method || min || max || date;
 
   const clearFilters = () => {
@@ -156,7 +159,7 @@ export function CashRegisterSalesModal({
     // Atendente responsavel
     doc.setFontSize(9);
     doc.setTextColor(0, 0, 0);
-    doc.text(`Atendente Responsavel: ${currentAttendantName || "Nao informado"}`, 14, yPos);
+    doc.text(`Atendente Responsavel: ${currentAttendantName}`, 14, yPos);
     yPos += 12;
 
     // Cards de resumo
@@ -342,10 +345,16 @@ export function CashRegisterSalesModal({
               )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-              <select value={method} onChange={(e) => setMethod(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg">
-                <option value="">Todos os metodos</option>
-                {methods.map((m) => (<option key={m} value={m}>{m}</option>))}
-              </select>
+             <select 
+                value={method} 
+                onChange={(e) => setMethod(e.target.value)} 
+                className="px-3 py-2 border border-gray-200 rounded-lg"
+            >
+                <option value="">Todos os métodos</option>
+                {methods.map((m) => (
+                    <option key={m} value={m}>{m}</option>
+                ))}
+            </select>
               <input type="number" placeholder="Valor minimo" value={min} onChange={(e) => setMin(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg" />
               <input type="number" placeholder="Valor maximo" value={max} onChange={(e) => setMax(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg" />
               <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg" />
@@ -396,7 +405,12 @@ export function CashRegisterSalesModal({
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#10b981" }}></div>
                             <p className="font-mono text-sm font-semibold text-gray-700">Venda #{saleNumberStr.slice(0, 8)}</p>
                           </div>
-                          <p className="text-sm text-gray-500 flex items-center gap-2"><CreditCardIcon className="w-4 h-4" />{sale.paymentMethod}</p>
+                        {sale.paymentMethod ? (
+                          <p className="text-sm text-gray-500 flex items-center gap-2">
+                            <CreditCardIcon className="w-4 h-4" />
+                            {sale.paymentMethod}
+                          </p>
+                        ) : null}
                           <div className="flex items-center gap-4 text-xs text-gray-400">
                             <span className="flex items-center gap-1"><CalendarIcon className="w-3 h-3" />{new Date(sale.createdAt).toLocaleString()}</span>
                             {sale.attendantName && <span>Atendente: {sale.attendantName}</span>}
