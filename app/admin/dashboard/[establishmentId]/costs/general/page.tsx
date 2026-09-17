@@ -77,7 +77,7 @@ const handleExportPDF = async () => {
 
         const pdfOptions = {
             title: "Relatório de despesas gerais",
-            subtitle: "Lista detalhada de todos as despesas registradas",
+            subtitle: "Lista detalhada de todos as despesas existentes",
             establishmentName: establishment?.tradeName || "Sistema",
             primaryColor: establishment?.primaryColor || "#4F46E5",
             secondaryColor: establishment?.secondaryColor || "#7C3AED",
@@ -88,7 +88,7 @@ const handleExportPDF = async () => {
         const pdfDataUrl = generateCostsPDF(allExpenses, pdfOptions);
 
         const link = document.createElement("a");
-        link.download = `relatorio_custos_${new Date().toISOString().split("T")[0]}.pdf`;
+        link.download = `relatorio_despesas_${new Date().toISOString().split("T")[0]}.pdf`;
         link.href = pdfDataUrl;
         link.click();
 
@@ -111,10 +111,10 @@ const handleExportPDF = async () => {
                     </button>
                     <div>
                         <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
-                            <List className="w-7 h-7" /> Custos Gerais
+                            <List className="w-7 h-7" /> Despesas Gerais
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">
-                            Registre custos fixos como aluguel, salários, etc
+                            Registre despesas fixas como aluguel, salários, etc
                         </p>
                     </div>
                 </div>

@@ -88,10 +88,10 @@ export default function CostCategoriesPage() {
                     </button>
                     <div>
                         <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
-                            <Tag className="w-7 h-7" /> Categorias de Custos
+                            <Tag className="w-7 h-7" /> Categorias de despesas
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">
-                            Gerencie as categorias para classificar seus custos
+                            Gerencie as categorias para classificar suas despesas
                         </p>
                     </div>
                 </div>

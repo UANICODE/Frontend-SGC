@@ -27,6 +27,7 @@ import {
   SparklesIcon,
   ClockIcon,
   CheckCircleIcon,
+  UserIcon, // 🔥 NOVO
 } from "@heroicons/react/24/outline";
 import { UserRole } from "@/enum/enum";
 import { useRoleGuard } from "@/hooks/auth/useRoleGuard";
@@ -44,6 +45,7 @@ interface ArchivedSale {
   tableLocation?: string;
   waiterName?: string;
   waiterPhone?: string;
+  customerName?: string; // 🔥 NOVO
 }
 
 export default function ArchivedSalesPage() {
@@ -64,6 +66,7 @@ export default function ArchivedSalesPage() {
   const [selectedSale, setSelectedSale] = useState<any>(null);
   const [selectedTableId, setSelectedTableId] = useState<string>("");
   const [selectedWaiterId, setSelectedWaiterId] = useState<string>("");
+  const [selectedCustomerName, setSelectedCustomerName] = useState<string>(""); // 🔥 NOVO
 
   const handleRestore = async (saleId: string) => {
     try {
@@ -78,18 +81,32 @@ export default function ArchivedSalesPage() {
 
   const handleOpenAssign = (sale: ArchivedSale) => {
     setSelectedSale(sale);
-    setSelectedTableId(sale.tableNumber ? 
-      tables.find(t => t.number === sale.tableNumber)?.id || "" : "");
-    setSelectedWaiterId(sale.waiterName ? 
-      waiters.find(w => w.name === sale.waiterName)?.id || "" : "");
+    setSelectedTableId(
+      sale.tableNumber
+        ? tables.find((t) => t.number === sale.tableNumber)?.id || ""
+        : ""
+    );
+    setSelectedWaiterId(
+      sale.waiterName
+        ? waiters.find((w) => w.name === sale.waiterName)?.id || ""
+        : ""
+    );
+    setSelectedCustomerName(sale.customerName || ""); // 🔥 NOVO
     setAssignModalOpen(true);
   };
 
-  const handleAssign = async (tableId?: string, waiterId?: string) => {
+  const handleAssign = async (
+    tableId?: string,
+    waiterId?: string,
+    customerName?: string
+  ) => {
     if (selectedSale) {
-      await assign(selectedSale.saleId, { tableId, waiterId });
+      await assign(selectedSale.saleId, { tableId, waiterId, customerName });
       setAssignModalOpen(false);
       setSelectedSale(null);
+      setSelectedTableId("");
+      setSelectedWaiterId("");
+      setSelectedCustomerName("");
       refresh();
     }
   };
@@ -99,14 +116,18 @@ export default function ArchivedSalesPage() {
   const primaryColor = establishment.primaryColor;
   const secondaryColor = establishment.secondaryColor;
 
+  // 🔥 Verificar se tem alguma identificação (mesa, garçom ou nome)
+  const hasIdentification = (sale: ArchivedSale) =>
+    !!sale.tableNumber || !!sale.waiterName || !!sale.customerName;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-100 to-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Header com gradiente usando cores do estabelecimento */}
-        <div 
+        <div
           className="relative overflow-hidden rounded-2xl shadow-2xl"
-          style={{ 
-            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`
+          style={{
+            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
           }}
         >
           <div className="absolute inset-0 bg-black opacity-10"></div>
@@ -135,9 +156,11 @@ export default function ArchivedSalesPage() {
               </div>
             </div>
           </div>
-          <div 
+          <div
             className="absolute bottom-0 left-0 right-0 h-1"
-            style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }}
+            style={{
+              background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})`,
+            }}
           ></div>
         </div>
 
@@ -158,9 +181,12 @@ export default function ArchivedSalesPage() {
               <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full">
                 <InboxIcon className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-700">Nenhuma venda arquivada</h3>
+              <h3 className="text-xl font-semibold text-gray-700">
+                Nenhuma venda arquivada
+              </h3>
               <p className="text-gray-500 text-sm">
-                As vendas arquivadas aparecerão aqui para você gerenciar e recuperar quando necessário.
+                As vendas arquivadas aparecerão aqui para você gerenciar e recuperar
+                quando necessário.
               </p>
             </div>
           </div>
@@ -175,20 +201,24 @@ export default function ArchivedSalesPage() {
               style={{ animationDelay: `${index * 100}ms` }}
             >
               {/* Barra de gradiente no topo */}
-              <div 
+              <div
                 className="absolute top-0 left-0 right-0 h-1"
-                style={{ background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})` }}
+                style={{
+                  background: `linear-gradient(90deg, ${primaryColor}, ${secondaryColor})`,
+                }}
               ></div>
-              
+
               <div className="p-6">
                 <div className="flex justify-between items-start flex-wrap gap-4">
                   {/* Informações principais */}
                   <div className="space-y-4 flex-1">
                     {/* Header do card */}
                     <div className="flex items-center gap-3 pb-3 border-b border-gray-100">
-                      <div 
+                      <div
                         className="p-2 rounded-xl shadow-md"
-                        style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                        style={{
+                          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        }}
                       >
                         <ReceiptPercentIcon className="w-5 h-5 text-white" />
                       </div>
@@ -198,7 +228,10 @@ export default function ArchivedSalesPage() {
                         </p>
                         <div className="flex items-center gap-1 text-xs text-gray-400 mt-1">
                           <ClockIcon className="w-3 h-3" />
-                          <span>Arquivada em {new Date(sale.saleDate).toLocaleDateString('pt-BR')}</span>
+                          <span>
+                            Arquivada em{" "}
+                            {new Date(sale.saleDate).toLocaleDateString("pt-BR")}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -211,7 +244,7 @@ export default function ArchivedSalesPage() {
                           <span className="text-xs font-medium">SUBTOTAL</span>
                         </div>
                         <p className="text-lg font-bold text-green-700">
-                          {sale.subtotal.toLocaleString('pt-BR')} MZN
+                          {sale.subtotal.toLocaleString("pt-BR")} MZN
                         </p>
                       </div>
 
@@ -221,37 +254,74 @@ export default function ArchivedSalesPage() {
                           <span className="text-xs font-medium">DESCONTO</span>
                         </div>
                         <p className="text-lg font-bold text-orange-700">
-                          {sale.discount.toLocaleString('pt-BR')} MZN
+                          {sale.discount.toLocaleString("pt-BR")} MZN
                         </p>
                       </div>
 
-                      <div 
+                      <div
                         className="rounded-xl p-3 border"
-                        style={{ 
+                        style={{
                           background: `linear-gradient(135deg, ${primaryColor}10, ${secondaryColor}10)`,
-                          borderColor: `${primaryColor}20`
+                          borderColor: `${primaryColor}20`,
                         }}
                       >
-                        <div className="flex items-center gap-2 mb-1" style={{ color: primaryColor }}>
+                        <div
+                          className="flex items-center gap-2 mb-1"
+                          style={{ color: primaryColor }}
+                        >
                           <CurrencyDollarIcon className="w-4 h-4" />
                           <span className="text-xs font-medium">TOTAL</span>
                         </div>
-                        <p className="text-lg font-bold" style={{ color: primaryColor }}>
-                          {sale.total.toLocaleString('pt-BR')} MZN
+                        <p
+                          className="text-lg font-bold"
+                          style={{ color: primaryColor }}
+                        >
+                          {sale.total.toLocaleString("pt-BR")} MZN
                         </p>
                       </div>
                     </div>
 
+                    {/* ============================================================
+                        🔥 IDENTIFICAÇÃO DO CLIENTE (NOVO)
+                    ============================================================ */}
+                    {sale.customerName && (
+                      <div
+                        className="rounded-xl p-4 border-2"
+                        style={{
+                          background: `linear-gradient(135deg, ${secondaryColor}10, ${primaryColor}10)`,
+                          borderColor: `${secondaryColor}40`,
+                        }}
+                      >
+                        <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
+                          <UserIcon className="w-3 h-3" />
+                          IDENTIFICAÇÃO DO CLIENTE
+                        </p>
+                        <p
+                          className="text-base font-bold flex items-center gap-2"
+                          style={{ color: secondaryColor }}
+                        >
+                          <CheckCircleIcon className="w-5 h-5" />
+                          {sale.customerName}
+                        </p>
+                      </div>
+                    )}
+
                     {/* Informações de Mesa e Garçom com design moderno */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-<div className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50" style={{ borderColor: `var(--hover-color)` }}>
+                      <div
+                        className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50"
+                        style={{ borderColor: `var(--hover-color)` }}
+                      >
                         <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
                           <TableCellsIcon className="w-3 h-3" />
                           INFORMAÇÕES DA MESA
                         </p>
                         {sale.tableNumber ? (
                           <div className="space-y-1">
-                            <p className="text-sm font-semibold flex items-center gap-2" style={{ color: primaryColor }}>
+                            <p
+                              className="text-sm font-semibold flex items-center gap-2"
+                              style={{ color: primaryColor }}
+                            >
                               <CheckCircleIcon className="w-4 h-4" />
                               Mesa {sale.tableNumber}
                             </p>
@@ -263,18 +333,26 @@ export default function ArchivedSalesPage() {
                             )}
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-400 italic">Não atribuída</p>
+                          <p className="text-sm text-gray-400 italic">
+                            Não atribuída
+                          </p>
                         )}
                       </div>
 
-                 <div className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50" style={{ borderColor: `var(--hover-color)` }}>
+                      <div
+                        className="bg-gray-50 rounded-xl p-3 border border-gray-200 transition-colors hover:border-opacity-50"
+                        style={{ borderColor: `var(--hover-color)` }}
+                      >
                         <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1">
                           <UserGroupIcon className="w-3 h-3" />
                           INFORMAÇÕES DO GARÇOM
                         </p>
                         {sale.waiterName ? (
                           <div className="space-y-1">
-                            <p className="text-sm font-semibold flex items-center gap-2" style={{ color: secondaryColor }}>
+                            <p
+                              className="text-sm font-semibold flex items-center gap-2"
+                              style={{ color: secondaryColor }}
+                            >
                               <CheckCircleIcon className="w-4 h-4" />
                               {sale.waiterName}
                             </p>
@@ -286,7 +364,9 @@ export default function ArchivedSalesPage() {
                             )}
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-400 italic">Não atribuído</p>
+                          <p className="text-sm text-gray-400 italic">
+                            Não atribuído
+                          </p>
                         )}
                       </div>
                     </div>
@@ -298,16 +378,23 @@ export default function ArchivedSalesPage() {
                       onClick={() => handleOpenAssign(sale)}
                       disabled={assigning === sale.saleId}
                       className="group/btn relative px-5 py-2.5 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
-                      style={{ background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})` }}
+                      style={{
+                        background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})`,
+                      }}
                     >
-                      <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity" style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}></div>
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity"
+                        style={{
+                          background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        }}
+                      ></div>
                       <span className="relative flex items-center gap-2 text-sm">
                         {assigning === sale.saleId ? (
                           <ArrowPathIcon className="w-4 h-4 animate-spin" />
                         ) : (
                           <UserGroupIcon className="w-4 h-4" />
                         )}
-                        {sale.tableNumber || sale.waiterName ? "Editar" : "Atribuir"}
+                        {hasIdentification(sale) ? "Editar" : "Identificar"}
                       </span>
                     </button>
 
@@ -315,9 +402,16 @@ export default function ArchivedSalesPage() {
                       disabled={restoringId === sale.saleId}
                       onClick={() => handleRestore(sale.saleId)}
                       className="group/btn relative px-5 py-2.5 text-white rounded-xl font-medium transition-all duration-200 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 overflow-hidden"
-                      style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                      style={{
+                        background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                      }}
                     >
-                      <div className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity" style={{ background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})` }}></div>
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover/btn:opacity-100 transition-opacity"
+                        style={{
+                          background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})`,
+                        }}
+                      ></div>
                       <span className="relative flex items-center gap-2 text-sm">
                         {restoringId === sale.saleId ? (
                           <>
@@ -348,6 +442,7 @@ export default function ArchivedSalesPage() {
           setSelectedSale(null);
           setSelectedTableId("");
           setSelectedWaiterId("");
+          setSelectedCustomerName("");
         }}
         onConfirm={handleAssign}
         tables={tables}
@@ -355,6 +450,7 @@ export default function ArchivedSalesPage() {
         saleNumber={selectedSale?.saleId?.slice(0, 8)}
         initialTableId={selectedTableId}
         initialWaiterId={selectedWaiterId}
+        initialCustomerName={selectedCustomerName}
         primaryColor={primaryColor}
         secondaryColor={secondaryColor}
       />
@@ -370,7 +466,7 @@ export default function ArchivedSalesPage() {
             transform: translateY(0);
           }
         }
-        
+
         @keyframes slideIn {
           from {
             opacity: 0;
@@ -381,11 +477,11 @@ export default function ArchivedSalesPage() {
             transform: translateX(0);
           }
         }
-        
+
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out forwards;
         }
-        
+
         .animate-slideIn {
           animation: slideIn 0.3s ease-out forwards;
         }

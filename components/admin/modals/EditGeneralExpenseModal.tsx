@@ -83,8 +83,8 @@ export function EditGeneralExpenseModal({ expense, establishmentId, onClose, onS
                                 <DollarSign className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-white">Editar Custo Geral</h2>
-                                <p className="text-white/80 text-sm">Altere os dados do custo</p>
+                                <h2 className="text-xl font-bold text-white">Editar Despesa Geral</h2>
+                                <p className="text-white/80 text-sm">Altere os dados da despesa</p>
                             </div>
                         </div>
                         <button

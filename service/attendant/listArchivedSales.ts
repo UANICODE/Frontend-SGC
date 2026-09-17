@@ -12,6 +12,7 @@ export interface ArchivedSale {
   tableLocation?: string;
   waiterName?: string;
   waiterPhone?: string;
+    customerName?: string;
 }
 export async function listArchivedSales(
   establishmentId: string,

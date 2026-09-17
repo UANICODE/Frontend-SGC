@@ -1,4 +1,3 @@
-// components/attendant/cards/CashRegisterCard.tsx
 "use client";
 
 import { CashRegister } from "@/types/attendant/CashRegister";
@@ -9,11 +8,11 @@ import {
     DollarSign,
     Ban,
     Eye,
-    Wallet, // 🆕
+    Wallet,
 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmCloseCashModal } from "../modals/ConfirmCloseCashModal";
-import { ExpensesModal } from "../modals/ExpensesModal"; // 🆕
+import { ExpensesModal } from "../modals/ExpensesModal";
 
 interface Props {
     cash: CashRegister;
@@ -56,6 +55,7 @@ export function CashRegisterCard({
 
     return (
         <>
+       
             <div
                 className={`
                     bg-white p-6 rounded-2xl shadow border transform transition-all duration-300
@@ -95,7 +95,6 @@ export function CashRegisterCard({
                         Cancelado: <strong>{formatCurrency(cash.totalCancelled)}</strong>
                     </p>
 
-                    {/* 🆕 NOVOS CAMPOS */}
                     <p className="flex items-center gap-2 text-orange-600">
                         <Wallet size={16} />
                         Total Custos: <strong>{formatCurrency(totalExpenses)}</strong>
@@ -107,58 +106,72 @@ export function CashRegisterCard({
                     </p>
                 </div>
 
-                {/* 🆕 BOTÃO VER SAÍDAS */}
-                <button
-                    onClick={() => setExpensesOpen(true)}
-                    className="mt-2 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
-                    transform transition-all duration-200 hover:scale-105"
-                    style={{ backgroundColor: primaryColor }}
-                >
-                    <Eye size={18} />
-                    Ver Saídas
-                </button>
+                {/* ============================================================
+                    BOTÕES LADO A LADO - BEM ORGANIZADOS
+                ============================================================ */}
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                    {/* BOTÃO VER DESPESAS */}
+                    <button
+                        onClick={() => setExpensesOpen(true)}
+                        className="py-2.5 rounded-xl text-white flex justify-center items-center gap-2 transform transition-all duration-200 hover:scale-105 text-sm font-medium"
+                        style={{ backgroundColor: primaryColor }}
+                    >
+                        <Eye size={16} />
+                        Despesas
+                    </button>
 
-                {/* BOTÃO VER VENDAS */}
-                <button
-                    onClick={() => onViewSales?.(cash.id)}
-                    className="mt-2 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
-                    transform transition-all duration-200 hover:scale-105"
-                    style={{ backgroundColor: secondaryColor }}
-                >
-                    <Eye size={18} />
-                    Ver Vendas
-                </button>
+                    {/* BOTÃO VER VENDAS */}
+                    <button
+                        onClick={() => onViewSales?.(cash.id)}
+                        className="py-2.5 rounded-xl text-white flex justify-center items-center gap-2 transform transition-all duration-200 hover:scale-105 text-sm font-medium"
+                        style={{ backgroundColor: secondaryColor }}
+                    >
+                        <Eye size={16} />
+                        Ver vendas
+                    </button>
+                </div>
 
                 {isOpen && (
-                    <>
-                        {/* BOTÃO VENDER */}
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                        {/* ============================================================
+                            🔥 BOTÃO VENDER - COM DESTAQUE E BRILHO ANIMADO
+                        ============================================================ */}
                         <button
                             onClick={() => setConfirmSellOpen(true)}
                             disabled={isSelling}
-                            className="mt-2 w-full py-2 rounded-xl text-white flex justify-center items-center gap-2
-                            transform transition-all duration-200 hover:scale-105"
-                            style={{ backgroundColor: secondaryColor }}
+                            className="
+                                btn-sell-shimmer btn-sell-glow
+                                py-2.5 rounded-xl text-white font-bold text-sm
+                                flex justify-center items-center gap-2
+                                transform transition-all duration-200
+                                hover:scale-105 active:scale-95
+                                disabled:opacity-50 disabled:hover:scale-100
+                            "
+                            style={{
+                                background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})`,
+                                boxShadow: `0 4px 15px ${primaryColor}60`,
+                            }}
                         >
-                            {isSelling && (
-                                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-5 h-5"></span>
+                            {isSelling ? (
+                                <span className="animate-spin border-2 border-white border-t-transparent rounded-full w-4 h-4"></span>
+                            ) : (
+                                <ShoppingCart size={16} className="btn-sell-icon" />
                             )}
-
-                            {!isSelling && <ShoppingCart size={18} />}
-
-                            {isSelling ? "Abrindo Venda..." : "Vender"}
+                            <span className="relative z-10">
+                                {isSelling ? "Abrindo..." : "VENDER"}
+                            </span>
                         </button>
 
                         {/* BOTÃO FECHAR */}
                         <button
                             onClick={() => setConfirmOpen(true)}
                             disabled={closing}
-                            className="mt-2 w-full py-2 rounded-xl bg-red-600 text-white flex justify-center items-center gap-2
-                            transform transition-all duration-200 hover:scale-105 disabled:opacity-50"
+                            className="py-2.5 rounded-xl bg-red-600 text-white flex justify-center items-center gap-2 transform transition-all duration-200 hover:scale-105 disabled:opacity-50 text-sm font-medium"
                         >
-                            <Lock size={18} />
-                            {closing ? "Fechando..." : "Fechar Caixa"}
+                            <Lock size={16} />
+                            {closing ? "Fechando..." : "Fechar"}
                         </button>
-                    </>
+                    </div>
                 )}
             </div>
 
@@ -188,15 +201,17 @@ export function CashRegisterCard({
                 variant="success"
             />
 
-            {/* 🆕 MODAL DE SAÍDAS */}
+            {/* MODAL DE DESPESAS - CORES DINÂMICAS */}
             <ExpensesModal
                 open={expensesOpen}
                 cashRegisterId={cash.id}
                 cashRegisterStatus={cash.status}
-                  establishmentId={establishmentId} 
+                establishmentId={establishmentId}
+                primaryColor={primaryColor}
+                secondaryColor={secondaryColor}
                 onClose={() => setExpensesOpen(false)}
                 onSuccess={() => {
-                    // Refresh da lista de caixas (se necessário)
+                    // Refresh da lista de caixas
                 }}
             />
         </>

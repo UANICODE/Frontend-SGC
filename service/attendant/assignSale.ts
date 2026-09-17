@@ -1,10 +1,10 @@
-// service/attendant/assignSale.ts
 import api from "@/service/api";
 import { handleHttpError } from "@/utils/httpErrorHandler";
 
 export interface AssignSaleRequest {
   tableId?: string;
   waiterId?: string;
+  customerName?: string;  // 🔥 NOVO CAMPO
 }
 
 export async function assignSale(
@@ -13,7 +13,10 @@ export async function assignSale(
   payload: AssignSaleRequest
 ): Promise<void> {
   try {
-    await api.put(`/api/attendant/sales/${saleId}/assign?establishmentId=${establishmentId}`, payload);
+    await api.put(
+      `/api/attendant/sales/${saleId}/assign?establishmentId=${establishmentId}`,
+      payload
+    );
   } catch (e) {
     handleHttpError(e);
   }

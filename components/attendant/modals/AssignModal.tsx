@@ -10,18 +10,20 @@ import {
   XMarkIcon,
   CheckCircleIcon,
   SparklesIcon,
-  ClockIcon
+  ClockIcon,
+  UserIcon,  // 🔥 ADICIONAR
 } from "@heroicons/react/24/outline";
 
 interface AssignModalProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: (tableId?: string, waiterId?: string) => void;
+  onConfirm: (tableId?: string, waiterId?: string, customerName?: string) => void;  // 🔥 ADICIONAR
   tables: any[];
   waiters: any[];
   saleNumber?: string;
   initialTableId?: string;
   initialWaiterId?: string;
+  initialCustomerName?: string;  // 🔥 ADICIONAR
   primaryColor: string;
   secondaryColor: string;
 }
@@ -35,25 +37,32 @@ export function AssignModal({
   saleNumber,
   initialTableId,
   initialWaiterId,
+  initialCustomerName,  // 🔥 ADICIONAR
   primaryColor,
   secondaryColor
 }: AssignModalProps) {
   const [selectedTableId, setSelectedTableId] = useState<string>("");
   const [selectedWaiterId, setSelectedWaiterId] = useState<string>("");
+  const [customerName, setCustomerName] = useState<string>("");  // 🔥 ADICIONAR
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setSelectedTableId(initialTableId || "");
       setSelectedWaiterId(initialWaiterId || "");
+      setCustomerName(initialCustomerName || "");  // 🔥 ADICIONAR
     }
-  }, [open, initialTableId, initialWaiterId]);
+  }, [open, initialTableId, initialWaiterId, initialCustomerName]);
 
   if (!open) return null;
 
   const handleConfirm = async () => {
     setSaving(true);
-    await onConfirm(selectedTableId || undefined, selectedWaiterId || undefined);
+    await onConfirm(
+      selectedTableId || undefined, 
+      selectedWaiterId || undefined,
+      customerName.trim() || undefined  // 🔥 ADICIONAR
+    );
     setSaving(false);
   };
 
@@ -101,7 +110,9 @@ export function AssignModal({
                         <SparklesIcon className="w-4 h-4 text-white" />
                       </div>
                       <h2 className="text-xl font-bold" style={{ color: primaryColor }}>
-                        {initialTableId || initialWaiterId ? "Editar Atribuição" : "Atribuir Mesa e Garçom"}
+                        {initialTableId || initialWaiterId || initialCustomerName 
+                          ? "Editar Identificação" 
+                          : "Identificar Venda"}
                       </h2>
                     </div>
                   </div>
@@ -116,7 +127,7 @@ export function AssignModal({
               </div>
 
               {/* Conteúdo do Modal */}
-              <div className="p-6 space-y-6">
+              <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto">
                 {/* Informação da Venda */}
                 {saleNumber && (
                   <div 
@@ -134,6 +145,41 @@ export function AssignModal({
                   </div>
                 )}
 
+                {/* ============================================================
+                    🔥 NOME DO CLIENTE (NOVO)
+                ============================================================ */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
+                    <div 
+                      className="p-1 rounded-lg"
+                      style={{ background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})` }}
+                    >
+                      <UserIcon className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    Identificação do Cliente
+                  </label>
+                  <input
+                    type="text"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Ex: Moça de saia branca, Jovem de barba..."
+                    maxLength={255}
+                    className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-200 hover:bg-gray-100"
+                    onFocus={(e) => e.target.style.borderColor = primaryColor}
+                    onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                  />
+                  <p className="text-xs text-gray-400 ml-1">
+                    💡 Dica: Use uma descrição fácil de identificar (ex: "Moça de saia branca")
+                  </p>
+                </div>
+
+                {/* Separador */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                  <span className="text-xs text-gray-400 font-medium">OU</span>
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                </div>
+
                 {/* Seleção de Mesa */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-700 flex items-center gap-2">
@@ -150,9 +196,7 @@ export function AssignModal({
                       value={selectedTableId}
                       onChange={(e) => setSelectedTableId(e.target.value)}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-200 appearance-none cursor-pointer hover:bg-gray-100"
-                      style={{ 
-                        borderColor: '#e5e7eb',
-                      }}
+                      style={{ borderColor: '#e5e7eb' }}
                       onFocus={(e) => e.target.style.borderColor = primaryColor}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -171,7 +215,6 @@ export function AssignModal({
                     </div>
                   </div>
                   
-                  {/* Preview da mesa selecionada */}
                   {selectedTableId && selectedTable && (
                     <motion.div
                       initial={{ opacity: 0, y: -10 }}
@@ -188,16 +231,6 @@ export function AssignModal({
                           Mesa {selectedTable.number} selecionada
                         </span>
                       </div>
-                      {selectedTable.location && (
-                        <p className="text-xs text-gray-500 mt-1 ml-6">
-                          Localização: {selectedTable.location}
-                        </p>
-                      )}
-                      {selectedTable.capacity && (
-                        <p className="text-xs text-gray-500 mt-1 ml-6">
-                          Capacidade: {selectedTable.capacity} pessoas
-                        </p>
-                      )}
                     </motion.div>
                   )}
                 </div>
@@ -218,9 +251,7 @@ export function AssignModal({
                       value={selectedWaiterId}
                       onChange={(e) => setSelectedWaiterId(e.target.value)}
                       className="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:outline-none transition-all duration-200 appearance-none cursor-pointer hover:bg-gray-100"
-                      style={{ 
-                        borderColor: '#e5e7eb',
-                      }}
+                      style={{ borderColor: '#e5e7eb' }}
                       onFocus={(e) => e.target.style.borderColor = secondaryColor}
                       onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
                     >
@@ -237,8 +268,6 @@ export function AssignModal({
                       </svg>
                     </div>
                   </div>
-                  
-                  
                 </div>
               </div>
 
@@ -275,7 +304,7 @@ export function AssignModal({
                     ) : (
                       <>
                         <CheckCircleIcon className="w-4 h-4" />
-                        Salvar Atribuição
+                        Salvar
                       </>
                     )}
                   </span>

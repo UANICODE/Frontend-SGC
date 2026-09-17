@@ -24,18 +24,22 @@ interface Props {
     open: boolean;
     cashRegisterId: string;
     cashRegisterStatus: string;
-    establishmentId: string; // 🆕 ADICIONAR
+    establishmentId: string;
     onClose: () => void;
     onSuccess?: () => void;
+    primaryColor?: string;
+    secondaryColor?: string;
 }
 
 export function ExpensesModal({
     open,
     cashRegisterId,
     cashRegisterStatus,
-    establishmentId, // 🆕 RECEBER
+    establishmentId,
     onClose,
     onSuccess,
+    primaryColor = "#4F46E5",
+    secondaryColor = "#7C3AED",
 }: Props) {
     const { showToast } = useToast();
     const { data: expenses, loading, fetch } = useCashRegisterExpenses();
@@ -53,7 +57,7 @@ export function ExpensesModal({
     }, [open, cashRegisterId, fetch]);
 
     const handleDelete = async (expenseId: string) => {
-        if (!confirm("Tem certeza que deseja remover este custo?")) return;
+        if (!confirm("Tem certeza que deseja remover esta despesa?")) return;
         try {
             await deleteExpense(expenseId);
             await fetch(cashRegisterId);
@@ -84,8 +88,13 @@ export function ExpensesModal({
         <>
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                 <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl max-h-[95vh] flex flex-col">
-                    {/* HEADER */}
-                    <div className="bg-gradient-to-r from-primary to-secondary px-6 py-5 flex-shrink-0 rounded-t-2xl">
+                    {/* HEADER - CORES DINÂMICAS */}
+                    <div
+                        className="px-6 py-5 flex-shrink-0 rounded-t-2xl"
+                        style={{
+                            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        }}
+                    >
                         <div className="flex justify-between items-center">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
@@ -93,10 +102,10 @@ export function ExpensesModal({
                                 </div>
                                 <div>
                                     <h2 className="text-xl font-bold text-white">
-                                        Saídas do Caixa
+                                        Despesas do Caixa
                                     </h2>
                                     <p className="text-white/80 text-sm">
-                                        {expenses.length} registro(s) de saída
+                                        {expenses.length} registro(s) de despesas
                                     </p>
                                 </div>
                             </div>
@@ -111,14 +120,17 @@ export function ExpensesModal({
 
                     {/* BODY */}
                     <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                        {/* Botão Registrar Saída (só se caixa aberto) */}
+                        {/* Botão Registrar Despesa */}
                         {isOpen && (
                             <button
                                 onClick={() => setOpenCreate(true)}
-                                className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                className="w-full text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                style={{
+                                    background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                                }}
                             >
                                 <Plus className="w-5 h-5" />
-                                Registrar Nova Saída
+                                Registrar Nova Despesa
                             </button>
                         )}
 
@@ -126,7 +138,7 @@ export function ExpensesModal({
                             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3">
                                 <AlertCircle className="w-5 h-5 text-amber-600" />
                                 <p className="text-sm text-amber-700">
-                                    Este caixa está fechado. Não é possível adicionar, editar ou remover saídas.
+                                    Este caixa está fechado. Não é possível adicionar, editar ou remover despesas.
                                 </p>
                             </div>
                         )}
@@ -134,22 +146,28 @@ export function ExpensesModal({
                         {/* Loading */}
                         {loading && (
                             <div className="flex flex-col items-center justify-center py-12">
-                                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-                                <p className="mt-4 text-gray-500">Carregando saídas...</p>
+                                <div
+                                    className="w-12 h-12 border-4 border-t-transparent rounded-full animate-spin"
+                                    style={{
+                                        borderColor: `${primaryColor}40`,
+                                        borderTopColor: primaryColor,
+                                    }}
+                                ></div>
+                                <p className="mt-4 text-gray-500">Carregando despesas...</p>
                             </div>
                         )}
 
-                        {/* Lista de Saídas */}
+                        {/* Lista Vazia */}
                         {!loading && expenses.length === 0 && (
                             <div className="text-center py-12">
                                 <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
                                     <DollarSign className="w-10 h-10 text-gray-400" />
                                 </div>
-                                <p className="text-gray-500 font-medium">Nenhuma saída registrada</p>
+                                <p className="text-gray-500 font-medium">Nenhuma despesa registrada</p>
                                 <p className="text-sm text-gray-400 mt-1">
                                     {isOpen
-                                        ? "Clique em 'Registrar Nova Saída' para começar"
-                                        : "Este caixa não tem saídas registradas"}
+                                        ? "Clique em 'Registrar Nova Despesa' para começar"
+                                        : "Este caixa não tem despesas registradas"}
                                 </p>
                             </div>
                         )}
@@ -160,7 +178,16 @@ export function ExpensesModal({
                                 {expenses.map((expense) => (
                                     <div
                                         key={expense.id}
-                                        className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-primary/20 transition-all"
+                                        className="flex items-center justify-between p-4 bg-gray-50 rounded-xl border transition-all hover:shadow-md"
+                                        style={{
+                                            borderColor: `${primaryColor}20`,
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.borderColor = `${primaryColor}50`;
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.borderColor = `${primaryColor}20`;
+                                        }}
                                     >
                                         {/* Info */}
                                         <div className="flex-1 min-w-0">
@@ -168,7 +195,13 @@ export function ExpensesModal({
                                                 <span className="text-sm font-semibold text-gray-800">
                                                     {expense.description}
                                                 </span>
-                                                <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
+                                                <span
+                                                    className="text-xs px-2 py-1 rounded-full"
+                                                    style={{
+                                                        background: `${primaryColor}15`,
+                                                        color: primaryColor,
+                                                    }}
+                                                >
                                                     {expense.categoryName}
                                                 </span>
                                             </div>
@@ -186,7 +219,10 @@ export function ExpensesModal({
 
                                         {/* Valor e Ações */}
                                         <div className="flex items-center gap-4">
-                                            <span className="text-lg font-bold text-primary">
+                                            <span
+                                                className="text-lg font-bold"
+                                                style={{ color: primaryColor }}
+                                            >
                                                 {formatCurrency(expense.amount)}
                                             </span>
 
@@ -194,7 +230,17 @@ export function ExpensesModal({
                                                 <div className="flex gap-1">
                                                     <button
                                                         onClick={() => setEditingExpense(expense)}
-                                                        className="p-2 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition"
+                                                        className="p-2 rounded-lg transition"
+                                                        style={{
+                                                            color: secondaryColor,
+                                                        }}
+                                                        onMouseEnter={(e) => {
+                                                            e.currentTarget.style.background = `${secondaryColor}10`;
+                                                        }}
+                                                        onMouseLeave={(e) => {
+                                                            e.currentTarget.style.background = "transparent";
+                                                        }}
+                                                        title="Editar"
                                                     >
                                                         <Pencil className="w-4 h-4" />
                                                     </button>
@@ -202,6 +248,7 @@ export function ExpensesModal({
                                                         onClick={() => handleDelete(expense.id)}
                                                         disabled={deleting}
                                                         className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition disabled:opacity-50"
+                                                        title="Remover"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
@@ -226,11 +273,13 @@ export function ExpensesModal({
                 </div>
             </div>
 
-            {/* Modal Criar Saída - PASSAR establishmentId */}
+            {/* Modal Criar Despesa */}
             {openCreate && (
                 <CreateExpenseModal
                     cashRegisterId={cashRegisterId}
-                    establishmentId={establishmentId} // 🆕 PASSAR
+                    establishmentId={establishmentId}
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
                     onClose={() => setOpenCreate(false)}
                     onSuccess={() => {
                         fetch(cashRegisterId);
@@ -239,11 +288,13 @@ export function ExpensesModal({
                 />
             )}
 
-            {/* Modal Editar Saída */}
+            {/* Modal Editar Despesa */}
             {editingExpense && (
                 <EditExpenseModal
                     expense={editingExpense}
-                    establishmentId={establishmentId} // 🆕 PASSAR
+                    establishmentId={establishmentId}
+                    primaryColor={primaryColor}
+                    secondaryColor={secondaryColor}
                     onClose={() => setEditingExpense(null)}
                     onSuccess={() => {
                         fetch(cashRegisterId);

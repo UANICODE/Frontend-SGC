@@ -3,7 +3,6 @@
 
 import { CashRegisterCard } from "@/components/attendant/cards/CashRegisterCard";
 import { CashClosingReceiptPreview } from "@/components/attendant/CashClosingReceiptPreview";
-import { CashRegisterFilters } from "@/components/attendant/CashRegisterFilters";
 import { CashRegisterSalesModal } from "@/components/attendant/modals/CashRegisterSalesModal";
 import { PageLoader } from "@/components/ui/PageLoader";
 
@@ -399,19 +398,7 @@ export default function AttendantHome() {
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white/30 via-white/50 to-white/30"></div>
         </div>
 
-        {/* FILTROS */}
-        <CashRegisterFilters
-          today={today}
-          status={status}
-          onTodayChange={() => {
-            setToday((prev) => !prev);
-            setPage(1);
-          }}
-          onStatusChange={(value) => {
-            setStatus(value);
-            setPage(1);
-          }}
-        />
+     
 
         {/* BOTÃO ABRIR CAIXA */}
         {!openCash && (

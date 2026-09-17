@@ -669,7 +669,7 @@ export default function HomePage() {
 
                   <span className="text-white/10">•</span>
 
-                  <span>v2.5.1</span>
+                  <span>v2.5.2</span>
                 </div>
               </section>
             </div>

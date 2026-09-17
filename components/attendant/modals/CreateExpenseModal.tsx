@@ -5,26 +5,28 @@ import { useState, useEffect } from "react";
 import { X, Save, DollarSign, Tag, FileText } from "lucide-react";
 
 import { useCreateCashRegisterExpense } from "@/hooks/attendant/useCreateCashRegisterExpense";
-import { useCostCategories } from "@/hooks/attendant/useCostCategories"; // 🔥 USAR HOOK DO ATENDENTE
+import { useCostCategories } from "@/hooks/attendant/useCostCategories";
 import { useToast } from "@/ context/ToastContext";
 
 interface Props {
     cashRegisterId: string;
-    establishmentId: string; // 🔥 RECEBE
+    establishmentId: string;
     onClose: () => void;
     onSuccess: () => void;
+    primaryColor?: string;
+    secondaryColor?: string;
 }
 
 export function CreateExpenseModal({ 
     cashRegisterId, 
-    establishmentId,  // 🔥 EXTRAIR
+    establishmentId,
     onClose, 
-    onSuccess 
+    onSuccess,
+    primaryColor = "#4F46E5",
+    secondaryColor = "#7C3AED",
 }: Props) {
     const { showToast } = useToast();
     const { execute, loading } = useCreateCashRegisterExpense();
-    
-    // 🔥 USAR establishmentId recebido como prop
     const { data: categories, loading: loadingCategories } = useCostCategories(establishmentId);
 
     const [form, setForm] = useState({
@@ -34,12 +36,10 @@ export function CreateExpenseModal({
         notes: "",
     });
 
-    // 🔥 LOG para debug
     useEffect(() => {
         console.log("🔍 CreateExpenseModal - establishmentId recebido:", establishmentId);
         console.log("📦 Categorias carregadas:", categories);
-        console.log("⏳ Loading categorias:", loadingCategories);
-    }, [establishmentId, categories, loadingCategories]);
+    }, [establishmentId, categories]);
 
     const handleSubmit = async () => {
         if (!form.categoryId) {
@@ -73,16 +73,21 @@ export function CreateExpenseModal({
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
-                {/* HEADER */}
-                <div className="bg-gradient-to-r from-green-500 to-emerald-500 px-6 py-5">
+                {/* HEADER - CORES DINÂMICAS */}
+                <div
+                    className="px-6 py-5"
+                    style={{
+                        background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                    }}
+                >
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
                                 <DollarSign className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-white">Registrar Saída</h2>
-                                <p className="text-white/80 text-sm">Registre um novo custo no caixa</p>
+                                <h2 className="text-xl font-bold text-white">Registrar despesa</h2>
+                                <p className="text-white/80 text-sm">Registre uma nova despesa no caixa</p>
                             </div>
                         </div>
                         <button
@@ -99,13 +104,18 @@ export function CreateExpenseModal({
                     {/* Categoria */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <Tag className="w-4 h-4 text-primary" />
+                            <Tag className="w-4 h-4" style={{ color: primaryColor }} />
                             Categoria *
                         </label>
                         <select
                             value={form.categoryId}
                             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all bg-white"
+                            style={{
+                                borderColor: form.categoryId ? primaryColor : "#e5e7eb",
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = form.categoryId ? primaryColor : "#e5e7eb"}
                             disabled={loadingCategories}
                         >
                             <option value="">Selecione uma categoria</option>
@@ -128,7 +138,7 @@ export function CreateExpenseModal({
                     {/* Descrição */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <FileText className="w-4 h-4 text-primary" />
+                            <FileText className="w-4 h-4" style={{ color: primaryColor }} />
                             Descrição *
                         </label>
                         <input
@@ -136,14 +146,16 @@ export function CreateExpenseModal({
                             placeholder="Ex: Almoço equipe, Material limpeza..."
                             value={form.description}
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                         />
                     </div>
 
                     {/* Valor */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <DollarSign className="w-4 h-4 text-primary" />
+                            <DollarSign className="w-4 h-4" style={{ color: primaryColor }} />
                             Valor (MZN) *
                         </label>
                         <input
@@ -152,21 +164,25 @@ export function CreateExpenseModal({
                             placeholder="0.00"
                             value={form.amount}
                             onChange={(e) => setForm({ ...form, amount: parseFloat(e.target.value) || 0 })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                         />
                     </div>
 
                     {/* Observações */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <FileText className="w-4 h-4 text-primary" />
+                            <FileText className="w-4 h-4" style={{ color: primaryColor }} />
                             Observações
                         </label>
                         <textarea
                             placeholder="Informações adicionais..."
                             value={form.notes}
                             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all resize-none"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                             rows={2}
                         />
                     </div>
@@ -184,7 +200,10 @@ export function CreateExpenseModal({
                     <button
                         onClick={handleSubmit}
                         disabled={loading || !form.categoryId || !form.description || form.amount <= 0}
-                        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="flex-1 text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        style={{
+                            background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`,
+                        }}
                     >
                         {loading ? (
                             <>

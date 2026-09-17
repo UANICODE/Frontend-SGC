@@ -11,21 +11,23 @@ import { useToast } from "@/ context/ToastContext";
 
 interface Props {
     expense: CashRegisterExpense;
-    establishmentId: string;  // 🔥 RECEBE
+    establishmentId: string;
     onClose: () => void;
     onSuccess: () => void;
+    primaryColor?: string;
+    secondaryColor?: string;
 }
 
 export function EditExpenseModal({ 
     expense, 
-    establishmentId,  // 🔥 EXTRAIR
+    establishmentId,
     onClose, 
-    onSuccess 
+    onSuccess,
+    primaryColor = "#4F46E5",
+    secondaryColor = "#7C3AED",
 }: Props) {
     const { showToast } = useToast();
     const { execute, loading } = useUpdateCashRegisterExpense();
-    
-    // 🔥 USAR establishmentId recebido como prop
     const { data: categories, loading: loadingCategories } = useCostCategories(establishmentId);
 
     const [form, setForm] = useState({
@@ -35,7 +37,6 @@ export function EditExpenseModal({
         notes: expense.notes || "",
     });
 
-    // 🔥 LOG para debug
     useEffect(() => {
         console.log("🔍 EditExpenseModal - establishmentId recebido:", establishmentId);
         console.log("📦 Categorias carregadas:", categories);
@@ -82,15 +83,20 @@ export function EditExpenseModal({
     return (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
-                {/* HEADER */}
-                <div className="bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-5">
+                {/* HEADER - CORES DINÂMICAS */}
+                <div
+                    className="px-6 py-5"
+                    style={{
+                        background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})`,
+                    }}
+                >
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-white/20 backdrop-blur-sm rounded-xl">
                                 <DollarSign className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-white">Editar Saída</h2>
+                                <h2 className="text-xl font-bold text-white">Editar despesa</h2>
                                 <p className="text-white/80 text-sm">Altere os dados do custo</p>
                             </div>
                         </div>
@@ -103,18 +109,23 @@ export function EditExpenseModal({
                     </div>
                 </div>
 
-                {/* BODY - resto igual */}
+                {/* BODY */}
                 <div className="p-6 space-y-4">
                     {/* Categoria */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <Tag className="w-4 h-4 text-primary" />
+                            <Tag className="w-4 h-4" style={{ color: primaryColor }} />
                             Categoria *
                         </label>
                         <select
                             value={form.categoryId}
                             onChange={(e) => setForm({ ...form, categoryId: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all bg-white"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all bg-white"
+                            style={{
+                                borderColor: form.categoryId ? primaryColor : "#e5e7eb",
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = form.categoryId ? primaryColor : "#e5e7eb"}
                             disabled={loadingCategories}
                         >
                             <option value="">Selecione uma categoria</option>
@@ -129,7 +140,7 @@ export function EditExpenseModal({
                     {/* Descrição */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <FileText className="w-4 h-4 text-primary" />
+                            <FileText className="w-4 h-4" style={{ color: primaryColor }} />
                             Descrição *
                         </label>
                         <input
@@ -137,14 +148,16 @@ export function EditExpenseModal({
                             placeholder="Ex: Almoço equipe, Material limpeza..."
                             value={form.description}
                             onChange={(e) => setForm({ ...form, description: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                         />
                     </div>
 
                     {/* Valor */}
                     <div>
                         <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                            <DollarSign className="w-4 h-4 text-primary" />
+                            <DollarSign className="w-4 h-4" style={{ color: primaryColor }} />
                             Valor (MZN) *
                         </label>
                         <input
@@ -153,7 +166,9 @@ export function EditExpenseModal({
                             placeholder="0.00"
                             value={form.amount}
                             onChange={(e) => setForm({ ...form, amount: parseFloat(e.target.value) || 0 })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                         />
                     </div>
 
@@ -166,7 +181,9 @@ export function EditExpenseModal({
                             placeholder="Informações adicionais..."
                             value={form.notes}
                             onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                            className="w-full border-2 border-gray-200 rounded-xl px-4 py-3 outline-none transition-all resize-none"
+                            onFocus={(e) => e.target.style.borderColor = primaryColor}
+                            onBlur={(e) => e.target.style.borderColor = "#e5e7eb"}
                             rows={2}
                         />
                     </div>
@@ -184,7 +201,10 @@ export function EditExpenseModal({
                     <button
                         onClick={handleSubmit}
                         disabled={loading}
-                        className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="flex-1 text-white px-4 py-3 rounded-xl font-medium hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        style={{
+                            background: `linear-gradient(135deg, ${secondaryColor}, ${primaryColor})`,
+                        }}
                     >
                         {loading ? (
                             <>

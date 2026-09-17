@@ -3,7 +3,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/ context/ToastContext";
-import { deleteCashRegisterExpense } from "@/service/attendant/eleteCashRegisterExpense";
+import { deleteCashRegisterExpense } from "@/service/attendant/deleteCashRegisterExpense";
 
 export function useDeleteCashRegisterExpense() {
     const { showToast } = useToast();

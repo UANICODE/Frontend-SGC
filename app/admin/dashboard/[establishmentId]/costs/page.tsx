@@ -1,4 +1,4 @@
-// app/admin/dashboard/[establishmentId]/costs/page.tsx
+
 "use client";
 
 import { useParams } from "next/navigation";
@@ -45,7 +45,7 @@ export default function CostsPage() {
                 <Wallet className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <p className="text-gray-500 font-medium">Nenhum dado disponível</p>
                 <p className="text-sm text-gray-400 mt-1">
-                    Registre alguns custos para ver o dashboard
+                    Registre algumas despesas para ver o dashboard
                 </p>
             </div>
         );
@@ -64,10 +64,10 @@ export default function CostsPage() {
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold text-white tracking-tight">
-                                    Dashboard de Custos
+                                    Dashboard de despesas
                                 </h1>
                                 <p className="text-white/80 text-sm mt-1">
-                                    Análise completa dos custos do estabelecimento
+                                    Análise completa das despesas do estabelecimento
                                 </p>
                             </div>
                         </div>
@@ -78,7 +78,7 @@ export default function CostsPage() {
                                 className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-xl hover:bg-white/30 transition flex items-center gap-2"
                             >
                                 <Calendar className="w-4 h-4" />
-                                Ver Todos os Custos
+                                Ver Todas as Despesas
                             </button>
                             <button
                                 onClick={() => router.push(`/admin/dashboard/${establishmentId}/costs/categories`)}
@@ -106,26 +106,26 @@ export default function CostsPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Custos por Categoria */}
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Custos por Categoria</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Despesas por Categoria</h3>
                     <CostByCategoryChart data={data.byCategory} />
                 </div>
 
                 {/* Custos por Período */}
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Custos por Periodicidade</h3>
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Despesas por Periodicidade</h3>
                     <CostByPeriodChart data={data.byPeriod} />
                 </div>
             </div>
 
             {/* Evolução Mensal */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Evolução Mensal dos Custos</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Evolução Mensal das Despesas</h3>
                 <MonthlyEvolutionChart data={data.monthlyEvolution} />
             </div>
 
             {/* Top Categorias */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Top 5 Categorias com Maiores Custos</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Top 5 Categorias com Maiores Despesas</h3>
                 <TopCategoriesList categories={data.topCategories} totalExpenses={data.totalExpenses} />
             </div>
         </div>

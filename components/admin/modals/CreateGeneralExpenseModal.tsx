@@ -69,8 +69,8 @@ export function CreateGeneralExpenseModal({ establishmentId, onClose, onSuccess 
                                 <DollarSign className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-white">Novo Custo Geral</h2>
-                                <p className="text-white/80 text-sm">Registre um custo não vinculado ao caixa</p>
+                                <h2 className="text-xl font-bold text-white">Nova Despesa Geral</h2>
+                                <p className="text-white/80 text-sm">Registre uma despesa não vinculada ao caixa</p>
                             </div>
                         </div>
                         <button
@@ -208,7 +208,7 @@ export function CreateGeneralExpenseModal({ establishmentId, onClose, onSuccess 
                         ) : (
                             <>
                                 <Save className="w-5 h-5" />
-                                Criar Custo
+                                Criar despesa
                             </>
                         )}
                     </button>

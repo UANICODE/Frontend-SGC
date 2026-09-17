@@ -1,7 +1,7 @@
 // components/admin/modals/CartModal.tsx
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
     X,
     ShoppingCart,
@@ -24,7 +24,7 @@ interface Props {
     items: CartItem[];
     onClose: () => void;
     onSuccess: () => void;
-     totalQuantity: number;  
+    totalQuantity: number;
     onRemoveItem: (productId: string) => void;
     onUpdateQuantity: (productId: string, quantity: number) => void;
     onUpdatePrice: (productId: string, price: number) => void;
@@ -35,7 +35,7 @@ export function CartModal({
     establishmentId,
     items,
     onClose,
-     totalQuantity,
+    totalQuantity,
     onSuccess,
     onRemoveItem,
     onUpdateQuantity,
@@ -90,15 +90,26 @@ export function CartModal({
         }
     };
 
+    // ============================================================
     // 🔥 QUANTIDADE - Permite apagar todo o número
+    // ============================================================
     const handleQuantityChange = (productId: string, value: string) => {
-        setInputValues(prev => ({ ...prev, [productId]: value }));
+        // 🔥 Normalizar vírgula para ponto
+        const normalizedValue = value.replace(",", ".");
         
-        if (value === "") {
+        // 🔥 Permitir apenas números e UM separador decimal
+        const regex = /^\d*\.?\d*$/;
+        if (!regex.test(normalizedValue)) {
             return;
         }
         
-        const numValue = parseFloat(value);
+        setInputValues(prev => ({ ...prev, [productId]: normalizedValue }));
+        
+        if (normalizedValue === "" || normalizedValue === ".") {
+            return;
+        }
+        
+        const numValue = parseFloat(normalizedValue);
         if (!isNaN(numValue) && numValue >= 0) {
             onUpdateQuantity(productId, numValue);
         }
@@ -107,65 +118,106 @@ export function CartModal({
     const handleQuantityBlur = (productId: string) => {
         const currentInputValue = inputValues[productId];
         
-        if (!currentInputValue || currentInputValue === "") {
+        if (!currentInputValue || currentInputValue === "" || currentInputValue === ".") {
             setInputValues(prev => ({ ...prev, [productId]: "1" }));
             onUpdateQuantity(productId, 1);
             return;
         }
         
-        const numValue = parseFloat(currentInputValue);
+        const normalizedValue = currentInputValue.replace(",", ".");
+        const numValue = parseFloat(normalizedValue);
+        
         if (isNaN(numValue) || numValue <= 0) {
             setInputValues(prev => ({ ...prev, [productId]: "1" }));
             onUpdateQuantity(productId, 1);
         } else {
             onUpdateQuantity(productId, numValue);
+            setInputValues(prev => ({ ...prev, [productId]: String(numValue) }));
         }
     };
 
-    // 🔥 PREÇO COMPRA - Permite apagar todo o número
-    const handlePriceChange = (productId: string, value: string) => {
-        setPriceInputValues(prev => ({ ...prev, [productId]: value }));
-        
-        if (value === "") {
-            return;
-        }
-        
-        const numValue = parseFloat(value);
-        if (!isNaN(numValue) && numValue >= 0) {
-            onUpdatePrice(productId, numValue);
-        }
-    };
+    // ============================================================
+    // 🔥 PREÇO COMPRA - Aceita decimais com vírgula ou ponto
+    // ============================================================
+   // ============================================================
+// 🔥 PREÇO COMPRA - Aceita decimais com vírgula ou ponto
+// ============================================================
+const handlePriceChange = (productId: string, value: string) => {
+    console.log("🔥 handlePriceChange chamado");
+    console.log("   Valor digitado:", value);
+    console.log("   Produto:", productId);
 
-    const handlePriceBlur = (productId: string) => {
-        const currentInputValue = priceInputValues[productId];
-        
-        if (!currentInputValue || currentInputValue === "") {
-            // Se estiver vazio, coloca 0
-            setPriceInputValues(prev => ({ ...prev, [productId]: "0" }));
-            onUpdatePrice(productId, 0);
-            return;
-        }
-        
-        const numValue = parseFloat(currentInputValue);
-        if (isNaN(numValue) || numValue < 0) {
-            setPriceInputValues(prev => ({ ...prev, [productId]: "0" }));
-            onUpdatePrice(productId, 0);
-        } else {
-            onUpdatePrice(productId, numValue);
-        }
-    };
+    // 🔥 Substituir vírgula por ponto
+    let normalizedValue = value.replace(",", ".");
+    console.log("   Após vírgula→ponto:", normalizedValue);
 
-    // 🔥 Sincronizar inputValues com items quando o carrinho mudar
-    useMemo(() => {
-        const newInputValues: Record<string, string> = {};
-        const newPriceValues: Record<string, string> = {};
-        items.forEach(item => {
-            newInputValues[item.productId] = String(item.quantity);
-            newPriceValues[item.productId] = String(item.purchasePrice);
-        });
-        setInputValues(newInputValues);
-        setPriceInputValues(newPriceValues);
-    }, [items]);
+    // 🔥 Permitir apenas dígitos e UM ponto
+    normalizedValue = normalizedValue.replace(/[^0-9.]/g, "");
+    console.log("   Após limpar caracteres:", normalizedValue);
+
+    // 🔥 Garantir que só tem UM ponto
+    const parts = normalizedValue.split(".");
+    if (parts.length > 2) {
+        normalizedValue = parts[0] + "." + parts.slice(1).join("");
+        console.log("   Após remover pontos extras:", normalizedValue);
+    }
+
+    // 🔥 Atualizar o input
+    setPriceInputValues(prev => {
+        console.log("   Atualizando priceInputValues:", { ...prev, [productId]: normalizedValue });
+        return { ...prev, [productId]: normalizedValue };
+    });
+
+    if (normalizedValue === "" || normalizedValue === ".") {
+        console.log("   ⏭️ Ignorando atualização de preço (vazio ou só ponto)");
+        return;
+    }
+
+    const numValue = parseFloat(normalizedValue);
+    console.log("   NumValue:", numValue);
+
+    if (!isNaN(numValue) && numValue >= 0) {
+        console.log("   ✅ Atualizando preço para:", numValue);
+        onUpdatePrice(productId, numValue);
+    }
+};
+
+const handlePriceBlur = (productId: string) => {
+    const currentInputValue = priceInputValues[productId];
+    
+    if (!currentInputValue || currentInputValue === "" || currentInputValue === ".") {
+        setPriceInputValues(prev => ({ ...prev, [productId]: "0" }));
+        onUpdatePrice(productId, 0);
+        return;
+    }
+    
+    const numValue = parseFloat(currentInputValue);
+    
+    if (isNaN(numValue) || numValue < 0) {
+        setPriceInputValues(prev => ({ ...prev, [productId]: "0" }));
+        onUpdatePrice(productId, 0);
+    } else {
+        onUpdatePrice(productId, numValue);
+        // 🔥 Formatar para 2 casas decimais no blur
+        setPriceInputValues(prev => ({ 
+            ...prev, 
+            [productId]: numValue.toFixed(2) 
+        }));
+    }
+};
+  // 🔥 Sincronizar inputValues com items APENAS quando o carrinho mudar
+// ⚠️ Só sincroniza quando a lista de produtos muda, NÃO quando o preço é digitado
+useEffect(() => {
+    const newInputValues: Record<string, string> = {};
+    const newPriceValues: Record<string, string> = {};
+    items.forEach(item => {
+        newInputValues[item.productId] = String(item.quantity);
+        newPriceValues[item.productId] = String(item.purchasePrice);
+    });
+    setInputValues(newInputValues);
+    setPriceInputValues(newPriceValues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [items.length]); // 🔥 Só roda quando a QUANTIDADE de items muda
 
     const formatCurrency = (value: number) => {
         return value.toFixed(2) + " MT";
@@ -264,7 +316,7 @@ export function CartModal({
                                         </p>
                                     </div>
 
-                                    {/* 🔥 PREÇO COMPRA - CORRIGIDO */}
+                                    {/* 🔥 PREÇO COMPRA - Aceita decimais com vírgula ou ponto */}
                                     <div className="w-32">
                                         <label className="text-xs text-gray-500 block mb-1">
                                             Preço Compra
@@ -280,7 +332,7 @@ export function CartModal({
                                         />
                                     </div>
 
-                                    {/* 🔥 QUANTIDADE - CORRIGIDA */}
+                                    {/* 🔥 QUANTIDADE - Aceita decimais com vírgula ou ponto */}
                                     <div className="w-24">
                                         <label className="text-xs text-gray-500 block mb-1">
                                             Qtd

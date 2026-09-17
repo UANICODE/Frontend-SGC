@@ -33,7 +33,7 @@ export function CostDashboardCards({ totalExpenses, monthlyAverage, monthlyChang
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all">
                 <div className="flex items-start justify-between">
                     <div>
-                        <p className="text-sm text-gray-500 font-medium">Total de Custos</p>
+                        <p className="text-sm text-gray-500 font-medium">Total de despesas</p>
                         <p className="text-2xl font-bold text-primary mt-2">{formatCurrency(totalExpenses)}</p>
                     </div>
                     <div className="p-3 bg-primary/10 rounded-xl">
